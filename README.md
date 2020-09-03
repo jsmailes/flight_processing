@@ -3,13 +3,26 @@ A python library built from a collection of C++ scripts for processing flight an
 
 ## Requirements
 
-Boost
+On fedora:
 
-Proper requirements list coming soon
+```
+boost-devel
+boost-python3-devel
+boost-numpy3
+```
+
+Proper requirements coming soon
 
 ## Build
 
-Instructions coming soon
+```
+mkdir build
+cd build
+cmake ..
+make
+```
+
+Proper instructions coming soon
 
 ## Usage
 
