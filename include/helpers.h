@@ -8,6 +8,7 @@
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
 #include <boost/geometry/geometries/multi_polygon.hpp>
+#include <boost/geometry/core/cs.hpp>
 //#include <boost/geometry/strategies/spherical/distance_haversine.hpp>
 
 #include <iostream>

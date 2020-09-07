@@ -5,6 +5,7 @@
 
 #include <boost/geometry.hpp>
 #include <boost/geometry/index/rtree.hpp>
+#include <boost/geometry/algorithms/distance.hpp>
 #include <boost/foreach.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
