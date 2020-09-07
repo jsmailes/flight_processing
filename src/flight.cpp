@@ -10,7 +10,7 @@ Flight::Flight(int vs, vector<float> xs, vector<float> ys, vector<int> hs, bool 
     if (!ft) {
         vector<int> hs2;
         for (int i = 0; i < hs.size(); i++) {
-            hs2.push_back(METRE_TO_FT(hs[i]));
+            hs2.push_back(metre_to_ft(hs[i]));
         }
         vertices_height = hs2;
     } else {

@@ -2,7 +2,6 @@
 #define HELPERS_H
 
 #define METRE_IN_FT 3.28084
-#define METRE_TO_FT(x) (x * METRE_IN_FT)
 
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/box.hpp>
@@ -27,5 +26,7 @@ typedef pair<box, int> value;
 
 // adapted from https://stackoverflow.com/questions/14539867/how-to-display-a-progress-indicator-in-pure-c-c-cout-printf
 void progress_bar(float progress, int barWidth = 70);
+
+float metre_to_ft(float metres);
 
 #endif

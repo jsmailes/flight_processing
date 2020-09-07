@@ -12,3 +12,7 @@ void progress_bar(float progress, int barWidth) {
     std::cout.flush();
     std::cout << std::endl;
 }
+
+float metre_to_ft(float metres) {
+    return metres * METRE_IN_FT;
+}

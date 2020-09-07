@@ -69,7 +69,7 @@ float AirspaceBoost::distance(float x, float y, int height) {
 }
 
 float AirspaceBoost::distance(point_xy &xy, int height) {
-    float distance_xy = METRE_TO_FT(bg::distance(xy, polygon));
+    float distance_xy = metre_to_ft(bg::distance(xy, polygon));
 
     float distance_height;
     if (inside_height(height)) {
@@ -131,7 +131,7 @@ vector<int> MultiAirspace::query_point(float x, float y, int height) {
 }
 
 vector<int> MultiAirspace::query_box(box query) {
-    auto b = bgi::qbegin(rtree, bgi::intersects(query)), 
+    auto b = bgi::qbegin(rtree, bgi::intersects(query)),
         e = bgi::qend(rtree);
 
     auto range = boost::make_iterator_range(b, e);

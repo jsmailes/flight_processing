@@ -60,7 +60,7 @@ void AirspaceHandler::process_flight(np::ndarray &xs, np::ndarray &ys, np::ndarr
     for (int i = 0; i < n; i++) {
         v_xs[i] = (float) (*(xs_ptr + i));
         v_ys[i] = (float) (*(ys_ptr + i));
-        v_hs[i] = METRE_TO_FT(rint(*(hs_ptr + i)));
+        v_hs[i] = metre_to_ft(rint(*(hs_ptr + i)));
     }
 
     Flight flight(v_xs.size(), v_xs, v_ys, v_hs);
@@ -87,7 +87,7 @@ py::list AirspaceHandler::airspaces_at_point(float x, float y, int height) {
         reset_result();
     }
 
-    vector<int> output = airspaces.query_point(x, y, METRE_TO_FT(height));
+    vector<int> output = airspaces.query_point(x, y, metre_to_ft(height));
 
     py::list py_output;
 
@@ -103,7 +103,7 @@ py::list AirspaceHandler::airspaces_near_point(float x, float y, int height) {
         reset_result();
     }
 
-    vector<pair<int, float>> output = airspaces.airspaces_near_point(x, y, METRE_TO_FT(height));
+    vector<pair<int, float>> output = airspaces.airspaces_near_point(x, y, metre_to_ft(height));
 
     py::list py_output;
 
