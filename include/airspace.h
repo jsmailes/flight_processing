@@ -3,6 +3,7 @@
 
 //#define EARTH_RADIUS_FT 20902260
 
+#include <boost/geometry.hpp>
 #include <boost/geometry/index/rtree.hpp>
 #include <boost/foreach.hpp>
 #include <boost/range/adaptor/transformed.hpp>

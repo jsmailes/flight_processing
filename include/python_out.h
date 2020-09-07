@@ -9,6 +9,7 @@
 #include "flight.h"
 #include "polygon.h"
 
+#include <boost/geometry.hpp>
 #include <boost/python.hpp>
 #include <boost/python/numpy.hpp>
 
