@@ -33,3 +33,6 @@
 
 # Build folder
 build
+
+# Python
+__pycache__
