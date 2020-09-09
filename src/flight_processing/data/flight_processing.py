@@ -1,5 +1,6 @@
 from ..process_flights import version, AirspaceHandler
 from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_withend
+from ..scalebar import scale_bar
 from .. import config
 
 from scipy import sparse
@@ -25,28 +26,33 @@ class AirspaceGraph:
     def __init__(self, dataset, time_start, time_end):
         self.__data_config = DataConfig(dataset)
 
+        print("Loading graph of handovers...")
         self.__matrix = self.__load_npz_bulk(time_start, time_end)
 
+        print("Loading airspace dataset...")
         self.__gdf = geopandas.read_file(self.__data_config.dataset_location)
 
+        print("Populating AirspaceHandler...")
         self.__airspaces = AirspaceHandler()
         self.__gdf['ident'] = self.__gdf.apply(self.__add_airspace, axis=1)
         self.__gdf.set_index('ident', inplace=True)
 
         self.num_airspaces = self.__airspaces.size()
 
+        print("Building graph...")
         self.__graph = build_graph_from_matrix(self.__gdf, self.__matrix)
 
-    @classmethod
+        print("Done!")
+
+    @classmethod # TODO
     def fromconfig(cls, dataset, time_start, time_end):
         return cls(dataset, time_start, time_end)
 
-    @classmethod
+    @classmethod # TODO
     def withbounds(cls, dataset, time_start, time_end):
         return cls(dataset, time_start, time_end)
 
     def __load_npz(self, time):
-        #file_load = graph_location_npz.format(dataset=dataset, date=time.strftime(timestring_date), time=time.strftime(timestring_time))
         file_load = self.__data_config.data_graph_npz(time)
         return sparse.load_npz(file_load)
 
@@ -85,10 +91,15 @@ class AirspaceGraph:
     def edge_weight(self, airspace1, airspace2):
         name1 = self.get_airspace(airspace1)['name']
         name2 = self.get_airspace(airspace2)['name']
-        return self.__graph[name1][name2]['weight']
+        edge = self.__graph[name1].get(name2)
+        if edge is not None:
+            weight = edge.get('weight')
+            return weight if weight is not None else 0
+        else:
+            return 0
 
     def zone_centre(self, name):
-        return get_zone_centre(self.__gdf, name)
+        return get_zone_centre(self.__gdf, self.get_airspace(name)['name'])
 
     def visualise_graph(self):
         hvnx.draw(self.__graph, mercator_positions(self.__gdf, self.__graph), edge_width=hv.dim('weight')*0.003, node_size=30, arrowhead_length=0.0001)
@@ -108,11 +119,13 @@ class AirspaceGraph:
         _, weights_original = zip(*nx.get_edge_attributes(self.__graph, 'weight').items())
         if logscale:
             weights = tuple(map(lambda x: math.log(x), weights_original))
+        else:
+            weights = weights_original
         positions_transformed = mercator_positions(self.__gdf, self.__graph)
         cmap = plt.cm.Purples
 
-        nodes = nx.draw_networkx_nodes(graph, positions_transformed, ax=ax, node_size=5, node_color="red")
-        edges = nx.draw_networkx_edges(graph, positions_transformed, ax=ax, node_size=5, edge_color=weights, edge_cmap=cmap, arrowsize=5, arrowstyle="->", width=0.8)
+        nodes = nx.draw_networkx_nodes(self.__graph, positions_transformed, ax=ax, node_size=5, node_color="red")
+        edges = nx.draw_networkx_edges(self.__graph, positions_transformed, ax=ax, node_size=5, edge_color=weights, edge_cmap=cmap, arrowsize=5, arrowstyle="->", width=0.8)
         nodes.set_zorder(20)
         for edge in edges:
             edge.set_zorder(19)
@@ -126,10 +139,10 @@ class AirspaceGraph:
 
         plt.show()
 
-    def test_point(self, long, lat, height):
+    def test_point(self, long, lat, height): # TODO
         pass
 
-    def test_handover(self, long, lat, height, id_1, id_2):
+    def test_handover(self, long, lat, height, id_1, id_2): # TODO
         pass
 
 
@@ -150,7 +163,7 @@ def build_graph_from_matrix(gdf, matrix):
     graph = nx.DiGraph()
     for i in range(n):
         name = gdf.loc[i]['name']
-        graph.add_node(graph, name)
+        graph_add_node(graph, name)
 
     I, J, V = sparse.find(matrix)
     N = I.size
@@ -161,7 +174,7 @@ def build_graph_from_matrix(gdf, matrix):
         v = V[k]
         name_i = gdf.loc[i]['name']
         name_j = gdf.loc[j]['name']
-        increment_edge(graph, name_i, name_j, v)
+        graph_increment_edge(graph, name_i, name_j, v)
 
     return graph
 

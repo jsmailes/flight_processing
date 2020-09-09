@@ -5,12 +5,12 @@ import errno
 
 # defaults
 dataset = "usa"
-data_prefix = "/mnt/cold_data/josh"
+data_prefix = "/mnt/cold_data/josh/processing"
 
 
 format_dataset_location = "{data_prefix}/regions_{dataset}_wkt.json"
-format_data_flights = "{data_prefix}/flights_{dataset}/{date}/{time}.json"
-format_data_graph = "{data_prefix}/graphs_{dataset}/{date}/{time}.{suffix}"
+format_data_flights = "{data_prefix}/flights/{dataset}/{date}/{time}.json"
+format_data_graph = "{data_prefix}/graphs/{dataset}/{date}/{time}.{suffix}"
 
 timestring_traffic = "%Y-%m-%d %H:%M"
 timestring_date = "%Y%m%d"
