@@ -3,12 +3,15 @@ from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_withend
 from .. import config
 
 from scipy import sparse
+from datetime import timedelta
 from dateutil import parser
 import math
 import pandas as pd
 import numpy as np
 import geopandas
+import pyproj
 from shapely.geometry import Point
+from shapely.ops import transform
 import networkx as nx
 import hvplot.networkx as hvnx
 
@@ -33,8 +36,6 @@ class AirspaceGraph:
         self.num_airspaces = self.__airspaces.size()
 
         self.__graph = build_graph_from_matrix(self.__gdf, self.__matrix)
-
-
 
     @classmethod
     def fromconfig(cls, dataset, time_start, time_end):
