@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
+from . import config
 
 import os
 import errno
 
 # defaults
 dataset = "usa"
-data_prefix = "/mnt/cold_data/josh/processing"
+data_prefix = config.get("global", "data_location", fallback="")
 
 
 format_dataset_location = "{data_prefix}/regions_{dataset}_wkt.json"
@@ -40,7 +41,7 @@ class DataConfig:
             self.maxlat = 48
             self.detail = 6
         else:
-            raise NotImplementedError
+            raise NotImplementedError("Dataset not recognised!")
 
         self.dataset_location = format_dataset_location.format(data_prefix=data_prefix, dataset=dataset)
 
@@ -91,7 +92,7 @@ def execute_bulk(function, time_start, count, time_delta=None):
         t2 = time_start + ((i + 1) * time_delta)
         function(t1, t2)
 
-def execute_bulk_withend(function, time_start, time_end, time_delta=None):
+def execute_bulk_between(function, time_start, time_end, time_delta=None):
     time_delta = time_delta if time_delta is not None else timedelta(hours=1)
     t1 = time_start
     t2 = time_start + time_delta

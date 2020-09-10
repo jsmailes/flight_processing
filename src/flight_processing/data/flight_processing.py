@@ -1,5 +1,5 @@
 from ..process_flights import version, AirspaceHandler
-from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_withend
+from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_between
 from ..scalebar import scale_bar
 from .. import config
 
@@ -57,8 +57,8 @@ class AirspaceGraph:
         return sparse.load_npz(file_load)
 
     def __load_npz_bulk(self, time_start, time_end):
-        t_start = parser.parse(time_start)
-        t_end = parser.parse(time_end)
+        t_start = parser.parse(str(time_start))
+        t_end = parser.parse(str(time_end))
         t_delta = timedelta(hours=1)
         count = math.floor((t_end - t_start) / t_delta)
 
