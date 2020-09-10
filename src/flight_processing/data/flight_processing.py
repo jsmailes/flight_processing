@@ -1,6 +1,7 @@
 from ..process_flights import version, AirspaceHandler
 from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_between
 from ..scalebar import scale_bar
+from .data_utils import graph_add_node, graph_increment_edge, build_graph_from_sparse_matrix, build_graph_from_matrix, get_zone_centre
 from .. import config
 
 from scipy import sparse
@@ -40,7 +41,7 @@ class AirspaceGraph:
         self.num_airspaces = self.__airspaces.size()
 
         print("Building graph...")
-        self.__graph = build_graph_from_matrix(self.__gdf, self.__matrix)
+        self.__graph = build_graph_from_sparse_matrix(self.__gdf, self.__matrix)
 
         print("Done!")
 
@@ -145,46 +146,6 @@ class AirspaceGraph:
     def test_handover(self, long, lat, height, id_1, id_2): # TODO
         pass
 
-
-def graph_add_node(graph, name):
-    if not graph.has_node(name):
-        graph.add_node(name)
-
-def graph_increment_edge(graph, u, v, amount=1):
-        if graph.has_edge(u, v):
-            graph[u][v]['weight'] += amount
-        else:
-            graph.add_edge(u, v, weight=amount)
-
-def build_graph_from_matrix(gdf, matrix):
-    n, m = matrix.shape
-    assert(n == m)
-
-    graph = nx.DiGraph()
-    for i in range(n):
-        name = gdf.loc[i]['name']
-        graph_add_node(graph, name)
-
-    I, J, V = sparse.find(matrix)
-    N = I.size
-
-    for k in range(N):
-        i = I[k]
-        j = J[k]
-        v = V[k]
-        name_i = gdf.loc[i]['name']
-        name_j = gdf.loc[j]['name']
-        graph_increment_edge(graph, name_i, name_j, v)
-
-    return graph
-
-def get_zone_centre(gdf, name):
-    gdf_temp = gdf[gdf['name'] == name]
-    if len(gdf_temp) == 0:
-        return None
-    if gdf_temp.iloc[0].geometry is None:
-        return Point(0.0, 0.0)
-    return gdf_temp.iloc[0].geometry.centroid
 
 wgs84 = pyproj.CRS('EPSG:4326')
 mercator = pyproj.CRS('EPSG:3857') # Note: if we change the map source this will need to change too!
