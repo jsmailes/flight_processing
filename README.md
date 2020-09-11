@@ -27,11 +27,25 @@ gcc-c++
 python3
 ```
 
-## Build
+### Build
+
+```
+pip3 install setuptools
+python3 setup.py build
+```
+
+### Build Wheel
+
+```
+pip3 install setuptools
+python3 setup.py sdist bdist_wheel
+```
+
+### Install
 
 ```
 pip3 install setuptools
 pip3 install .
 ```
 
-Python's `setuptools` will automatically call the underlying `cmake` build pipeline and install all the python prerequisites.
+Pip should automatically call the underlying `cmake` build pipeline and install all the python prerequisites.
