@@ -95,7 +95,7 @@ setup(
     ],
     include_package_data=True,
     package_data={
-        "": ["*.conf"],
+        "": ["*.conf", "*.so"],
     },
     install_requires=[
         "python-dateutil>=2.8.1",
