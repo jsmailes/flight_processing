@@ -1,29 +1,37 @@
-# cpp-flights
-A python library built from a collection of C++ scripts for processing flight and airspace data.
+# flight_processing
 
-## Requirements
+Flight_processing is a python library aimed at extracting useful data from OpenSky flight position reports and airspace data.
 
-On fedora:
+## Installation
+
+You can install flight_processing from [PyPI](https://pypi.org/):
+```
+TODO put on pypi
+```
+
+## Usage
+
+Documentation coming soon
+
+## Build
+
+Requirements on Fedora (package names may vary between distributions):
 
 ```
 boost-devel
 boost-python3-devel
 boost-numpy3
+git
+cmake
+gcc-c++
+python3
 ```
-
-Proper requirements coming soon
 
 ## Build
 
 ```
-mkdir build
-cd build
-cmake ..
-make
+pip3 install setuptools
+pip3 install .
 ```
 
-Proper instructions coming soon
-
-## Usage
-
-Documentation coming soon
+Python's `setuptools` will automatically call the underlying `cmake` build pipeline and install all the python prerequisites.
