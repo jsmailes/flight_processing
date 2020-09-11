@@ -48,4 +48,8 @@ target_include_directories(process_flights PUBLIC ${Boost_INCLUDE_DIR} PUBLIC ${
 target_link_libraries(process_flights ${Boost_LIBRARIES})
 target_link_libraries(process_flights ${BOOST_LINK})
 
+set_target_properties(process_flights PROPERTIES
+                      LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/src/flight_processing
+)
+
 set(CMAKE_SHARED_MODULE_PREFIX "")
