@@ -12,6 +12,7 @@
 #include <cmath>
 #include <cassert>
 #include <fstream>
+#include <utility>
 
 #include "json.hpp"
 using json = nlohmann::json;
@@ -59,6 +60,7 @@ public:
     vector<pair<int, float>> airspaces_near_point(float x, float y, int height, int k=5);
     long unsigned int size();
     void process_flight(Flight &flight, vector<vector<int>> &out);
+    vector<pair<int, int>> process_single_flight(Flight &flight);
 private:
     vector<AirspaceBoost> airspaces;
     bgi::rtree<value, bgi::rstar<16>> rtree;

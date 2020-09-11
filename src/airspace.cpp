@@ -234,12 +234,48 @@ void MultiAirspace::process_flight(Flight &flight, vector<vector<int>> &out) {
             }
         }
         if (count > 0) {
-            //printf(",");
             fill(spaces1->begin(), spaces1->end(), false);
             swap(spaces1, spaces2);
         }
         else {
-            //printf(".");
+        }
+    }
+}
+
+vector<pair<int, int>> MultiAirspace::process_single_flight(Flight &flight) {
+    int N = size();
+
+    vector<pair<int, int>> out;
+
+    vector<int> do_check = query_box(flight.bbox);
+
+    vector<bool> *spaces1 = new vector<bool>(N);
+    vector<bool> *spaces2 = new vector<bool>(N);
+    fill(spaces1->begin(), spaces1->end(), false);
+    fill(spaces2->begin(), spaces2->end(), false);
+
+    int count;
+
+    for (int i = 0; i < flight.vertices; i++) {
+        count = 0;
+        BOOST_FOREACH(int const &j, do_check) {
+            if (airspaces[j].inside(flight.vertices_x[i], flight.vertices_y[i], flight.vertices_height[i])) {
+                count++;
+                spaces2->at(j) = true;
+                if (!spaces1->at(j)) {
+                    for (int k = 0; k < N; k++) {
+                        if (spaces1->at(k)) {
+                            out.push_back(make_pair(k, j));
+                        }
+                    }
+                }
+            }
+        }
+        if (count > 0) {
+            fill(spaces1->begin(), spaces1->end(), false);
+            swap(spaces1, spaces2);
+        }
+        else {
         }
     }
 }

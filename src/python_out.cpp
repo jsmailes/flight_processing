@@ -33,6 +33,48 @@ int AirspaceHandler::add_airspaces_file(string location) {
     return airspaces.add_airspaces_file(location);
 }
 
+py::list AirspaceHandler::process_single_flight(np::ndarray &xs, np::ndarray &ys, np::ndarray &hs) {
+    py::list py_output;
+
+    int n = xs.shape(0);
+    if (ys.shape(0) != n || hs.shape(0) != n) {
+        printf("Error: Mismatch in array lengths.\n");
+        return py_output;
+    }
+    if (xs.get_dtype() != np::dtype::get_builtin<double>()
+    || ys.get_dtype() != np::dtype::get_builtin<double>()
+    || hs.get_dtype() != np::dtype::get_builtin<double>()) {
+        printf("Error: incorrect array type.\n");
+        return py_output;
+    }
+
+    double* xs_ptr = reinterpret_cast<double*>(xs.get_data());
+    double* ys_ptr = reinterpret_cast<double*>(ys.get_data());
+    double* hs_ptr = reinterpret_cast<double*>(hs.get_data());
+    vector<float> v_xs(n);
+    vector<float> v_ys(n);
+    vector<int> v_hs(n);
+
+    for (int i = 0; i < n; i++) {
+        v_xs[i] = (float) (*(xs_ptr + i));
+        v_ys[i] = (float) (*(ys_ptr + i));
+        v_hs[i] = metre_to_ft(rint(*(hs_ptr + i)));
+    }
+
+    Flight flight(v_xs.size(), v_xs, v_ys, v_hs);
+    //vector<pair<int, int>> output;
+    vector<pair<int, int>> output = airspaces.process_single_flight(flight);
+
+    for (int i = 0; i < output.size(); i++) {
+        py::list output_i;
+        output_i.append(output[i].first);
+        output_i.append(output[i].second);
+        py_output.append(output_i);
+    }
+
+    return py_output;
+}
+
 void AirspaceHandler::process_flight(np::ndarray &xs, np::ndarray &ys, np::ndarray &hs) {
     if (!ready) {
         reset_result();
@@ -177,6 +219,7 @@ BOOST_PYTHON_MODULE(process_flights)
     py::class_<AirspaceHandler>("AirspaceHandler")
         .def("add_airspace", &AirspaceHandler::add_airspace)
         .def("add_airspaces_file", &AirspaceHandler::add_airspaces_file)
+        .def("process_single_flight", &AirspaceHandler::process_single_flight)
         .def("process_flight", &AirspaceHandler::process_flight)
         .def("process_flights_file", &AirspaceHandler::process_flights_file)
         .def("airspaces_at_point", &AirspaceHandler::airspaces_at_point)

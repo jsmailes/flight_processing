@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <utility>
 
 #include "processing.h"
 #include "airspace.h"
@@ -37,6 +38,7 @@ public:
     int add_airspace(string wkt, int lower, int upper);
     int add_airspaces_file(string location);
     //void add_airspaces(); TODO
+    py::list process_single_flight(np::ndarray &xs, np::ndarray &ys, np::ndarray &hs);
     void process_flight(np::ndarray &xs, np::ndarray &ys, np::ndarray &hs);
     void process_flights_file(string location);
     py::list airspaces_at_point(float x, float y, int height);

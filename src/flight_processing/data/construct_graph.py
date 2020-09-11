@@ -30,6 +30,9 @@ class GraphBuilder:
             print("Adding airspace data to C++.")
         self.__gdf['ident'] = self.__gdf.apply(self.__add_airspace, axis=1)
 
+    def process_single_flight(self, xs, ys, hs):
+        return self.__airspaces.process_single_flight(xs, ys, hs)
+
     def process_flights(self, time, json=False, yaml=False, npz=True):
         t = parser.parse(str(time))
 
@@ -42,17 +45,17 @@ class GraphBuilder:
             graph_json = self.__data_config.data_graph_json(t)
         else:
             graph_json = None
-        
+
         if yaml:
             graph_yaml = self.__data_config.data_graph_yaml(t)
         else:
             graph_yaml = None
-        
+
         if npz:
             graph_npz = self.__data_config.data_graph_npz(t)
         else:
             graph_npz = None
-        
+
         self.__airspaces.reset_result()
         self.__airspaces.process_flights_file(data_flights)
 
@@ -61,9 +64,9 @@ class GraphBuilder:
             print("JSON: {}".format(graph_json))
             print("YAML: {}".format(graph_yaml))
             print("NPZ:  {}".format(graph_npz))
-        
+
         matrix = self.__airspaces.get_result()
-        
+
         check_file(graph_json)
         check_file(graph_yaml)
         check_file(graph_npz)
