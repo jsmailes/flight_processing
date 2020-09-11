@@ -31,8 +31,13 @@
 *.out
 *.app
 
-# Build folder
+# Build folders
 build
+dist
 
 # Python
 __pycache__
+*.egg-info
+
+# Misc
+*.swp
