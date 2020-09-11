@@ -1,8 +1,10 @@
+__version__ = '0.2.0'
+
 from pathlib import Path
 from appdirs import user_config_dir
 import configparser
 
-from .process_flights import version, AirspaceHandler
+from .process_flights import AirspaceHandler
 
 # Config
 

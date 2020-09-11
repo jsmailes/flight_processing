@@ -5,6 +5,7 @@ import re
 import sys
 import platform
 import subprocess
+import pathlib
 
 from distutils.version import LooseVersion
 from setuptools import setup, find_packages, Extension
@@ -67,13 +68,53 @@ class CMakeBuild(build_ext):
                               cwd=self.build_temp)
         print()  # Add an empty line for cleaner output
 
+HERE = pathlib.Path(__file__).parent
+README = (HERE / "README.md").read_text()
+
 setup(
     name='flight_processing',
-    version='0.1.0',
+    version='0.2.0',
     author='Joshua Smailes',
     author_email='joshua.smailes@cs.ox.ac.uk',
-    description='A test project',
-    long_description='',
+    description='Extract useful data from OpenSky position reports and previously extracted airspace data.',
+    long_description=README,
+    long_description_content_type="text/markdown",
+    url="https://github.com/jsmailes/flight_processing",
+    license="MIT",
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Framework :: Matplotlib",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Programming Language :: C++",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Topic :: Security",
+    ],
+    include_package_data=True,
+    package_data={
+        "": ["*.conf", "*.so"],
+    },
+    install_requires=[
+        "python-dateutil>=2.8.1",
+        "scipy>=1.5.2",
+        "pandas>=1.1.2",
+        "geopandas>=0.8.1",
+        "Shapely>=1.7.1",
+        "networkx>=2.5",
+        "simplejson>=3",
+        "traffic>=2.4",
+        "numpy>=1.19.1",
+        "pyproj>=2.6.1",
+        "hvplot>=0.6.0",
+        "matplotlib>=3",
+        "cartopy>=0.18.0",
+        "pathlib>=1",
+        "appdirs>=1.4.4",
+        "configparser>=5.0.0",
+    ],
     # tell setuptools to look for any packages under 'src'
     packages=find_packages('src'),
     # tell setuptools that all packages will be under the 'src' directory
