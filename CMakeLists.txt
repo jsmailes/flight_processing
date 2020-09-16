@@ -35,18 +35,23 @@ message("Libs of Boost: " ${Boost_LIBRARIES} )
 include_directories(${Boost_INCLUDE_DIR} ${PYTHON_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS} ${PYTHON_LIBRARIES})
 
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(lib/json)
+
 include_directories(include)
 
 set(SOURCES src/airspace.cpp src/flight.cpp src/helpers.cpp src/polygon.cpp src/processing.cpp)
 
 add_executable(main src/main.cpp ${SOURCES})
-target_link_libraries(main ${Boost_LIBRARIES})
+target_link_libraries(main PRIVATE ${Boost_LIBRARIES})
+target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
 
 python_add_module(process_flights src/python_out.cpp ${SOURCES})
 # TODO figure out what keywords we actually need here
 target_include_directories(process_flights PUBLIC ${Boost_INCLUDE_DIR} PUBLIC ${PYTHON_INCLUDE_DIR})
-target_link_libraries(process_flights ${Boost_LIBRARIES})
-target_link_libraries(process_flights ${BOOST_LINK})
+target_link_libraries(process_flights PRIVATE ${Boost_LIBRARIES})
+target_link_libraries(process_flights PRIVATE ${BOOST_LINK})
+target_link_libraries(process_flights PRIVATE nlohmann_json::nlohmann_json)
 
 set_target_properties(process_flights PROPERTIES
                       LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/src/flight_processing
