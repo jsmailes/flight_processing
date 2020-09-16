@@ -2,3 +2,4 @@ include *.py
 include CMakeLists.txt
 recursive-include src *.py *.conf *.cpp
 recursive-include include *.h *.hpp
+recursive-include lib/json *
