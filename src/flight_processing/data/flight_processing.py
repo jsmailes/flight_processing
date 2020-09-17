@@ -25,7 +25,14 @@ from traffic.data import opensky
 
 class AirspaceGraph:
     def __init__(self, dataset, time_start, time_end):
-        self.__data_config = DataConfig(dataset)
+        if isinstance(dataset, DataConfig):
+            self.__data_config = dataset
+            self.dataset = dataset.dataset
+        elif isinstance(dataset, str):
+            self.__data_config = DataConfig.known_dataset(dataset)
+            self.dataset = dataset
+        else:
+            raise ValueError("Argument 'dataset' must be of type DataConfig or str.")
 
         print("Loading graph of handovers...")
         self.__matrix = self.__load_npz_bulk(time_start, time_end)

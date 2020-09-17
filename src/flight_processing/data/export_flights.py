@@ -21,10 +21,16 @@ def flights_to_json(flights):
 
 class FlightDownloader:
     def __init__(self, dataset, verbose=False):
-        self.dataset = dataset
-        self.verbose = verbose
+        if isinstance(dataset, DataConfig):
+            self.__data_config = dataset
+            self.dataset = dataset.dataset
+        elif isinstance(dataset, str):
+            self.__data_config = DataConfig.known_dataset(dataset)
+            self.dataset = dataset
+        else:
+            raise ValueError("Argument 'dataset' must be of type DataConfig or str.")
 
-        self.__data_config = DataConfig(dataset=self.dataset)
+        self.verbose = verbose
 
     def download_flights(self, time_start, time_end):
         t_start = parser.parse(str(time_start))
@@ -54,16 +60,16 @@ class FlightDownloader:
             print("Converting to JSON.")
 
         out = flights_to_json(flights)
-        
+
         location = self.__data_config.data_flights(t_start)
         check_file(location)
 
         if self.verbose:
             print("Saving to {}.".format(location))
 
-        with open(location, "w") as outfile: 
+        with open(location, "w") as outfile:
             outfile.write(out)
-    
+
     def dump_flights_bulk(self, time_start, time_end):
         t_start = parser.parse(str(time_start))
         t_end = parser.parse(str(time_end))

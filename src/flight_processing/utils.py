@@ -5,7 +5,7 @@ import os
 import errno
 
 # defaults
-dataset = "usa"
+detail = 4
 data_prefix = config.get("global", "data_location", fallback="")
 
 
@@ -17,36 +17,55 @@ timestring_traffic = "%Y-%m-%d %H:%M"
 timestring_date = "%Y%m%d"
 timestring_time = "%H%M"
 
+datasets = dict(
+    uk = dict(
+        minlon = -11,
+        maxlon = 6,
+        minlat = 48,
+        maxlat = 61.5,
+        detail = 6
+    ),
+    usa = dict(
+        minlon = -130,
+        maxlon = -58,
+        minlat = 23,
+        maxlat = 46,
+        detail = 4
+    ),
+    switzerland = dict(
+        minlon = 5.3,
+        maxlon = 10.7,
+        minlat = 45.5,
+        maxlat = 48,
+        detail = 6
+    )
+)
+
 class DataConfig:
-    def __init__(self, dataset=dataset, data_prefix=data_prefix):
+    def __init__(self, dataset, minlon, maxlon, minlat, maxlat, detail=detail, data_prefix=data_prefix):
         self.dataset = dataset
         self.data_prefix = data_prefix
 
-        if dataset == "uk":
-            self.minlon = -11
-            self.maxlon = 6
-            self.minlat = 48
-            self.maxlat = 61.5
-            self.detail = 6
-        elif dataset == "usa":
-            self.minlon = -130
-            self.maxlon = -58
-            self.minlat = 23
-            self.maxlat = 46
-            self.detail = 4
-        elif dataset == "switzerland":
-            self.minlon = 5.3
-            self.maxlon = 10.7
-            self.minlat = 45.5
-            self.maxlat = 48
-            self.detail = 6
-        else:
-            raise NotImplementedError("Dataset not recognised!")
+        self.minlon = minlon
+        self.maxlon = maxlon
+        self.minlat = minlat
+        self.maxlat = maxlat
+        self.detail = detail
 
         self.dataset_location = format_dataset_location.format(data_prefix=data_prefix, dataset=dataset)
 
         self.bounds_opensky = (self.minlon, self.minlat, self.maxlon, self.maxlat)
         self.bounds_plt = (self.minlon, self.maxlon, self.minlat, self.maxlat)
+
+    @classmethod
+    def known_dataset(cls, dataset, data_prefix=data_prefix):
+        data = datasets.get(dataset)
+
+        if data is None:
+            raise NotImplementedError("Dataset {} not recognised: specify bounds using main __init__ method.".format(dataset))
+        else:
+            return cls(dataset, data['minlon'], data['maxlon'], data['minlat'], data['maxlat'], data['detail'], data_prefix)
+
 
     def data_flights(self, datetime):
         date = datetime.strftime(timestring_date)
@@ -55,7 +74,8 @@ class DataConfig:
                 dataset = self.dataset,
                 data_prefix = self.data_prefix,
                 date = date,
-                time = time)
+                time = time
+        )
 
     def __data_graph(self, datetime, suffix):
         date = datetime.strftime(timestring_date)
@@ -65,7 +85,8 @@ class DataConfig:
                 data_prefix = self.data_prefix,
                 date = date,
                 time = time,
-                suffix = suffix)
+                suffix = suffix
+        )
 
     def data_graph_yaml(self, datetime):
         return self.__data_graph(datetime, "yaml")
