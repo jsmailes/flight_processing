@@ -13,7 +13,9 @@ from shapely.geometry import Point
 import shapely.wkt
 import tempfile, os
 from traffic.core.flight import Flight
+from traffic.core.traffic import Traffic
 import matplotlib.pyplot as plt
+import cartopy
 import cartopy.crs as ccrs
 import cartopy.io.img_tiles as cimgt
 
@@ -139,13 +141,18 @@ class GraphBuilder:
 
         ax.set_extent(self.__data_config.bounds_plt)
 
-        #ax.add_image(imagery, self.__data_config.detail, interpolation='spline36', cmap="gray")
+        ax.add_image(imagery, self.__data_config.detail)
 
         ax.add_geometries(self.__gdf.geometry, crs=ccrs.PlateCarree(), facecolor="none", edgecolor="black")
 
         if flight is not None:
-            assert(isinstance(flight, Flight))
-            flight.plot(ax)
+            if isinstance(flight, Flight):
+                flight.plot(ax)
+            elif isinstance(flight, Traffic):
+                for f in flight:
+                    f.plot(ax)
+            else:
+                raise ValueError("Flight must be of type Flight or Traffic.")
 
         if subset is not None:
             if isinstance(subset, list) or isinstance(subset, set):

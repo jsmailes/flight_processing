@@ -278,4 +278,6 @@ vector<pair<int, int>> MultiAirspace::process_single_flight(Flight &flight) {
         else {
         }
     }
+
+    return out;
 }
