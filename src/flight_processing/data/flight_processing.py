@@ -1,7 +1,7 @@
 from ..process_flights import version, AirspaceHandler
 from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_between
 from ..scalebar import scale_bar
-from .data_utils import graph_add_node, graph_increment_edge, build_graph_from_sparse_matrix, build_graph_from_matrix, get_zone_centre
+from .data_utils import graph_add_node, graph_increment_edge, build_graph_from_sparse_matrix, build_graph_from_matrix, get_zone_centre, save_graph_to_file, process_dataframe
 from .. import config
 
 from scipy import sparse
@@ -14,6 +14,7 @@ import geopandas
 import pyproj
 from shapely.geometry import Point
 from shapely.ops import transform
+import holoviews as hv
 import networkx as nx
 import hvplot.networkx as hvnx
 
@@ -24,7 +25,7 @@ import cartopy.io.img_tiles as cimgt
 from traffic.data import opensky
 
 class AirspaceGraph:
-    def __init__(self, dataset, time_start, time_end):
+    def __init__(self, dataset, df=None, dataset_location=None, verbose=False):
         if isinstance(dataset, DataConfig):
             self.__data_config = dataset
             self.dataset = dataset.dataset
@@ -34,11 +35,14 @@ class AirspaceGraph:
         else:
             raise ValueError("Argument 'dataset' must be of type DataConfig or str.")
 
-        print("Loading graph of handovers...")
-        self.__matrix = self.__load_npz_bulk(time_start, time_end)
-
         print("Loading airspace dataset...")
-        self.__gdf = geopandas.read_file(self.__data_config.dataset_location)
+        if df is not None:
+            self.__gdf = process_dataframe(df)
+        else:
+            if dataset_location is None:
+                dataset_location = self.__data_config.dataset_location
+
+            self.__gdf = geopandas.read_file(dataset_location)
 
         print("Populating AirspaceHandler...")
         self.__airspaces = AirspaceHandler()
@@ -47,18 +51,44 @@ class AirspaceGraph:
 
         self.num_airspaces = self.__airspaces.size()
 
+        print("Done!")
+
+    def load_graphs(self, time_start, time_end):
+        print("Loading graph of handovers...")
+        self.__matrix = self.__load_npz_bulk(time_start, time_end)
+
         print("Building graph...")
         self.__graph = build_graph_from_sparse_matrix(self.__gdf, self.__matrix)
 
         print("Done!")
 
-    @classmethod # TODO
-    def fromconfig(cls, dataset, time_start, time_end):
-        return cls(dataset, time_start, time_end)
+    def load_graph_files(self, files):
+        if isinstance(files, str):
+            to_load = [files]
+        elif isinstance(files, list) and all(isinstance(f, str) for f in files):
+            to_load = files
+        else:
+            raise ValueError("Argument 'files' must be str or list of str.")
 
-    @classmethod # TODO
-    def withbounds(cls, dataset, time_start, time_end):
-        return cls(dataset, time_start, time_end)
+        print("Loading graph of handovers...")
+        self.__matrix = self.__load_npz_files(to_load)
+
+        print("Building graph...")
+        self.__graph = build_graph_from_sparse_matrix(self.__gdf, self.__matrix)
+
+        print("Done!")
+
+    def __load_npz_files(self, files):
+        matrix = None
+
+        for f in files:
+            matrix_new = sparse.load_npz(f)
+            if matrix is None:
+                matrix = matrix_new
+            else:
+                matrix += matrix_new
+
+        return matrix
 
     def __load_npz(self, time):
         file_load = self.__data_config.data_graph_npz(time)
@@ -110,7 +140,7 @@ class AirspaceGraph:
         return get_zone_centre(self.__gdf, self.get_airspace(name)['name'])
 
     def visualise_graph(self):
-        hvnx.draw(self.__graph, mercator_positions(self.__gdf, self.__graph), edge_width=hv.dim('weight')*0.003, node_size=30, arrowhead_length=0.0001)
+        return hvnx.draw(self.__graph, mercator_positions(self.__gdf, self.__graph), edge_width=hv.dim('weight')*0.003, node_size=30, arrowhead_length=0.0001)
 
     def draw_graph_map(self, file_out=None, logscale=False):
         fig = plt.figure(dpi=300, figsize=(7,7))
@@ -120,7 +150,7 @@ class AirspaceGraph:
 
         ax.set_extent(self.__data_config.bounds_plt)
 
-        ax.add_image(imagery, self.__data_config.detail, interpolation='spline36', cmap="gray")
+        ax.add_image(imagery, self.__data_config.detail)
 
         ax.add_geometries(self.__gdf.geometry, crs=ccrs.PlateCarree(), facecolor="none", edgecolor="black") #"#8fa8bf"
 

@@ -1,7 +1,7 @@
 from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_between
 from ..process_flights import version, AirspaceHandler
 from ..scalebar import scale_bar
-from .data_utils import graph_add_node, graph_increment_edge, build_graph_from_sparse_matrix, build_graph_from_matrix, get_zone_centre, save_graph_to_file
+from .data_utils import graph_add_node, graph_increment_edge, build_graph_from_sparse_matrix, build_graph_from_matrix, get_zone_centre, save_graph_to_file, process_dataframe
 
 from datetime import datetime, timedelta
 from dateutil import parser
@@ -55,24 +55,7 @@ class GraphBuilder:
         if verbose:
             print("Preprocessing dataframe...")
 
-        if isinstance(df, pd.DataFrame):
-            df2 = df.copy()
-            required_columns = {'name', 'wkt', 'lower_limit', 'upper_limit'}
-            if not required_columns <= set(df2.columns):
-                raise ValueError("DataFrame must contain columns 'name', 'wkt', 'lower_limit', 'upper_limit'.")
-            if not 'geometry' in list(df2.columns):
-                df2['geometry'] = df2.wkt.apply(shapely.wkt.loads)
-            gdf = geopandas.GeoDataFrame(df2, geometry=df2.geometry)
-        elif isinstance(df, geopandas.GeoDataFrame):
-            df2 = df.copy()
-            required_columns = {'name', 'lower_limit', 'upper_limit'}
-            if not required_columns <= set(df2.columns):
-                raise ValueError("GeoDataFrame must contain columns 'name', 'lower_limit', 'upper_limit'.")
-            if not 'wkt' in list(df2.columns):
-                df2['wkt'] = df2.geometry.apply(lambda g: g.wkt)
-            gdf = df2
-        else:
-            raise ValueError("df must be a DataFrame or GeoDataFrame!")
+        gdf = process_dataframe(df)
 
         fd, path = tempfile.mkstemp(suffix='.json')
 

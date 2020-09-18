@@ -35,7 +35,7 @@ datasets = dict(
         maxlon = 6,
         minlat = 48,
         maxlat = 61.5,
-        detail = 6
+        detail = 7
     ),
     usa = dict(
         minlon = -130,
@@ -49,7 +49,7 @@ datasets = dict(
         maxlon = 10.7,
         minlat = 45.5,
         maxlat = 48,
-        detail = 6
+        detail = 8
     )
 )
 
