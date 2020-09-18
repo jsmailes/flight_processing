@@ -1,5 +1,5 @@
 from ..process_flights import version, AirspaceHandler
-from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_between
+from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_between, lerp
 from ..scalebar import scale_bar
 from .data_utils import graph_add_node, graph_increment_edge, build_graph_from_sparse_matrix, build_graph_from_matrix, get_zone_centre, save_graph_to_file, process_dataframe
 from .. import config
@@ -60,6 +60,9 @@ class AirspaceGraph:
         print("Building graph...")
         self.__graph = build_graph_from_sparse_matrix(self.__gdf, self.__matrix)
 
+        print("Computing adjusted weights...")
+        self.__graph_relative_weights()
+
         print("Done!")
 
     def load_graph_files(self, files):
@@ -75,6 +78,9 @@ class AirspaceGraph:
 
         print("Building graph...")
         self.__graph = build_graph_from_sparse_matrix(self.__gdf, self.__matrix)
+
+        print("Computing adjusted weights...")
+        self.__graph_relative_weights()
 
         print("Done!")
 
@@ -177,8 +183,66 @@ class AirspaceGraph:
 
         plt.show()
 
-    def test_point(self, long, lat, height): # TODO
-        pass
+    def average_edge_weight(self):
+        weight_total = 0
+        count = 0
+
+        for source, dest, data in self.__graph.edges(data=True):
+            if source != dest:
+                weight_total += data.get('weight')
+                count += 1
+
+        return weight_total / count
+
+    def __airspace_total_weight(self, name):
+        total = 0
+        for k, v in self.__graph[name].items():
+            if k != name:
+                total += v['weight']
+        return total
+
+    def __graph_relative_weights(self):
+        self.__gdf['total_weight'] = self.__gdf['name'].apply(lambda x: self.__airspace_total_weight(x))
+
+        for name in self.__graph.nodes:
+            total_weight = self.__gdf[self.__gdf['name'] == name].iloc[0].total_weight
+            for k, v in graph[name].items():
+                v['weight_adjusted'] = v['weight'] / total_weight
+
+    def test_point(self, long, lat, height):
+        ids_at_point = self.__airspaces.airspaces_at_point(long, lat, height)
+        near_point = self.__airspaces.airspaces_near_point(long, lat, height)
+        #ids_near_point = [ x[0] for x in near_point ]
+
+        for id_at in ids_at_point:
+            name_at = self.__gdf.loc[id_at]['name']
+            print("At airspace {}. Potential handovers:".format(name_at))
+            for (id_near, distance) in near_point:
+                name_near = self.__gdf.loc[id_near]['name']
+                edge = self.__graph[name_at].get(name_near)
+                if edge is not None:
+                    weight = edge.get('weight')
+                    weight_adjusted = edge.get('weight_adjusted') # TODO copy computation over from old code
+                else:
+                    weight = 0
+                    weight_adjusted = 0
+
+                # TODO put thresholds etc elsewhere
+                threshold_distance_zero = 5000
+                threshold_distance_one = 3000
+                threshold_weight = 50
+                threshold_weight_adjusted = 0.05
+
+                confidence_distance = lerp(distance, threshold_distance_one, threshold_distance_zero, 0.0, 1.0)
+                confidence_weight = weight >= threshold_weight
+                confidence_weight_adjusted = weight_adjusted >= threshold_weight_adjusted
+
+                confidence = confidence_distance + int(confidence_weight) + int(confidence_weight_adjusted)
+
+                print("- {}".format(name_near))
+                print("  distance {:.0f} ft".format(distance))
+                print("  edge weight {}".format(weight))
+                print("  confidence {}".format(confidence))
 
     def test_handover(self, long, lat, height, id_1, id_2): # TODO
         pass

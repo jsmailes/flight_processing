@@ -133,3 +133,11 @@ def execute_bulk_between(function, time_start, time_end, time_delta=None):
         function(t1, t2)
         t1 += time_delta
         t2 += time_delta
+
+def lerp(x, xmin, xmax, ymin, ymax):
+    if x <= xmin:
+        return ymin
+    elif x >= xmax:
+        return ymax
+    else:
+        return (((x - xmin) / (xmax - xmin)) * (ymax - ymin)) + ymin
