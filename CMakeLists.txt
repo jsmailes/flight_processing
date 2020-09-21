@@ -42,9 +42,9 @@ include_directories(include)
 
 set(SOURCES src/airspace.cpp src/flight.cpp src/helpers.cpp src/polygon.cpp src/processing.cpp)
 
-add_executable(main src/main.cpp ${SOURCES})
-target_link_libraries(main PRIVATE ${Boost_LIBRARIES})
-target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
+#add_executable(main src/main.cpp ${SOURCES})
+#target_link_libraries(main PRIVATE ${Boost_LIBRARIES})
+#target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
 
 python_add_module(process_flights src/python_out.cpp ${SOURCES})
 # TODO figure out what keywords we actually need here
