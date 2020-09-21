@@ -32,7 +32,7 @@ class FlightDownloader:
 
         self.verbose = verbose
 
-    def download_flights(self, time_start, time_end):
+    def download_flights(self, time_start, time_end, limit=None):
         t_start = parser.parse(str(time_start))
         t_end = parser.parse(str(time_end))
         string_start = t_start.strftime(timestring_traffic)
@@ -43,6 +43,7 @@ class FlightDownloader:
             string_end,
             bounds = self.__data_config.bounds_opensky,
             cached = False,
+            limit = limit,
         )
 
         return flights

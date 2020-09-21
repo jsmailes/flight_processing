@@ -17,6 +17,8 @@ from shapely.ops import transform
 import holoviews as hv
 import networkx as nx
 import hvplot.networkx as hvnx
+from traffic.core.flight import Flight
+from traffic.core.traffic import Traffic
 
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
@@ -122,15 +124,19 @@ class AirspaceGraph:
         return self.__airspaces.add_airspace(row.wkt, row.lower_limit, row.upper_limit)
 
     def get_airspace(self, airspace):
-        if isinstance(airspace, int):
-            return self.__gdf.loc[airspace]
-        elif isinstance(airspace, str):
+        if isinstance(airspace, str):
             gdf_temp = self.__gdf[self.__gdf['name'] == airspace]
             if len(gdf_temp) == 0:
                 return None
             return gdf_temp.iloc[0]
+        elif isinstance(airspace, int):
+            return self.__gdf.loc[airspace]
         else:
-            return None
+            try:
+                a = int(airspace)
+                return self.__gdf.loc[a]
+            except:
+                return None
 
     def edge_weight(self, airspace1, airspace2):
         name1 = self.get_airspace(airspace1)['name']
@@ -206,8 +212,8 @@ class AirspaceGraph:
 
         for name in self.__graph.nodes:
             total_weight = self.__gdf[self.__gdf['name'] == name].iloc[0].total_weight
-            for k, v in graph[name].items():
-                v['weight_adjusted'] = v['weight'] / total_weight
+            for k, v in self.__graph[name].items():
+                v['weight_adjusted'] = v['weight'] / total_weight if total_weight != 0 else 0
 
     def __confidence(self, edge, distance=None):
         if edge is not None:
@@ -275,7 +281,7 @@ class AirspaceGraph:
             raise ValueError("Airspace not found!")
 
         edge = self.__graph[a1['name']].get(a2['name'])
-        distance = self.__airspaces.distance_to_airspace(long, lat, height, a2['ident'])
+        distance = self.__airspaces.distance_to_airspace(long, lat, height, int(a2.name))
 
         confidence = self.__confidence(edge, distance)
 
@@ -297,14 +303,14 @@ class AirspaceGraph:
 
             confidence = self.__confidence(edge)
 
-            confidence['airspace1'] = a1['ident']
-            confidence['airspace2'] = a2['ident']
+            confidence['airspace1'] = a1.name
+            confidence['airspace2'] = a2.name
             confidence['name1'] = a1['name']
             confidence['name2'] = a2['name']
 
             out.append(confidence)
 
-        return confidence
+        return out
 
 
 wgs84 = pyproj.CRS('EPSG:4326')
