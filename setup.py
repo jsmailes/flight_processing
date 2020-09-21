@@ -6,10 +6,12 @@ import sys
 import platform
 import subprocess
 import pathlib
+import shutil
 
 from distutils.version import LooseVersion
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
+from setuptools.command.install_lib import install_lib
 
 
 class CMakeExtension(Extension):
@@ -68,12 +70,77 @@ class CMakeBuild(build_ext):
                               cwd=self.build_temp)
         print()  # Add an empty line for cleaner output
 
+
+class InstallCMakeLibs(install_lib):
+    """
+    Get the libraries from the parent distribution, use those as the outfiles
+
+    Skip building anything; everything is already built, forward libraries to
+    the installation step
+    """
+
+    def run(self):
+        """
+        Copy libraries from the bin directory and place them as appropriate
+        """
+
+        self.announce("Moving library files", level=3)
+
+        # We have already built the libraries in the previous build_ext step
+
+        self.skip_build = True
+
+        bin_dir = "src/flight_processing"
+
+        libs = [os.path.join(bin_dir, _lib) for _lib in
+                os.listdir(bin_dir) if
+                os.path.isfile(os.path.join(bin_dir, _lib)) and
+                os.path.splitext(_lib)[1] in [".dll", ".so"]]
+
+        print("Library files: {}".format(libs))
+
+        print("Copy destination: {}".format(os.path.join(self.build_dir, os.path.basename(libs[0]))))
+
+        for lib in libs:
+            shutil.move(lib, os.path.join(self.build_dir,
+                                          "flight_processing",
+                                          os.path.basename(lib)))
+
+        # Mark the libs for installation, adding them to
+        # distribution.data_files seems to ensure that setuptools' record
+        # writer appends them to installed-files.txt in the package's egg-info
+        #
+        # Also tried adding the libraries to the distribution.libraries list,
+        # but that never seemed to add them to the installed-files.txt in the
+        # egg-info, and the online recommendation seems to be adding libraries
+        # into eager_resources in the call to setup(), which I think puts them
+        # in data_files anyways.
+        #
+        # What is the best way?
+
+        # These are the additional installation files that should be
+        # included in the package, but are resultant of the cmake build
+        # step; depending on the files that are generated from your cmake
+        # build chain, you may need to modify the below code
+
+        self.distribution.data_files = [os.path.join(self.build_dir,
+                                                     "flight_processing",
+                                                     os.path.basename(lib))
+                                        for lib in libs]
+
+        # Must be forced to run after adding the libs to data_files
+
+        self.distribution.run_command("install_data")
+
+        super().run()
+
+
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(
     name='flight_processing',
-    version='0.7.1',
+    version='0.7.2',
     author='Joshua Smailes',
     author_email='joshua.smailes@cs.ox.ac.uk',
     description='Extract useful data from OpenSky position reports and previously extracted airspace data.',
@@ -124,6 +191,8 @@ setup(
     # 'python_cpp_example'
     ext_modules=[CMakeExtension('flight_processing/process_flights')],
     # add custom build_ext command
-    cmdclass=dict(build_ext=CMakeBuild),
+    cmdclass=dict(
+        build_ext=CMakeBuild,
+        install_lib=InstallCMakeLibs),
     zip_safe=False,
 )
