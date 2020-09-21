@@ -158,6 +158,10 @@ py::list AirspaceHandler::airspaces_near_point(float x, float y, int height) {
     //return vector_to_list(output);
 }
 
+float AirspaceHandler::distance_to_airspace(float x, float y, int height, int id) {
+    return airspaces.distance_to_airspace(x, y, height, id);
+}
+
 np::ndarray AirspaceHandler::get_result() {
     if (!ready) {
         printf("Error: Processing has not yet begun.\n");
@@ -224,6 +228,7 @@ BOOST_PYTHON_MODULE(process_flights)
         .def("process_flights_file", &AirspaceHandler::process_flights_file)
         .def("airspaces_at_point", &AirspaceHandler::airspaces_at_point)
         .def("airspaces_near_point", &AirspaceHandler::airspaces_near_point)
+        .def("distance_to_airspace", &AirspaceHandler::distance_to_airspace)
         .def("reset_result", &AirspaceHandler::reset_result)
         .def("get_result", &AirspaceHandler::get_result)
         .def("size", &AirspaceHandler::size)

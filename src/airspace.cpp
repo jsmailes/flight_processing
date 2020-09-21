@@ -281,3 +281,11 @@ vector<pair<int, int>> MultiAirspace::process_single_flight(Flight &flight) {
 
     return out;
 }
+
+float MultiAirspace::distance_to_airspace(float x, float y, int height, int id) {
+    point_xy point = point_xy(x, y);
+
+    float distance = airspaces[id].distance(point, height);
+
+    return distance;
+}

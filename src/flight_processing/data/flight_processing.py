@@ -209,6 +209,46 @@ class AirspaceGraph:
             for k, v in graph[name].items():
                 v['weight_adjusted'] = v['weight'] / total_weight
 
+    def __confidence(self, edge, distance=None):
+        if edge is not None:
+            weight = edge.get('weight')
+            weight_adjusted = edge.get('weight_adjusted')
+        else:
+            weight = 0
+            weight_adjusted = 0
+
+        # TODO put thresholds etc elsewhere
+        threshold_distance_zero = 5000
+        threshold_distance_one = 3000
+        threshold_weight = 50
+        threshold_weight_adjusted = 0.05
+
+        if distance is not None:
+            confidence_distance = lerp(distance, threshold_distance_one, threshold_distance_zero, 0.0, 1.0)
+        else:
+            confidence_distance = 0
+
+        confidence_weight = weight >= threshold_weight
+        confidence_weight_adjusted = weight_adjusted >= threshold_weight_adjusted
+
+        confidence = confidence_distance + int(confidence_weight) + int(confidence_weight_adjusted)
+
+        return dict(
+            distance = distance,
+            confidence = confidence,
+            weight = weight,
+            weight_adjusted = weight_adjusted,
+            confidence_distance = confidence_distance,
+            confidence_weight = confidence_weight,
+            confidence_weight_adjusted = confidence_weight_adjusted
+        )
+
+    def process_single_flight(self, flight):
+        xs = np.array([c[0] for c in list(flight.coords)])
+        ys = np.array([c[1] for c in list(flight.coords)])
+        hs = np.array([c[2] for c in list(flight.coords)])
+        return self.__airspaces.process_single_flight(xs, ys, hs)
+
     def test_point(self, long, lat, height):
         ids_at_point = self.__airspaces.airspaces_at_point(long, lat, height)
         near_point = self.__airspaces.airspaces_near_point(long, lat, height)
@@ -220,32 +260,51 @@ class AirspaceGraph:
             for (id_near, distance) in near_point:
                 name_near = self.__gdf.loc[id_near]['name']
                 edge = self.__graph[name_at].get(name_near)
-                if edge is not None:
-                    weight = edge.get('weight')
-                    weight_adjusted = edge.get('weight_adjusted') # TODO copy computation over from old code
-                else:
-                    weight = 0
-                    weight_adjusted = 0
 
-                # TODO put thresholds etc elsewhere
-                threshold_distance_zero = 5000
-                threshold_distance_one = 3000
-                threshold_weight = 50
-                threshold_weight_adjusted = 0.05
-
-                confidence_distance = lerp(distance, threshold_distance_one, threshold_distance_zero, 0.0, 1.0)
-                confidence_weight = weight >= threshold_weight
-                confidence_weight_adjusted = weight_adjusted >= threshold_weight_adjusted
-
-                confidence = confidence_distance + int(confidence_weight) + int(confidence_weight_adjusted)
+                confidence = self.__confidence(edge, distance)
 
                 print("- {}".format(name_near))
                 print("  distance {:.0f} ft".format(distance))
-                print("  edge weight {}".format(weight))
-                print("  confidence {}".format(confidence))
+                print("  edge weight {}".format(confidence['weight']))
+                print("  confidence {}".format(confidence['confidence']))
 
-    def test_handover(self, long, lat, height, id_1, id_2): # TODO
-        pass
+    def test_handover(self, long, lat, height, airspace1, airspace2):
+        a1 = self.get_airspace(airspace1)
+        a2 = self.get_airspace(airspace2)
+        if a1 is None or a2 is None:
+            raise ValueError("Airspace not found!")
+
+        edge = self.__graph[a1['name']].get(a2['name'])
+        distance = self.__airspaces.distance_to_airspace(long, lat, height, a2['ident'])
+
+        confidence = self.__confidence(edge, distance)
+
+        return confidence
+
+    def test_flight(self, flight):
+        if not isinstance(flight, Flight):
+            raise ValueError("Argument must be of type Flight!")
+
+        handovers = self.process_single_flight(flight)
+
+        out = []
+
+        for airspace1, airspace2 in handovers:
+            a1 = self.get_airspace(airspace1)
+            a2 = self.get_airspace(airspace2)
+
+            edge = self.__graph[a1['name']].get(a2['name'])
+
+            confidence = self.__confidence(edge)
+
+            confidence['airspace1'] = a1['ident']
+            confidence['airspace2'] = a2['ident']
+            confidence['name1'] = a1['name']
+            confidence['name2'] = a2['name']
+
+            out.append(confidence)
+
+        return confidence
 
 
 wgs84 = pyproj.CRS('EPSG:4326')

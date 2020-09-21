@@ -43,6 +43,7 @@ public:
     void process_flights_file(string location);
     py::list airspaces_at_point(float x, float y, int height);
     py::list airspaces_near_point(float x, float y, int height);
+    float distance_to_airspace(float x, float y, int height, int id);
     int size();
     void reset_result();
     np::ndarray get_result();

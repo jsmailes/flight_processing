@@ -61,6 +61,7 @@ public:
     long unsigned int size();
     void process_flight(Flight &flight, vector<vector<int>> &out);
     vector<pair<int, int>> process_single_flight(Flight &flight);
+    float distance_to_airspace(float x, float y, int height, int id);
 private:
     vector<AirspaceBoost> airspaces;
     bgi::rtree<value, bgi::rstar<16>> rtree;
