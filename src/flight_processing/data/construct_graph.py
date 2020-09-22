@@ -22,10 +22,30 @@ import cartopy.io.img_tiles as cimgt
 import networkx as nx
 
 class GraphBuilder:
+    """
+    Using already downloaded flight data and a dataframe of airspaces, construct a graph of airspace handovers.
+
+    Requires flights to have been downloaded ahead of time using `FlightDownloader` as well as a dataframe of airspaces.
+    """
+
     def __add_airspace(self, row):
         return self.__airspaces.add_airspace(row.wkt, row.lower_limit, row.upper_limit)
 
     def __init__(self, dataset, verbose=False, dataset_location=None):
+        """
+        Initialise the graph builder with a given dataset from file.
+
+        :param dataset: dataset name or specification
+        :type dataset: str or DataConfig
+        :param verbose: verbose logging
+        :type verbose: bool, optional
+        :param dataset_location: location of saved dataframe
+        :type dataset_location: str, optional
+
+        :return: object
+        :rtype: GraphBuilder
+        """
+
         if isinstance(dataset, DataConfig):
             self.__data_config = dataset
             self.dataset = dataset.dataset
@@ -52,6 +72,28 @@ class GraphBuilder:
 
     @classmethod
     def from_dataframe(cls, dataset, df, verbose=False):
+        """
+        Initialise the graph builder with a dataframe which is passed in.
+
+        The dataframe must have the following columns:
+        - `name`
+        - `lower_limit`
+        - `upper_limit`
+
+        In addition, a DataFrame must have a `wkt` column containing the well-known text of the airspace's geometry,
+        and a GeoDataFrame must have a correctly formatted `geometry` column.
+
+        :param dataset: dataset name or specification
+        :type dataset: str or DataConfig
+        :param df: dataframe of airspaces
+        :type df: pandas.core.frame.DataFrame or geopandas.geodataframe.GeoDataFrame
+        :param verbose: verbose logging
+        :type verbose: bool, optional
+
+        :return: object
+        :rtype: GraphBuilder
+        """
+
         if verbose:
             print("Preprocessing dataframe...")
 
@@ -74,12 +116,41 @@ class GraphBuilder:
         return out
 
     def process_single_flight(self, flight):
+        """
+        Process a single flight, returning an ordered list of airspace handovers.
+
+        :param flight: flight to process
+        :type flight: traffic.core.flight.Flight
+
+        :return: list of handovers as pairs of identifiers
+        :rtype: list(list(int))
+        """
+
         xs = np.array([c[0] for c in list(flight.coords)])
         ys = np.array([c[1] for c in list(flight.coords)])
         hs = np.array([c[2] for c in list(flight.coords)])
         return self.__airspaces.process_single_flight(xs, ys, hs)
 
     def process_flights(self, time, npz=True, json=False, yaml=False):
+        """
+        Process a file containing flights which have been saved to disk by FlightDownloader,
+        saving the resulting graph to disk.
+
+        Graphs will be saved to `{data_prefix}/graphs/{dataset}/{date}/{time}.json`, where:
+        - `data_prefix` is specified by the `DataConfig` object passed in on construction, or the `data_location` config value is used by default,
+        - `dataset` is the name of the dataset as specified on construction,
+        - `date` and `time` are determined by `time_start`.
+
+        :param time: time of flights to process
+        :type time: datetime.datetime or str
+        :param npz: save output as NPZ, default True
+        :type npz: bool
+        :param json: save output as JSON, default False
+        :type json: bool
+        :param yaml: save output as YAML, default False
+        :type yaml: bool
+        """
+
         t = parser.parse(str(time))
 
         if self.verbose:
@@ -102,21 +173,51 @@ class GraphBuilder:
 
         matrix = self.__airspaces.get_result()
 
+        check_file(graph_npz)
         check_file(graph_json)
         check_file(graph_yaml)
-        check_file(graph_npz)
         save_graph_to_file(self.__gdf, matrix, graph_json, graph_yaml, graph_npz)
 
         if self.verbose:
             print("Done.")
 
     def process_flights_bulk(self, time_start, time_end, npz=True, json=False, yaml=False):
+        """
+        Process multiple files containing flights which have been saved to disk by FlightDownloader,
+        saving the resulting graphs to disk.
+
+        :param time_start: start time for processing
+        :type time_start: datetime.datetime or str
+        :param time_end: end time for processing
+        :type time_end: datetime.datetime or str
+        :param npz: save output as NPZ, default True
+        :type npz: bool
+        :param json: save output as JSON, default False
+        :type json: bool
+        :param yaml: save output as YAML, default False
+        :type yaml: bool
+        """
+
         t_start = parser.parse(str(time_start))
         t_end = parser.parse(str(time_end))
 
         execute_bulk_between(lambda t1, t2: self.process_flights(t1, npz=npz, yaml=yaml, json=json), t_start, t_end)
 
-    def draw_map(self, file_out=None, flight=None, subset=None):
+    def draw_map(self, flight=None, subset=None, file_out=None):
+        """
+        Draw the dataframe of airspaces on a map, optionally plotting flights and highlighting a subset of airspaces.
+
+        Calls pyplot's `draw` function so a diagram will be output directly.
+        The result can also be saved to a file.
+
+        :param flight: draw a flight or flights on the map
+        :type flight: traffic.core.flight.Flight or traffic.core.traffic.Traffic
+        :param subset: subset of airspaces to highlight (e.g. airspaces a flight passes through), as IDs or names
+        :type subset: set(int) or list(int) or set(str) or list(str)
+        :param file_out: save the result to a file
+        :type file_out: str, optional
+        """
+
         fig = plt.figure(dpi=300, figsize=(7,7))
 
         imagery = cimgt.Stamen(style="terrain-background")
