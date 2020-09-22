@@ -54,7 +54,33 @@ datasets = dict(
 )
 
 class DataConfig:
+    """
+    Load relevant information about a dataset, giving either custom parameters or the name of a known dataset.
+    """
+
     def __init__(self, dataset, minlon, maxlon, minlat, maxlat, detail=detail, data_prefix=data_prefix):
+        """
+        Initialise the object with custom parameters.
+
+        :param dataset: dataset name
+        :type dataset: str
+        :param minlon: longitude minimum bound
+        :type minlon: float
+        :param maxlon: longitude maximum bound
+        :type maxlon: float
+        :param minlat: latitude minimum bound
+        :type minlat: float
+        :param maxlat: latitude maximum bound
+        :type maxlat: float
+        :param detail: map detail on plots
+        :type detail: int, optional
+        :param data_prefix: dataset folder location, overrides config
+        :type data_prefix: str, optional
+
+        :return: object
+        :rtype: DataConfig
+        """
+
         self.dataset = dataset
         self.data_prefix = data_prefix
 
@@ -71,6 +97,17 @@ class DataConfig:
 
     @classmethod
     def known_dataset(cls, dataset, data_prefix=data_prefix):
+        """
+        Initialise the object with known parameters.
+
+        :param dataset: dataset name
+        :type dataset: str
+        :param data_prefix: dataset folder location, overrides config
+        :type data_prefix: str, optional
+
+        :return: object
+        :rtype: DataConfig
+        """
         data = datasets.get(dataset)
 
         if data is None:
@@ -80,6 +117,15 @@ class DataConfig:
 
 
     def data_flights(self, datetime):
+        """
+        Get the location of a flight dump for the given datetime.
+
+        :param datetime: datetime to get
+        :type datetime: datetime.datetime or str
+
+        :return: location of file (may not exist)
+        :rtype: str
+        """
         date = datetime.strftime(timestring_date)
         time = datetime.strftime(timestring_time)
         return format_data_flights.format(
@@ -101,16 +147,49 @@ class DataConfig:
         )
 
     def data_graph_yaml(self, datetime):
+        """
+        Get the location of a YAML graph for the given datetime.
+
+        :param datetime: datetime to get
+        :type datetime: datetime.datetime or str
+
+        :return: location of file (may not exist)
+        :rtype: str
+        """
         return self.__data_graph(datetime, "yaml")
 
     def data_graph_json(self, datetime):
+        """
+        Get the location of a JSON graph for the given datetime.
+
+        :param datetime: datetime to get
+        :type datetime: datetime.datetime or str
+
+        :return: location of file (may not exist)
+        :rtype: str
+        """
         return self.__data_graph(datetime, "json")
 
     def data_graph_npz(self, datetime):
+        """
+        Get the location of an NPZ graph for the given datetime.
+
+        :param datetime: datetime to get
+        :type datetime: datetime.datetime or str
+
+        :return: location of file (may not exist)
+        :rtype: str
+        """
         return self.__data_graph(datetime, "npz")
 
 
 def check_file(filename):
+    """
+    Given a filename check if its parent directory exists, creating any necessary directories if not.
+
+    :param filename: filename to check
+    :type filename: str
+    """
     if filename is not None and not os.path.exists(os.path.dirname(filename)):
         try:
             os.makedirs(os.path.dirname(filename))
@@ -119,6 +198,20 @@ def check_file(filename):
                 raise
 
 def execute_bulk(function, time_start, count, time_delta=None):
+    """
+    Execute the given function multiple times, stepping through time as its parameter.
+
+    Running `execute_bulk(f, t0, 2, d)` will execute `f(t0 + 0*d, t0 + 1*d)` followed by `f(t0 + 1*d, t0 + 2*d)`.
+
+    :param function: function to execute, must take 2 datetime arguments
+    :type function: function
+    :param time_start: start time
+    :type time_start: datetime.datetime
+    :param count: number of times to run the function
+    :type count: int
+    :param time_delta: amount by which to increase the time each step, defaults to datetime.timedelta(hours=1)
+    :type time_delta: datetime.timedelta
+    """
     time_delta = time_delta if time_delta is not None else timedelta(hours=1)
     for i in range(count):
         t1 = time_start + (i * time_delta)
@@ -126,6 +219,19 @@ def execute_bulk(function, time_start, count, time_delta=None):
         function(t1, t2)
 
 def execute_bulk_between(function, time_start, time_end, time_delta=None):
+    """
+    Execute the given function multiple times, stepping through time as its parameter.
+    Stops when `time_end` is reached.
+
+    :param function: function to execute, must take 2 datetime arguments
+    :type function: function
+    :param time_start: start time
+    :type time_start: datetime.datetime
+    :param time_end: end time
+    :type time_end: datetime.datetime
+    :param time_delta: amount by which to increase the time each step, defaults to datetime.timedelta(hours=1)
+    :type time_delta: datetime.timedelta
+    """
     time_delta = time_delta if time_delta is not None else timedelta(hours=1)
     t1 = time_start
     t2 = time_start + time_delta
@@ -135,6 +241,23 @@ def execute_bulk_between(function, time_start, time_end, time_delta=None):
         t2 += time_delta
 
 def lerp(x, xmin, xmax, ymin, ymax):
+    """
+    Linearly interpolate between `ymin` and `ymax` according to the bounds of `xmin` and `xmax`.
+
+    :param x: point to interpolate
+    :type x: float
+    :param xmin: minimum x value
+    :type xmin: float
+    :param xmax: maximum x value
+    :type xmax: float
+    :param ymin: minimum y value
+    :type ymin: float
+    :param ymax: maximum y value
+    :type ymax: float
+
+    :return: resulting y value
+    :rtype: float
+    """
     if x <= xmin:
         return ymin
     elif x >= xmax:
