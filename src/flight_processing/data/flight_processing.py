@@ -27,7 +27,40 @@ import cartopy.io.img_tiles as cimgt
 from traffic.data import opensky
 
 class AirspaceGraph:
+    """
+    Having constructed a graph of handovers from processing downloaded flights,
+    load the graph and perform data processing on it.
+
+    Requires a dataframe of airspaces as well as flights to have been processed using `GraphBuilder` - they must first be saved using `FlightDownloader`.
+    """
+
     def __init__(self, dataset, df=None, dataset_location=None, verbose=False):
+        """
+        Initialise the graph builder with a given dataset, either from a file or directly from a dataframe.
+
+        By default the dataframe will be loaded from a file as specified in the config.
+
+        A loaded dataframe must have the following columns:
+        - `name`
+        - `lower_limit`
+        - `upper_limit`
+
+        In addition, a DataFrame must have a `wkt` column containing the well-known text of the airspace's geometry,
+        and a GeoDataFrame must have a correctly formatted `geometry` column.
+
+        :param dataset: dataset name or specification
+        :type dataset: str or DataConfig
+        :param df: dataframe of airspaces
+        :type df: pandas.core.frame.DataFrame or geopandas.geodataframe.GeoDataFrame, optional
+        :param dataset_location: location of saved dataframe
+        :type dataset_location: str, optional
+        :param verbose: verbose logging
+        :type verbose: bool, optional
+
+        :return: object
+        :rtype: AirspaceGraph
+        """
+
         if isinstance(dataset, DataConfig):
             self.__data_config = dataset
             self.dataset = dataset.dataset
@@ -56,6 +89,20 @@ class AirspaceGraph:
         print("Done!")
 
     def load_graphs(self, time_start, time_end):
+        """
+        Load the graph of handovers from a series of NPZ files within a given time range.
+
+        Graphs will be loaded from `{data_prefix}/graphs/{dataset}/{date}/{time}.json`, where:
+        - `data_prefix` is specified by the `DataConfig` object passed in on construction, or the `data_location` config value is used by default,
+        - `dataset` is the name of the dataset as specified on construction,
+        - `date` and `time` are determined by the timestamp.
+
+        :param time_start: start time
+        :type time_start: datetime.datetime or str
+        :param time_end: end time
+        :type time_end: datetime.datetime or str
+        """
+
         print("Loading graph of handovers...")
         self.__matrix = self.__load_npz_bulk(time_start, time_end)
 
@@ -68,6 +115,13 @@ class AirspaceGraph:
         print("Done!")
 
     def load_graph_files(self, files):
+        """
+        Load the graph of handovers from a given list of NPZ file locations.
+
+        :param files: files to load
+        :type files: list(str)
+        """
+
         if isinstance(files, str):
             to_load = [files]
         elif isinstance(files, list) and all(isinstance(f, str) for f in files):
@@ -124,6 +178,16 @@ class AirspaceGraph:
         return self.__airspaces.add_airspace(row.wkt, row.lower_limit, row.upper_limit)
 
     def get_airspace(self, airspace):
+        """
+        Returns the row corresponding to the given airspace name or identifier.
+
+        :param airspace: airspace name or identifier
+        :type airspace: str or int
+
+        :return: airspace data
+        :rtype: pandas.core.series.Series
+        """
+
         if isinstance(airspace, str):
             gdf_temp = self.__gdf[self.__gdf['name'] == airspace]
             if len(gdf_temp) == 0:
@@ -139,6 +203,18 @@ class AirspaceGraph:
                 return None
 
     def edge_weight(self, airspace1, airspace2):
+        """
+        Get the weight of the edge between the given airspaces on the graph.
+
+        :param airspace1: first airspace name or identifier
+        :type airspace1: str or int
+        :param airspace2: second airspace name or identifier
+        :type airspace2: str or int
+
+        :return: edge weight
+        :rtype: float
+        """
+
         name1 = self.get_airspace(airspace1)['name']
         name2 = self.get_airspace(airspace2)['name']
         edge = self.__graph[name1].get(name2)
@@ -149,12 +225,42 @@ class AirspaceGraph:
             return 0
 
     def zone_centre(self, name):
+        """
+        Get the centre of the given airspace.
+
+        :param name: airspace name or identifier
+        :type name: str or int
+
+        :return: coordinates of the airspace centre
+        :rtype: shapely.geometry.point.Point
+        """
+
         return get_zone_centre(self.__gdf, self.get_airspace(name)['name'])
 
     def visualise_graph(self):
+        """
+        Visualise the graph interactively using HoloViews.
+        """
+
         return hvnx.draw(self.__graph, mercator_positions(self.__gdf, self.__graph), edge_width=hv.dim('weight')*0.003, node_size=30, arrowhead_length=0.0001)
 
-    def draw_graph_map(self, file_out=None, logscale=False):
+    def draw_graph_map(self, flight=None, subset=None, logscale=False, file_out=None):
+        """
+        Draw the dataframe of airspaces on a map with the graph of handovers overlaid on top, optionally plotting flights and highlighting a subset of airspaces.
+
+        Calls pyplot's `draw` function so a diagram will be output directly.
+        The result can also be saved to a file.
+
+        :param flight: draw a flight or flights on the map
+        :type flight: traffic.core.flight.Flight or traffic.core.traffic.Traffic
+        :param subset: subset of airspaces to highlight (e.g. airspaces a flight passes through), as IDs or names
+        :type subset: set(int) or list(int) or set(str) or list(str)
+        :param logscale: edges are coloured according to a logarithmic (rather than linear) scale, default False
+        :type logscale: bool
+        :param file_out: save the result to a file
+        :type file_out: str, optional
+        """
+
         fig = plt.figure(dpi=300, figsize=(7,7))
 
         imagery = cimgt.Stamen(style="terrain-background")
@@ -180,6 +286,28 @@ class AirspaceGraph:
         for edge in edges:
             edge.set_zorder(19)
 
+        if flight is not None:
+            if isinstance(flight, Flight):
+                flight.plot(ax)
+            elif isinstance(flight, Traffic):
+                for f in flight:
+                    f.plot(ax)
+            else:
+                raise ValueError("Flight must be of type Flight or Traffic.")
+
+        if subset is not None:
+            if isinstance(subset, list) or isinstance(subset, set):
+                if all(isinstance(x, int) for x in subset):
+                    gdf_filtered = self.__gdf[self.__gdf.index.isin(subset)]
+                elif all(isinstance(x, str) for x in subset):
+                    gdf_filtered = self.__gdf[self.__gdf.name.isin(subset)]
+                else:
+                    raise ValueError("Subset must be list/set of indices or airspace names.")
+
+                ax.add_geometries(gdf_filtered.geometry, crs=ccrs.PlateCarree(), facecolor="none", edgecolor="red")
+            else:
+                raise ValueError("Subset of airspaces must be a list or set!")
+
         scale_bar(ax, (0.75, 0.05), 100)
 
         ax.set_aspect('auto')
@@ -190,6 +318,13 @@ class AirspaceGraph:
         plt.show()
 
     def average_edge_weight(self):
+        """
+        Get the average edge weight across the whole graph.
+
+        :return: average edge weight
+        :rtype: float
+        """
+
         weight_total = 0
         count = 0
 
@@ -250,12 +385,33 @@ class AirspaceGraph:
         )
 
     def process_single_flight(self, flight):
+        """
+        Process a single flight, returning an ordered list of airspace handovers.
+
+        :param flight: flight to process
+        :type flight: traffic.core.flight.Flight
+
+        :return: list of handovers as pairs of identifiers
+        :rtype: list(list(int))
+        """
+
         xs = np.array([c[0] for c in list(flight.coords)])
         ys = np.array([c[1] for c in list(flight.coords)])
         hs = np.array([c[2] for c in list(flight.coords)])
         return self.__airspaces.process_single_flight(xs, ys, hs)
 
     def test_point(self, long, lat, height):
+        """
+        Test a point, printing a list of potential handovers which could occur at that point and their confidence.
+
+        :param long: longitude of point
+        :type long: float
+        :param lat: latitude of point
+        :type lat: float
+        :param height: height in ft
+        :type height: float
+        """
+
         ids_at_point = self.__airspaces.airspaces_at_point(long, lat, height)
         near_point = self.__airspaces.airspaces_near_point(long, lat, height)
         #ids_near_point = [ x[0] for x in near_point ]
@@ -275,6 +431,24 @@ class AirspaceGraph:
                 print("  confidence {}".format(confidence['confidence']))
 
     def test_handover(self, long, lat, height, airspace1, airspace2):
+        """
+        Test a handover at a given point, returning a dictionary containing information about that handover (including confidence).
+
+        :param long: longitude of point
+        :type long: float
+        :param lat: latitude of point
+        :type lat: float
+        :param height: height in ft
+        :type height: float
+        :param airspace1: first airspace name or identifier
+        :type airspace1: str or int
+        :param airspace2: second airspace name or identifier
+        :type airspace2: str or int
+
+        :return: information about handover
+        :rtype: dict
+        """
+
         a1 = self.get_airspace(airspace1)
         a2 = self.get_airspace(airspace2)
         if a1 is None or a2 is None:
@@ -288,6 +462,16 @@ class AirspaceGraph:
         return confidence
 
     def test_flight(self, flight):
+        """
+        Test a given flight, returning each of the handovers that could have occurred during the flight and information about that handover's confidence.
+
+        :param flight: flight to test
+        :type flight: traffic.core.flight.Flight
+
+        :return: information about handovers
+        :rtype: list(dict)
+        """
+
         if not isinstance(flight, Flight):
             raise ValueError("Argument must be of type Flight!")
 
@@ -318,9 +502,31 @@ mercator = pyproj.CRS('EPSG:3857') # Note: if we change the map source this will
 wgs84_to_mercator = pyproj.Transformer.from_crs(wgs84, mercator, always_xy=True).transform
 
 def point_to_mercator(point):
+    """
+    Convert a point from the WGS84 coordinate system to Mercator.
+
+    :param point: point to convert
+    :type point: shapely.geometry.point.Point
+
+    :return: converted point
+    :rtype: shapely.geometry.point.Point
+    """
+
     return transform(wgs84_to_mercator, point)
 
 def mercator_positions(gdf, graph):
+    """
+    For a given dataframe and graph, get a list of coordinates of airspace centres for each node in the graph according to the Mercator coordinate system.
+
+    :param gdf: dataframe to use
+    :type gdf: geopandas.geodataframe.GeoDataFrame
+    :param graph: graph to use
+    :type graph: networkx.classes.digraph.DiGraph
+
+    :return: list of coordinates
+    :rtype: list(list(float))
+    """
+
     positions_transformed = dict()
     for name in list(nx.nodes(graph)):
         positions_transformed[name] = list(point_to_mercator(get_zone_centre(gdf, name)).coords)[0]

@@ -11,6 +11,15 @@ import sys
 timestring_traffic = "%Y-%m-%d %H:%M"
 
 def flights_to_json(flights):
+    """
+    Convert flights to JSON for exporting.
+
+    :param flights: flights to save
+    :type flights: traffic.core.traffic.Traffic
+
+    :return: JSON output
+    :rtype: str
+    """
     flight_coords = []
 
     if flights is not None:
@@ -20,7 +29,26 @@ def flights_to_json(flights):
     return simplejson.dumps(dict(flights=flight_coords), indent=0, ignore_nan=True)
 
 class FlightDownloader:
+    """
+    Download flight data from the OpenSky impala shell using the traffic library.
+
+    Requires traffic to be correctly configured with valid impala credentials,
+    see the `traffic documentation <https://traffic-viz.github.io/opensky_impala.html>`_ for more details.
+    """
+
     def __init__(self, dataset, verbose=False):
+        """
+        Initialise the downloader with a given dataset.
+
+        :param dataset: dataset name or specification
+        :type dataset: str or DataConfig
+        :param verbose: verbose logging
+        :type verbose: bool, optional
+
+        :return: object
+        :rtype: FlightDownloader
+        """
+
         if isinstance(dataset, DataConfig):
             self.__data_config = dataset
             self.dataset = dataset.dataset
@@ -33,6 +61,19 @@ class FlightDownloader:
         self.verbose = verbose
 
     def download_flights(self, time_start, time_end, limit=None):
+        """
+        Download flights within the specified time interval, returning the flights as an object
+
+        :param time_start: start time
+        :type time_start: datetime.datetime or str
+        :param time_end: end time
+        :type time_end: datetime.datetime or str
+        :param limit: maximum number of *position values* to return - note that each flight may contain thousands of position values
+        :type limit: int, optional
+
+        :return: flights
+        :rtype: traffic.core.traffic.Traffic
+        """
         t_start = parser.parse(str(time_start))
         t_end = parser.parse(str(time_end))
         string_start = t_start.strftime(timestring_traffic)
@@ -48,21 +89,21 @@ class FlightDownloader:
 
         return flights
 
-    def dump_flights(self, time_start, time_end):
-        t_start = parser.parse(str(time_start))
-        t_end = parser.parse(str(time_end))
+    def save_traffic(self, traffic, location):
+        """
+        Save the passed in flights to the specified location.
 
-        if self.verbose:
-            print("Downloading flights from {} to {}.".format(t_start, t_end))
-
-        flights = self.download_flights(t_start, t_end)
+        :param traffic: flights to save
+        :type traffic: traffic.core.traffic.Traffic
+        :param location: location to save the flights to
+        :type location: str
+        """
 
         if self.verbose:
             print("Converting to JSON.")
 
-        out = flights_to_json(flights)
+        out = flights_to_json(traffic)
 
-        location = self.__data_config.data_flights(t_start)
         check_file(location)
 
         if self.verbose:
@@ -71,7 +112,45 @@ class FlightDownloader:
         with open(location, "w") as outfile:
             outfile.write(out)
 
+    def dump_flights(self, time_start, time_end):
+        """
+        Download flights within the specified time interval, saving the flights to a file.
+
+        Flights will be saved to `{data_prefix}/flights/{dataset}/{date}/{time}.json`, where:
+        - `data_prefix` is specified by the `DataConfig` object passed in on construction, or the `data_location` config value is used by default,
+        - `dataset` is the name of the dataset as specified on construction,
+        - `date` and `time` are determined by `time_start`.
+
+        :param time_start: start time
+        :type time_start: datetime.datetime or str
+        :param time_end: end time
+        :type time_end: datetime.datetime or str
+        """
+
+        t_start = parser.parse(str(time_start))
+        t_end = parser.parse(str(time_end))
+
+        if self.verbose:
+            print("Downloading flights from {} to {}.".format(t_start, t_end))
+
+        flights = self.download_flights(t_start, t_end)
+
+        location = self.__data_config.data_flights(t_start)
+
+        self.save_traffic(flights, location)
+
     def dump_flights_bulk(self, time_start, time_end):
+        """
+        Download flights within the specified time interval, saving the flights to a file.
+
+        Behaves the same as `dump_flights` but flight data is split into new files for each hour.
+
+        :param time_start: start time
+        :type time_start: datetime.datetime or str
+        :param time_end: end time
+        :type time_end: datetime.datetime or str
+        """
+
         t_start = parser.parse(str(time_start))
         t_end = parser.parse(str(time_end))
 
