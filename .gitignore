@@ -39,6 +39,9 @@ dist
 __pycache__
 *.egg-info
 
+# Jupyter
+.ipynb_checkpoints
+
 # Sphinx
 docs/_build
 docs/_static
