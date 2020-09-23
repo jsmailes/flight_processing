@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Flight Processing's documentation!
-=============================================
+flight_processing
+=================
 
 Source code on `GitHub <https://github.com/jsmailes/flight_processing>`_.
 
@@ -16,9 +16,10 @@ Where explicit functionality is not provided, access is given to the underlying 
 Improvements and bug fixes are welcome, simply submit a pull request on GitHub.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    installation
+   quickstart
    core_structure
 
 

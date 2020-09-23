@@ -5,3 +5,5 @@ flight_processing.data.AirspaceGraph
     :members:
     :inherited-members:
     :no-undoc-members:
+
+    .. automethod:: __init__

@@ -5,3 +5,5 @@ flight_processing.data.GraphBuilder
     :members:
     :inherited-members:
     :no-undoc-members:
+
+    .. automethod:: __init__
