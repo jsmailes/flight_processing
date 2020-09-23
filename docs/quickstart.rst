@@ -16,4 +16,6 @@ This is a series of pages/jupyter notebooks intended to guide a user through the
 
     configuration
     preparing_datasets
-    downloading_flights
+    demo_flight_downloader
+    demo_graph_builder
+    demo_airspace_graph
