@@ -39,5 +39,9 @@ dist
 __pycache__
 *.egg-info
 
+# Sphinx
+docs/_build
+docs/_static
+
 # Misc
 *.swp
