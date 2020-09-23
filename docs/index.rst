@@ -19,6 +19,7 @@ Improvements and bug fixes are welcome, simply submit a pull request on GitHub.
    :maxdepth: 2
 
    installation
+   core_structure
 
 
 Indices and tables
