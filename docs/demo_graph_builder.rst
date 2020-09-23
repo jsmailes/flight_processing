@@ -1,5 +1,5 @@
-Processing Flights Example
-==========================
+Processing Flights
+==================
 
 This notebook takes a dataset from a file or (Geo)DataFrame and flights
 which have been dumped to a file (see ``demo-export-flights.ipynb``) and
