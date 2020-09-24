@@ -36,14 +36,19 @@ def graph_increment_edge(graph, u, v, amount=1):
     else:
         graph.add_edge(u, v, weight=amount)
 
-def build_graph_from_sparse_matrix(gdf, matrix):
+def build_graph_from_sparse_matrix(gdf, matrix, graph=None):
     """
     Given a sparse matrix, construct a NetworkX graph.
+
+    Optionally takes another graph - if this argument is used, this function will
+    instead add to this graph. The graph will be edited in-place.
 
     :param gdf: dataframe for the airspace for which the graph is being constructed
     :type gdf: geopandas.geodataframe.GeoDataFrame
     :param matrix: sparse matrix from which to construct the graph
     :type matrix: scipy.sparse.csr.csr_matrix
+    :param graph: existing graph to add to
+    :type graph: networkx.classes.digraph.DiGraph, optional
 
     :return: graph of airspace handovers
     :rtype: networkx.classes.digraph.DiGraph
@@ -51,10 +56,11 @@ def build_graph_from_sparse_matrix(gdf, matrix):
     n, m = matrix.shape
     assert(n == m)
 
-    graph = nx.DiGraph()
-    for i in range(n):
-        name = gdf.loc[i]['name']
-        graph_add_node(graph, name)
+    if graph is None:
+        graph = nx.DiGraph()
+        for i in range(n):
+            name = gdf.loc[i]['name']
+            graph_add_node(graph, name)
 
     I, J, V = sparse.find(matrix)
     N = I.size
@@ -69,14 +75,19 @@ def build_graph_from_sparse_matrix(gdf, matrix):
 
     return graph
 
-def build_graph_from_matrix(gdf, matrix):
+def build_graph_from_matrix(gdf, matrix, graph=None):
     """
     Given a 2D numpy array, construct a NetworkX graph.
+
+    Optionally takes another graph - if this argument is used, this function will
+    instead add to this graph. The graph will be edited in-place.
 
     :param gdf: dataframe for the airspace for which the graph is being constructed
     :type gdf: geopandas.geodataframe.GeoDataFrame
     :param matrix: matrix from which to construct the graph
     :type matrix: numpy.ndarray
+    :param graph: existing graph to add to
+    :type graph: networkx.classes.digraph.DiGraph, optional
 
     :return: graph of airspace handovers
     :rtype: networkx.classes.digraph.DiGraph
@@ -84,10 +95,11 @@ def build_graph_from_matrix(gdf, matrix):
     n, m = matrix.shape
     assert(n == m)
 
-    graph = nx.DiGraph()
-    for i in range(n):
-        name = gdf.loc[i]['name']
-        graph_add_node(graph, name)
+    if graph is None:
+        graph = nx.DiGraph()
+        for i in range(n):
+            name = gdf.loc[i]['name']
+            graph_add_node(graph, name)
 
     for i in range(n):
         for j in range(n):

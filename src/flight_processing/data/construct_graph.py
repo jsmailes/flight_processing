@@ -115,6 +115,17 @@ class GraphBuilder:
 
         return out
 
+    @property
+    def gdf(self):
+        """
+        Returns the underlying geopandas GeoDataFrame.
+
+        :return: dataframe
+        :rtype: geopandas.geodataframe.GeoDataFrame
+        """
+
+        return self.__gdf
+
     def process_single_flight(self, flight):
         """
         Process a single flight, returning an ordered list of airspace handovers.

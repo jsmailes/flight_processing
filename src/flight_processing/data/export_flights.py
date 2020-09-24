@@ -93,6 +93,10 @@ class FlightDownloader:
         """
         Save the passed in flights to the specified location.
 
+        This function is intended for the use case in which a user does not have access to the OpenSky Impala shell.
+        The user can instead download traffic from another source, such as the `OpenSky REST API <https://traffic-viz.github.io/opensky_rest.html>`_,
+        and save it to disk using this function.
+
         :param traffic: flights to save
         :type traffic: traffic.core.traffic.Traffic
         :param location: location to save the flights to

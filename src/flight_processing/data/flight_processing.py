@@ -88,6 +88,30 @@ class AirspaceGraph:
 
         print("Done!")
 
+        self.__graph = None
+
+    @property
+    def gdf(self):
+        """
+        Returns the underlying geopandas GeoDataFrame.
+
+        :return: dataframe
+        :rtype: geopandas.geodataframe.GeoDataFrame
+        """
+
+        return self.__gdf
+
+    @property
+    def graph(self):
+        """
+        Returns the underlying graph of airspace handovers.
+
+        :return: graph
+        :rtype: networkx.classes.digraph.DiGraph
+        """
+
+        return self.__graph
+
     def load_graphs(self, time_start, time_end):
         """
         Load the graph of handovers from a series of NPZ files within a given time range.
@@ -104,10 +128,13 @@ class AirspaceGraph:
         """
 
         print("Loading graph of handovers...")
-        self.__matrix = self.__load_npz_bulk(time_start, time_end)
+        matrix = self.__load_npz_bulk(time_start, time_end)
 
         print("Building graph...")
-        self.__graph = build_graph_from_sparse_matrix(self.__gdf, self.__matrix)
+        if self.__graph is None:
+            self.__graph = build_graph_from_sparse_matrix(self.__gdf, matrix)
+        else:
+            self.__graph = build_graph_from_sparse_matrix(self.__gdf, matrix, self.__graph)
 
         print("Computing adjusted weights...")
         self.__graph_relative_weights()
@@ -130,10 +157,13 @@ class AirspaceGraph:
             raise ValueError("Argument 'files' must be str or list of str.")
 
         print("Loading graph of handovers...")
-        self.__matrix = self.__load_npz_files(to_load)
+        matrix = self.__load_npz_files(to_load)
 
         print("Building graph...")
-        self.__graph = build_graph_from_sparse_matrix(self.__gdf, self.__matrix)
+        if self.__graph is None:
+            self.__graph = build_graph_from_sparse_matrix(self.__gdf, matrix)
+        else:
+            self.__graph = build_graph_from_sparse_matrix(self.__gdf, matrix, self.__graph)
 
         print("Computing adjusted weights...")
         self.__graph_relative_weights()
