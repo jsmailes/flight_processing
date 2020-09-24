@@ -29,11 +29,11 @@ class GraphBuilder:
 
     **Summary:**
 
-        - properties:
-          `gdf <#flight_processing.data.GraphBuilder.gdf>`_
         - initialisation:
           `__init__ <#flight_processing.data.GraphBuilder.\_\_init\_\_>`_,
           `from_dataframe <#flight_processing.data.GraphBuilder.from_dataframe>`_
+        - properties:
+          `gdf <#flight_processing.data.GraphBuilder.gdf>`_
         - processing:
           `process_single_flight <#flight_processing.data.GraphBuilder.process_single_flight>`_,
           `process_flights <#flight_processing.data.GraphBuilder.process_flights>`_,

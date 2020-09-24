@@ -35,13 +35,13 @@ class AirspaceGraph:
 
     **Summary:**
 
-        - properties:
-          `gdf <#flight_processing.data.AirspaceGraph.gdf>`_,
-          `graph <#flight_processing.data.AirspaceGraph.graph>`_
         - initialisation:
           `__init__ <#flight_processing.data.AirspaceGraph.\_\_init\_\_>`_,
           `load_graphs <#flight_processing.data.AirspaceGraph.load_graphs>`_,
           `load_graph_files <#flight_processing.data.AirspaceGraph.load_graph_files>`_
+        - properties:
+          `gdf <#flight_processing.data.AirspaceGraph.gdf>`_,
+          `graph <#flight_processing.data.AirspaceGraph.graph>`_
         - handover testing:
           `confidence <#flight_processing.data.AirspaceGraph.confidence>`_,
           `test_point <#flight_processing.data.AirspaceGraph.test_point>`_,

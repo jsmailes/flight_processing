@@ -62,11 +62,21 @@ class DataConfig:
         - initialisation:
           `__init__ <#flight_processing.DataConfig.\_\_init\_\_>`_,
           `known_dataset <#flight_processing.DataConfig.known_dataset>`_
+        - properties:
+          `dataset <#flight_processing.DataConfig.dataset>`_,
+          `minlon <#flight_processing.DataConfig.minlon>`_,
+          `maxlon <#flight_processing.DataConfig.maxlon>`_,
+          `minlat <#flight_processing.DataConfig.minlat>`_,
+          `maxlat <#flight_processing.DataConfig.maxlat>`_,
+          `detail <#flight_processing.DataConfig.detail>`_,
+          `dataset_location <#flight_processing.DataConfig.dataset_location>`_,
+          `bounds_opensky <#flight_processing.DataConfig.bounds_opensky>`_,
+          `bounds_plt <#flight_processing.DataConfig.bounds_plt>`_
         - utility:
           `data_flights <#flight_processing.DataConfig.data_flights>`_,
           `data_graph_yaml <#flight_processing.DataConfig.data_graph_yaml>`_,
           `data_graph_json <#flight_processing.DataConfig.data_graph_json>`_,
-          `data_graph_npz <#flight_processing.DataConfig.data_graph_npz>`_,
+          `data_graph_npz <#flight_processing.DataConfig.data_graph_npz>`_
     """
 
     def __init__(self, dataset, minlon, maxlon, minlat, maxlat, detail=detail, data_prefix=data_prefix):
