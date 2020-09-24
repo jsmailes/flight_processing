@@ -7,6 +7,8 @@ In order to process flight data we must first download airspace data and save th
 - USA airspace data is imported from a dataset provided by the FAA,
 - Swiss airspace data is exported from OpenAIP and converted to OpenAir format using a free tool.
 
+This code is intended to be used with very little modification - jupyter notebooks are available for each dataset in the repo, at ``airspace_data_<dataset>.ipynb``.
+
 **Contents**
 
 .. toctree::

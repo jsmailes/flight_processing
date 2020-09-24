@@ -56,6 +56,17 @@ datasets = dict(
 class DataConfig:
     """
     Load relevant information about a dataset, giving either custom parameters or the name of a known dataset.
+
+    **Summary:**
+
+        - initialisation:
+          `__init__ <#flight_processing.data.GraphBuilder.\_\_init\_\_>`_,
+          `known_dataset <#flight_processing.data.GraphBuilder.known_dataset>`_
+        - utility:
+          `data_flights <#flight_processing.data.GraphBuilder.data_flights>`_,
+          `data_graph_yaml <#flight_processing.data.GraphBuilder.data_graph_yaml>`_,
+          `data_graph_json <#flight_processing.data.GraphBuilder.data_graph_json>`_,
+          `data_graph_npz <#flight_processing.data.GraphBuilder.data_graph_npz>`_,
     """
 
     def __init__(self, dataset, minlon, maxlon, minlat, maxlat, detail=detail, data_prefix=data_prefix):

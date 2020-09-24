@@ -38,7 +38,7 @@ class FlightDownloader:
     **Summary:**
 
         - initialisation:
-          `__init__ <#flight_processing.data.FlightDownloader.__init__>`_
+          `__init__ <#flight_processing.data.FlightDownloader.\_\_init\_\_>`_
         - downloading:
           `download_flights <#flight_processing.data.FlightDownloader.download_flights>`_,
           `save_traffic <#flight_processing.data.FlightDownloader.save_traffic>`_,
