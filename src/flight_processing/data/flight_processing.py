@@ -350,7 +350,19 @@ class AirspaceGraph:
             for k, v in self.__graph[name].items():
                 v['weight_adjusted'] = v['weight'] / total_weight if total_weight != 0 else 0
 
-    def __confidence(self, edge, distance=None):
+    def confidence(self, edge, distance=None):
+        """
+        Given a graph edge and (optional) distance to an airspace, return information on the confidence about that handover.
+
+        :param edge: edge from handover graph
+        :type edge: dict
+        :param distance: distance to second airspace
+        :type distance: float, optional
+
+        :return: information about handover confidence
+        :rtype: dict
+        """
+
         if edge is not None:
             weight = edge.get('weight')
             weight_adjusted = edge.get('weight_adjusted')
@@ -402,7 +414,11 @@ class AirspaceGraph:
 
     def test_point(self, long, lat, height):
         """
-        Test a point, printing a list of potential handovers which could occur at that point and their confidence.
+        Test a point, returning a list of potential handovers which could occur at that point and their confidence.
+
+        For each airspace which contains the given point we return a number of airspaces near that point,
+        along with the confidence value of that (potential) handover.
+        This takes the form of a list of dictionaries.
 
         :param long: longitude of point
         :type long: float
@@ -410,25 +426,35 @@ class AirspaceGraph:
         :type lat: float
         :param height: height in ft
         :type height: float
+
+        :return: information about handovers
+        :rtype: list(dict)
         """
 
         ids_at_point = self.__airspaces.airspaces_at_point(long, lat, height)
         near_point = self.__airspaces.airspaces_near_point(long, lat, height)
-        #ids_near_point = [ x[0] for x in near_point ]
+
+        out = []
 
         for id_at in ids_at_point:
-            name_at = self.__gdf.loc[id_at]['name']
-            print("At airspace {}. Potential handovers:".format(name_at))
+            a1 = self.__gdf.loc[id_at]
+            name_at = a1['name']
+
             for (id_near, distance) in near_point:
-                name_near = self.__gdf.loc[id_near]['name']
+                a2 = self.__gdf.loc[id_near]
+                name_near = a2['name']
                 edge = self.__graph[name_at].get(name_near)
 
-                confidence = self.__confidence(edge, distance)
+                confidence = self.confidence(edge, distance)
 
-                print("- {}".format(name_near))
-                print("  distance {:.0f} ft".format(distance))
-                print("  edge weight {}".format(confidence['weight']))
-                print("  confidence {}".format(confidence['confidence']))
+                confidence['airspace1'] = a1.name
+                confidence['airspace2'] = a2.name
+                confidence['name1'] = a1['name']
+                confidence['name2'] = a2['name']
+
+                out.append(confidence)
+
+        return out
 
     def test_handover(self, long, lat, height, airspace1, airspace2):
         """
@@ -457,7 +483,7 @@ class AirspaceGraph:
         edge = self.__graph[a1['name']].get(a2['name'])
         distance = self.__airspaces.distance_to_airspace(long, lat, height, int(a2.name))
 
-        confidence = self.__confidence(edge, distance)
+        confidence = self.confidence(edge, distance)
 
         return confidence
 
@@ -485,7 +511,7 @@ class AirspaceGraph:
 
             edge = self.__graph[a1['name']].get(a2['name'])
 
-            confidence = self.__confidence(edge)
+            confidence = self.confidence(edge)
 
             confidence['airspace1'] = a1.name
             confidence['airspace2'] = a2.name
