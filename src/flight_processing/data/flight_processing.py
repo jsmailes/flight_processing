@@ -32,6 +32,30 @@ class AirspaceGraph:
     load the graph and perform data processing on it.
 
     Requires a dataframe of airspaces as well as flights to have been processed using `GraphBuilder` - they must first be saved using `FlightDownloader`.
+
+    **Summary:**
+
+        - properties:
+          `gdf <#flight_processing.data.AirspaceGraph.gdf>`_,
+          `graph <#flight_processing.data.AirspaceGraph.graph>`_
+        - initialisation:
+          `__init__ <#flight_processing.data.AirspaceGraph.__init__>`_,
+          `load_graphs <#flight_processing.data.AirspaceGraph.load_graphs>`_,
+          `load_graph_files <#flight_processing.data.AirspaceGraph.load_graph_files>`_
+        - handover testing:
+          `confidence <#flight_processing.data.AirspaceGraph.confidence>`_,
+          `test_point <#flight_processing.data.AirspaceGraph.test_point>`_,
+          `test_handover <#flight_processing.data.AirspaceGraph.test_handover>`_,
+          `test_flight <#flight_processing.data.AirspaceGraph.test_flight>`_
+        - visualisation:
+          `visualise_graph <#flight_processing.data.AirspaceGraph.visualise_graph>`_,
+          `draw_graph_map <#flight_processing.data.AirspaceGraph.draw_graph_map>`_
+        - miscellaneous:
+          `get_airspace <#flight_processing.data.AirspaceGraph.get_airspace>`_,
+          `edge_weight <#flight_processing.data.AirspaceGraph.edge_weight>`_,
+          `zone_centre <#flight_processing.data.AirspaceGraph.zone_centre>`_,
+          `average_edge_weight <#flight_processing.data.AirspaceGraph.average_edge_weight>`_,
+          `process_single_flight <#flight_processing.data.AirspaceGraph.process_single_flight>`_
     """
 
     def __init__(self, dataset, df=None, dataset_location=None, verbose=False):

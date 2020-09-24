@@ -34,6 +34,16 @@ class FlightDownloader:
 
     Requires traffic to be correctly configured with valid impala credentials,
     see the `traffic documentation <https://traffic-viz.github.io/opensky_impala.html>`_ for more details.
+
+    **Summary:**
+
+        - initialisation:
+          `__init__ <#flight_processing.data.FlightDownloader.__init__>`_
+        - downloading:
+          `download_flights <#flight_processing.data.FlightDownloader.download_flights>`_,
+          `save_traffic <#flight_processing.data.FlightDownloader.save_traffic>`_,
+          `dump_flights <#flight_processing.data.FlightDownloader.dump_flights>`_,
+          `dump_flights_bulk <#flight_processing.data.FlightDownloader.dump_flights_bulk>`_
     """
 
     def __init__(self, dataset, verbose=False):

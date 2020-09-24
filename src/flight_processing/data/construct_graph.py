@@ -26,6 +26,20 @@ class GraphBuilder:
     Using already downloaded flight data and a dataframe of airspaces, construct a graph of airspace handovers.
 
     Requires flights to have been downloaded ahead of time using `FlightDownloader` as well as a dataframe of airspaces.
+
+    **Summary:**
+
+        - properties:
+          `gdf <#flight_processing.data.GraphBuilder.gdf>`_
+        - initialisation:
+          `__init__ <#flight_processing.data.GraphBuilder.__init__>`_,
+          `from_dataframe <#flight_processing.data.GraphBuilder.from_dataframe>`_
+        - processing:
+          `process_single_flight <#flight_processing.data.GraphBuilder.process_single_flight>`_,
+          `process_flights <#flight_processing.data.GraphBuilder.process_flights>`_,
+          `process_flights_bulk <#flight_processing.data.GraphBuilder.process_flights_bulk>`_
+        - visualisation:
+          `draw_map <#flight_processing.data.GraphBuilder.draw_map>`_
     """
 
     def __add_airspace(self, row):
