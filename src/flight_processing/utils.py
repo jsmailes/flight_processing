@@ -5,6 +5,7 @@ import errno
 from pathlib import Path
 from appdirs import user_config_dir
 import configparser
+import numpy as np
 
 config_dir = Path(user_config_dir("flight_processing"))
 config_file = config_dir / "flight_processing.conf"
@@ -341,27 +342,29 @@ def execute_bulk_between(function, time_start, time_end, time_delta=None):
         t1 += time_delta
         t2 += time_delta
 
-def lerp(x, xmin, xmax, ymin, ymax):
+def lerp(x, x1, x2, y1, y2):
     """
-    Linearly interpolate between `ymin` and `ymax` according to the bounds of `xmin` and `xmax`.
+    Linearly interpolate between ``y1`` and ``y2`` according to the bounds of ``x1`` and ``x2``.
+
+    It must hold that ``x1 >= x2`` - this function is designed to create a
+    gradient which approaches its maximum value as ``x`` moves down from ``x1``
+    to ``x2``.
 
     :param x: point to interpolate
     :type x: float
-    :param xmin: minimum x value
-    :type xmin: float
-    :param xmax: maximum x value
-    :type xmax: float
-    :param ymin: minimum y value
-    :type ymin: float
-    :param ymax: maximum y value
-    :type ymax: float
+    :param x1: maximum x value
+    :type x1: float
+    :param x2: minimum x value
+    :type x2: float
+    :param y1: minimum y value
+    :type y1: float
+    :param y2: maximum y value
+    :type y2: float
 
     :return: resulting y value
     :rtype: float
     """
-    if x <= xmin:
-        return ymin
-    elif x >= xmax:
-        return ymax
-    else:
-        return (((x - xmin) / (xmax - xmin)) * (ymax - ymin)) + ymin
+
+    assert(x1 >= x2)
+
+    return float(np.interp(-x, [-x1, -x2], [y1, y2]))

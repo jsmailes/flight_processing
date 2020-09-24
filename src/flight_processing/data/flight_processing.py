@@ -43,6 +43,7 @@ class AirspaceGraph:
           `gdf <#flight_processing.data.AirspaceGraph.gdf>`_,
           `graph <#flight_processing.data.AirspaceGraph.graph>`_
         - handover testing:
+          `set_confidence_values <#flight_processing.data.AirspaceGraph.set_confidence_values>`_,
           `confidence <#flight_processing.data.AirspaceGraph.confidence>`_,
           `test_point <#flight_processing.data.AirspaceGraph.test_point>`_,
           `test_handover <#flight_processing.data.AirspaceGraph.test_handover>`_,
@@ -113,6 +114,15 @@ class AirspaceGraph:
         print("Done!")
 
         self.__graph = None
+
+        self.__distance_zero = 5000
+        self.__distance_one = 3000
+        self.__minimum_weight = 50
+        self.__minimum_weight_adjusted = 0.05
+        self.__confidence_distance = 1.0
+        self.__confidence_distance_modifier = 0.8
+        self.__confidence_weight = 1.0
+        self.__confidence_weight_adjusted = 1.0
 
     @property
     def gdf(self):
@@ -404,14 +414,95 @@ class AirspaceGraph:
             for k, v in self.__graph[name].items():
                 v['weight_adjusted'] = v['weight'] / total_weight if total_weight != 0 else 0
 
-    def confidence(self, edge, distance=None):
+    def set_confidence_values(self,
+                              distance_zero=None,
+                              distance_one=None,
+                              minimum_weight=None,
+                              minimum_weight_adjusted=None,
+                              confidence_distance=None,
+                              confidence_distance_modifier=None,
+                              confidence_weight=None,
+                              confidence_weight_adjusted=None
+                              ):
+        """
+        Sets the confidence values used in
+        `confidence <#flight_processing.data.AirspaceGraph.confidence>`_,
+        `test_point <#flight_processing.data.AirspaceGraph.test_point>`_,
+        `test_handover <#flight_processing.data.AirspaceGraph.test_handover>`_,
+        and `test_flight <#flight_processing.data.AirspaceGraph.test_flight>`_.
+
+        These values are set to the following by default:
+        - distance_zero = 5000
+        - distance_one = 3000
+        - minimum_weight = 50
+        - minimum_weight_adjusted = 0.05
+        - confidence_distance = 1.0
+        - confidence_distance_modifier = 0.8
+        - confidence_weight = 1.0
+        - confidence_weight_adjusted = 1.0
+
+        These values should be modified according to data extracted from
+        handovers and from the specific graph used.
+
+        ``distance_zero`` and ``distance_one`` do not depend on the graph, but
+        ``minimum_weight`` and ``minimum_weight_adjusted`` should be modified
+        to fit the graph since they are based on its weights.
+
+        It must hold that ``distance_zero >= distance_one``.
+
+        :param distance_zero: distance from airspace border above which confidence is not increased
+        :type distance_zero: float
+        :param distance_one: distance from airspace border below which confidence is increased by ``confidence_distance``
+        :type distance_one: float
+        :param minimum_weight: minimum graph edge weight before confidence value is increased
+        :type minimum_weight: float
+        :param minimum_weight_adjusted: minimum "adjusted" graph edge weight before confidence value is increased - adjusted weight is the edge weight divided by the total weight of all edges leaving that node
+        :type minimum_weight: float
+        :param confidence_distance: if distance is sufficiently low, how much to increase confidence by
+        :type confidence_distance: float
+        :param confidence_distance_modifier: if aircraft is not in either airspace, multiply distance-based confidence by this value (should be ``<=1.0``)
+        :type confidence_distance_modifier: float
+        :param confidence_weight: if edge weight is sufficiently high, how much to increase confidence by
+        :type confidence_weight: float
+        :param confidence_weight_adjusted: if "adjusted" edge weight is sufficiently high, how much to increase confidence by
+        :type confidence_weight_adjusted: float
+        """
+
+        if distance_zero is not None and distance_one is not None:
+            assert(distance_zero >= distance_one)
+            self.__distance_zero = distance_zero
+            self.__distance_one = distance_one
+        else:
+            if distance_zero is not None:
+                assert(distance_zero >= self.__distance_one)
+                self.__distance_zero = distance_zero
+            if distance_one is not None:
+                assert(self.__distance_zero >= distance_one)
+                self.__distance_one = distance_one
+
+        if minimum_weight is not None:
+            self.__minimum_weight = minimum_weight
+        if minimum_weight_adjusted is not None:
+            self.__minimum_weight_adjusted = minimum_weight_adjusted
+        if confidence_distance is not None:
+            self.__confidence_distance = confidence_distance
+        if confidence_distance_modifier is not None:
+            self.__confidence_distance_modifier = confidence_distance_modifier
+        if confidence_weight is not None:
+            self.__confidence_weight = confidence_weight
+        if confidence_weight_adjusted is not None:
+            self.__confidence_weight_adjusted = confidence_weight_adjusted
+
+    def confidence(self, edge, distance1=None, distance2=None):
         """
         Given a graph edge and (optional) distance to an airspace, return information on the confidence about that handover.
 
         :param edge: edge from handover graph
         :type edge: dict
-        :param distance: distance to second airspace
-        :type distance: float, optional
+        :param distance1: distance to first airspace
+        :type distance1: float, optional
+        :param distance2: distance to second airspace
+        :type distance2: float, optional
 
         :return: information about handover confidence
         :rtype: dict
@@ -424,24 +515,29 @@ class AirspaceGraph:
             weight = 0
             weight_adjusted = 0
 
-        # TODO put thresholds etc elsewhere
-        threshold_distance_zero = 5000
-        threshold_distance_one = 3000
-        threshold_weight = 50
-        threshold_weight_adjusted = 0.05
-
-        if distance is not None:
-            confidence_distance = lerp(distance, threshold_distance_one, threshold_distance_zero, 0.0, 1.0)
+        if distance1 is not None and distance2 is not None:
+            if distance1 == 0: # aircraft inside first airspace, assume approaching second airspace
+                confidence_distance = lerp(distance2, self.__distance_zero, self.__distance_one, 0.0, 1.0)
+            elif distance2 == 0: # aircraft inside second airspace, assume just left first airspace
+                confidence_distance = lerp(distance1, self.__distance_zero, self.__distance_one, 0.0, 1.0)
+            else: # aircraft in neither airspace, check distance to second airspace but reduce confidence
+                confidence_distance = lerp(distance2, self.__distance_zero, self.__distance_one, 0.0, 1.0)
+                confidence_distance *= self.__confidence_distance_modifier
         else:
             confidence_distance = 0
 
-        confidence_weight = weight >= threshold_weight
-        confidence_weight_adjusted = weight_adjusted >= threshold_weight_adjusted
+        confidence_weight = int(weight >= self.__minimum_weight)
+        confidence_weight_adjusted = int(weight_adjusted >= self.__minimum_weight_adjusted)
 
-        confidence = confidence_distance + int(confidence_weight) + int(confidence_weight_adjusted)
+        confidence_distance *= self.__confidence_distance
+        confidence_weight *= self.__confidence_weight
+        confidence_weight_adjusted *= self.__confidence_weight_adjusted
+
+        confidence = confidence_distance + confidence_weight + confidence_weight_adjusted
 
         return dict(
-            distance = distance,
+            distance1 = distance1,
+            distance2 = distance2,
             confidence = confidence,
             weight = weight,
             weight_adjusted = weight_adjusted,
@@ -499,7 +595,7 @@ class AirspaceGraph:
                 name_near = a2['name']
                 edge = self.__graph[name_at].get(name_near)
 
-                confidence = self.confidence(edge, distance)
+                confidence = self.confidence(edge, 0.0, distance) # we know the point is within the first airspace so we set distance1 to 0.0
 
                 confidence['airspace1'] = a1.name
                 confidence['airspace2'] = a2.name
@@ -535,9 +631,10 @@ class AirspaceGraph:
             raise ValueError("Airspace not found!")
 
         edge = self.__graph[a1['name']].get(a2['name'])
-        distance = self.__airspaces.distance_to_airspace(long, lat, height, int(a2.name))
+        distance1 = self.__airspaces.distance_to_airspace(long, lat, height, int(a1.name))
+        distance2 = self.__airspaces.distance_to_airspace(long, lat, height, int(a2.name))
 
-        confidence = self.confidence(edge, distance)
+        confidence = self.confidence(edge, distance1, distance2)
 
         return confidence
 

@@ -140,7 +140,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name='flight_processing',
-    version='0.8.0',
+    version='0.8.1',
     author='Joshua Smailes',
     author_email='joshua.smailes@cs.ox.ac.uk',
     description='Extract useful data from OpenSky position reports and previously extracted airspace data.',
