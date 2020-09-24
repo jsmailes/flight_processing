@@ -60,13 +60,13 @@ class DataConfig:
     **Summary:**
 
         - initialisation:
-          `__init__ <#flight_processing.data.GraphBuilder.\_\_init\_\_>`_,
-          `known_dataset <#flight_processing.data.GraphBuilder.known_dataset>`_
+          `__init__ <#flight_processing.DataConfig.\_\_init\_\_>`_,
+          `known_dataset <#flight_processing.DataConfig.known_dataset>`_
         - utility:
-          `data_flights <#flight_processing.data.GraphBuilder.data_flights>`_,
-          `data_graph_yaml <#flight_processing.data.GraphBuilder.data_graph_yaml>`_,
-          `data_graph_json <#flight_processing.data.GraphBuilder.data_graph_json>`_,
-          `data_graph_npz <#flight_processing.data.GraphBuilder.data_graph_npz>`_,
+          `data_flights <#flight_processing.DataConfig.data_flights>`_,
+          `data_graph_yaml <#flight_processing.DataConfig.data_graph_yaml>`_,
+          `data_graph_json <#flight_processing.DataConfig.data_graph_json>`_,
+          `data_graph_npz <#flight_processing.DataConfig.data_graph_npz>`_,
     """
 
     def __init__(self, dataset, minlon, maxlon, minlat, maxlat, detail=detail, data_prefix=data_prefix):
@@ -92,19 +92,19 @@ class DataConfig:
         :rtype: DataConfig
         """
 
-        self.dataset = dataset
+        self.__dataset = dataset
         self.data_prefix = data_prefix
 
-        self.minlon = minlon
-        self.maxlon = maxlon
-        self.minlat = minlat
-        self.maxlat = maxlat
-        self.detail = detail
+        self.__minlon = minlon
+        self.__maxlon = maxlon
+        self.__minlat = minlat
+        self.__maxlat = maxlat
+        self.__detail = detail
 
-        self.dataset_location = format_dataset_location.format(data_prefix=data_prefix, dataset=dataset)
+        self.__dataset_location = format_dataset_location.format(data_prefix=data_prefix, dataset=dataset)
 
-        self.bounds_opensky = (self.minlon, self.minlat, self.maxlon, self.maxlat)
-        self.bounds_plt = (self.minlon, self.maxlon, self.minlat, self.maxlat)
+        self.__bounds_opensky = (self.__minlon, self.__minlat, self.__maxlon, self.__maxlat)
+        self.__bounds_plt = (self.__minlon, self.__maxlon, self.__minlat, self.__maxlat)
 
     @classmethod
     def known_dataset(cls, dataset, data_prefix=data_prefix):
@@ -126,6 +126,86 @@ class DataConfig:
         else:
             return cls(dataset, data['minlon'], data['maxlon'], data['minlat'], data['maxlat'], data['detail'], data_prefix)
 
+    @property
+    def dataset(self):
+        """
+        Returns the name of the dataset.
+
+        :rtype: str
+        """
+        return self.__dataset
+
+    @property
+    def minlon(self):
+        """
+        Returns the longitude minimum bound.
+
+        :rtype: float
+        """
+        return self.__minlon
+
+    @property
+    def maxlon(self):
+        """
+        Returns the longitude maximum bound.
+
+        :rtype: float
+        """
+        return self.__maxlon
+
+    @property
+    def minlat(self):
+        """
+        Returns the latitude minimum bound.
+
+        :rtype: float
+        """
+        return self.__minlat
+
+    @property
+    def maxlat(self):
+        """
+        Returns the latitude maximum bound.
+
+        :rtype: float
+        """
+        return self.__maxlat
+
+    @property
+    def detail(self):
+        """
+        Returns the map detail.
+
+        :rtype: int
+        """
+        return self.__detail
+
+    @property
+    def dataset_location(self):
+        """
+        Returns the location of the saved geopandas GeoDataFrame.
+
+        :rtype: str
+        """
+        return self.__dataset_location
+
+    @property
+    def bounds_opensky(self):
+        """
+        Returns the bounding box of the dataset in the format expected by traffic.
+
+        :rtype: (float, float, float, float)
+        """
+        return self.__bounds_opensky
+
+    @property
+    def bounds_plt(self):
+        """
+        Returns the bounding box of the dataset in the format expected by pyplot.
+
+        :rtype: (float, float, float, float)
+        """
+        return self.__bounds_plt
 
     def data_flights(self, datetime):
         """
