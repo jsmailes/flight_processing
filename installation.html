@@ -83,7 +83,18 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-using-pip">Installation using pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#manual-build-and-installation">Manual build and installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-prerequisites">Install prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clone-repository">Clone repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-wheel-optional">Build wheel (optional)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install">Install</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core_structure.html">Core Structure</a></li>
 </ul>
@@ -156,23 +167,83 @@
 <p>This library has a number of dependencies, most notably the <a class="reference external" href="https://github.com/xoolive/traffic">traffic</a> library, for which you can find installation instructions <a class="reference external" href="https://traffic-viz.github.io/installation.html">here</a>.</p>
 <p>The library also relies on <a class="reference external" href="https://www.scipy.org/">scipy</a> and <a class="reference external" href="https://numpy.org/">numpy</a> for data types and mathematical functions, and <a class="reference external" href="https://pandas.pydata.org/">pandas</a>, <a class="reference external" href="https://geopandas.org/">geopandas</a>, and <a class="reference external" href="https://pypi.org/project/Shapely/">Shapely</a> for processing airspace data.</p>
 <p>Visualisations are provided through <a class="reference external" href="https://matplotlib.org/">matplotlib</a>, <a class="reference external" href="https://scitools.org.uk/cartopy/docs/latest/">cartopy</a>, <a class="reference external" href="https://github.com/pyproj4/pyproj">pyproj</a>, and <a class="reference external" href="https://hvplot.holoviz.org/">hvplot</a>. The <a class="reference external" href="https://simplejson.readthedocs.io/en/latest/">simplejson</a> library enables data exporting, and <a class="reference external" href="https://networkx.github.io/">networkx</a> is used to build directed graphs.</p>
-<p>Pip should handle the installation of these dependencies, allowing the following two installation options:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">jsmailes</span><span class="o">/</span><span class="n">flight_processing</span>
-<span class="n">cd</span> <span class="n">flight_processing</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">flight_processing</span>
-</pre></div>
-</div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Certain dependencies (particularly <cite>cartopy</cite> and <cite>shapely</cite>) require access to libraries which may not be present on the system. The <a class="reference external" href="https://www.anaconda.com/distribution/#download-section">Anaconda</a> platform is much better at handling these dependencies - if possible, install it first then do the following:</p>
+<p>Certain dependencies (particularly <cite>cartopy</cite> and <cite>shapely</cite>) require access to libraries which may not be present on the system. The <a class="reference external" href="https://www.anaconda.com/distribution/#download-section">Anaconda</a> platform is much better at handling these dependencies - if possible, install it first then run the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="n">cartopy</span> <span class="n">shapely</span>
 <span class="n">pip</span> <span class="n">install</span> <span class="n">flight_processing</span>
 </pre></div>
 </div>
 <p>Additional dependencies can also be installed using Anaconda if desired.</p>
+</div>
+<div class="section" id="installation-using-pip">
+<h2>Installation using pip<a class="headerlink" href="#installation-using-pip" title="Permalink to this headline">¶</a></h2>
+<p>The package is available on <a class="reference external" href="https://pypi.org/">PyPI</a> and can be installed as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">flight_processing</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="manual-build-and-installation">
+<h2>Manual build and installation<a class="headerlink" href="#manual-build-and-installation" title="Permalink to this headline">¶</a></h2>
+<p>We can also build and install the package manually using python’s <code class="docutils literal notranslate"><span class="pre">setuptools</span></code>.</p>
+<div class="section" id="install-prerequisites">
+<h3>Install prerequisites<a class="headerlink" href="#install-prerequisites" title="Permalink to this headline">¶</a></h3>
+<p>Building the package requires a number of prerequisites, both to compile the C++ component and to install the python library itself.</p>
+<p>First install the following using your package manager:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>git
+cmake
+gcc-c++
+python3
+boost-devel
+boost-python3-devel
+boost-numpy3
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The above package names are correct on Fedora Linux, but they may differ depending on your operating system. The following package names can be used on Ubuntu:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>git
+cmake
+g++
+python3-dev
+libboost-all-dev
+</pre></div>
+</div>
+</div>
+<p>Next we need to install some python prerequisites:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">setuptools</span> <span class="n">wheel</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="clone-repository">
+<h3>Clone repository<a class="headerlink" href="#clone-repository" title="Permalink to this headline">¶</a></h3>
+<p>Now we clone the repository from Github:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="o">--</span><span class="n">recurse</span><span class="o">-</span><span class="n">submodules</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">jsmailes</span><span class="o">/</span><span class="n">flight_processing</span>
+<span class="n">cd</span> <span class="n">flight_processing</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-wheel-optional">
+<h3>Build wheel (optional)<a class="headerlink" href="#build-wheel-optional" title="Permalink to this headline">¶</a></h3>
+<p>To build a wheel and/or source tarball using <code class="docutils literal notranslate"><span class="pre">setuptools</span></code>, run the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">sdist</span> <span class="n">bdist_wheel</span>
+</pre></div>
+</div>
+<p>These can then be installed using <code class="docutils literal notranslate"><span class="pre">pip</span></code> if desired.</p>
+</div>
+<div class="section" id="install">
+<h3>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h3>
+<p>Installation is fairly straightforward, since <code class="docutils literal notranslate"><span class="pre">pip</span></code> installs the prerequisites and runs <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> for us:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="troubleshooting">
+<h3>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h3>
+<p>Issues with python dependencies can usually be fixed by installing them using <a class="reference external" href="https://www.anaconda.com/distribution/#download-section">Anaconda</a>.</p>
+<p>Cryptic issues with CMake are usually caused by having an incorrect version of Python and/or Boost installed.</p>
+<p>If you’re having any more problems, please <a class="reference external" href="https://github.com/jsmailes/flight_processing/issues">create an issue</a> on the Github repo with some details about your system and the problem you’re having.</p>
+</div>
 </div>
 </div>
 
