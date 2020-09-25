@@ -1,5 +1,5 @@
 from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_between
-from ..process_flights import version, AirspaceHandler
+from ..process_flights import AirspaceHandler
 from ..scalebar import scale_bar
 from .data_utils import graph_add_node, graph_increment_edge, build_graph_from_sparse_matrix, build_graph_from_matrix, get_zone_centre, save_graph_to_file, process_dataframe
 

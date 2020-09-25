@@ -1,4 +1,4 @@
-from ..process_flights import version, AirspaceHandler
+from ..process_flights import AirspaceHandler
 from ..utils import DataConfig, check_file, execute_bulk, execute_bulk_between, lerp
 from ..scalebar import scale_bar
 from .data_utils import graph_add_node, graph_increment_edge, build_graph_from_sparse_matrix, build_graph_from_matrix, get_zone_centre, save_graph_to_file, process_dataframe
@@ -53,6 +53,7 @@ class AirspaceGraph:
           `draw_graph_map <#flight_processing.data.AirspaceGraph.draw_graph_map>`_
         - miscellaneous:
           `get_airspace <#flight_processing.data.AirspaceGraph.get_airspace>`_,
+          `airspace_distance <#flight_processing.data.AirspaceGraph.airspace_distance>`_,
           `edge_weight <#flight_processing.data.AirspaceGraph.edge_weight>`_,
           `zone_centre <#flight_processing.data.AirspaceGraph.zone_centre>`_,
           `average_edge_weight <#flight_processing.data.AirspaceGraph.average_edge_weight>`_,
@@ -266,6 +267,27 @@ class AirspaceGraph:
             except:
                 return None
 
+    def airspace_distance(self, long, lat, height, airspace):
+        """
+        Returns the distance from the given point to the given airspace in feet.
+
+        :param long: longitude of point
+        :type long: float
+        :param lat: latitude of point
+        :type lat: float
+        :param height: height in ft
+        :type height: float
+        :param airspace: airspace name or identifier
+        :type airspace: str or int
+
+        :return: distance to airspace in feet
+        :rtype: float
+        """
+
+        a = self.get_airspace(airspace)
+
+        return self.__airspaces.distance_to_airspace(long, lat, height, int(a.name))
+
     def edge_weight(self, airspace1, airspace2):
         """
         Get the weight of the edge between the given airspaces on the graph.
@@ -381,23 +403,39 @@ class AirspaceGraph:
 
         plt.show()
 
-    def average_edge_weight(self):
+    def average_edge_weight(self, median=False):
         """
         Get the average edge weight across the whole graph.
+
+        :param median: return median weight instead of mean, default False
+        :type median: bool, optional
 
         :return: average edge weight
         :rtype: float
         """
 
-        weight_total = 0
-        count = 0
+        if median:
+            weights = [edge[2]['weight'] for edge in list(self.__graph.edges(data=True))]
+            weights.sort()
 
-        for source, dest, data in self.__graph.edges(data=True):
-            if source != dest:
-                weight_total += data.get('weight')
-                count += 1
+            n = len(weights)
 
-        return weight_total / count
+            if n % 2 == 1:
+                return weights[(n - 1) // 2]
+            else:
+                v1 = weights[n // 2]
+                v2 = weights[(n // 2) - 1]
+                return (v1 + v2) / 2
+        else:
+            weight_total = 0
+            count = 0
+
+            for source, dest, data in self.__graph.edges(data=True):
+                if source != dest:
+                    weight_total += data.get('weight')
+                    count += 1
+
+            return weight_total / count
 
     def __airspace_total_weight(self, name):
         total = 0
@@ -581,8 +619,10 @@ class AirspaceGraph:
         :rtype: list(dict)
         """
 
-        ids_at_point = self.__airspaces.airspaces_at_point(long, lat, height)
-        near_point = self.__airspaces.airspaces_near_point(long, lat, height)
+        ft = True # TODO add option to allow height in metres?
+
+        ids_at_point = self.__airspaces.airspaces_at_point(long, lat, height, ft)
+        near_point = self.__airspaces.airspaces_near_point(long, lat, height, ft)
 
         out = []
 

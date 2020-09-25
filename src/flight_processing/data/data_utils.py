@@ -5,6 +5,7 @@ from scipy import sparse
 import pandas as pd
 import geopandas
 import shapely.wkt
+from shapely.geometry import Point
 
 def graph_add_node(graph, name):
     """

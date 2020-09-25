@@ -124,12 +124,17 @@ void AirspaceHandler::process_flights_file(string location) {
     process_flights(flights, airspaces, result);
 }
 
-py::list AirspaceHandler::airspaces_at_point(float x, float y, int height) {
+py::list AirspaceHandler::airspaces_at_point(float x, float y, int height, bool ft) {
     if (!ready) {
         reset_result();
     }
 
-    vector<int> output = airspaces.query_point(x, y, metre_to_ft(height));
+    float height2 = (float) height;
+    if (!ft) {
+        height2 = metre_to_ft(height2);
+    }
+
+    vector<int> output = airspaces.query_point(x, y, height2);
 
     py::list py_output;
 
@@ -140,12 +145,17 @@ py::list AirspaceHandler::airspaces_at_point(float x, float y, int height) {
     return py_output;
 }
 
-py::list AirspaceHandler::airspaces_near_point(float x, float y, int height) {
+py::list AirspaceHandler::airspaces_near_point(float x, float y, int height, bool ft) {
     if (!ready) {
         reset_result();
     }
 
-    vector<pair<int, float>> output = airspaces.airspaces_near_point(x, y, metre_to_ft(height));
+    float height2 = (float) height;
+    if (!ft) {
+        height2 = metre_to_ft(height2);
+    }
+
+    vector<pair<int, float>> output = airspaces.airspaces_near_point(x, y, height2);
 
     py::list py_output;
 
@@ -214,7 +224,7 @@ BOOST_PYTHON_MODULE(process_flights)
 {
     np::initialize();
 
-    py::scope().attr("version") = version;;
+    //py::scope().attr("version") = version;;
 
     // Add regular functions to the module.
     //py::def("get_flight", get_flight);
