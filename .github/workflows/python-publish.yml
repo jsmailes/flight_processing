@@ -16,17 +16,23 @@ jobs:
     - uses: actions/checkout@v2
       with:
           submodules: recursive
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-    - name: Install C++ dependencies
+
+    - name: Install C++ Prerequisites
       shell: bash
-      run: sudo apt install python3 cmake g++ python3-dev libboost-all-dev
-    - name: Install python dependencies
+      run: |
+        sudo apt install cmake g++ python3-dev libboost-all-dev
+
+    - name: Set up Conda
+      uses: s-weigand/setup-conda@v1
+      with:
+        python-version: 3.8
+
+    - name: Install Python Prerequisites
       run: |
         python -m pip install --upgrade pip
-        pip install setuptools wheel twine
+        conda install cartopy shapely
+        pip install setuptools wheel twine sphinx sphinx_rtd_theme
+
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
