@@ -24,10 +24,6 @@ Before using this notebook ensure you have dumped some flight data using
 
 
 
-.. raw:: html
-
-    
-
 
 Example 1: known dataset from file, graph output in standard location
 ---------------------------------------------------------------------

@@ -22,10 +22,6 @@ notebook, and set the data location in
 
 
 
-.. raw:: html
-
-    
-
 
 Example 1: known dataset from file
 ----------------------------------
