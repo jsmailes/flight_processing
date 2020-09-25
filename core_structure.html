@@ -1,0 +1,238 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Core Structure &mdash; Flight Processing  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="flight_processing.DataConfig" href="flight_processing.DataConfig.html" />
+    <link rel="prev" title="Loading Graph" href="demo_airspace_graph.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Flight Processing
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Core Structure</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.DataConfig.html">flight_processing.DataConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.data.FlightDownloader.html">flight_processing.data.FlightDownloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.data.GraphBuilder.html">flight_processing.data.GraphBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.data.AirspaceGraph.html">flight_processing.data.AirspaceGraph</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flight Processing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Core Structure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/core_structure.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="core-structure">
+<h1>Core Structure<a class="headerlink" href="#core-structure" title="Permalink to this headline">¶</a></h1>
+<p>The library is based around three classes for data handling and processing, and one helper class:</p>
+<ul class="simple">
+<li><p>airspace bounds and other parameters are specified using <a class="reference external" href="flight_processing.DataConfig.html">flight_processing.DataConfig</a>,</p></li>
+<li><p>flights are downloaded through <a class="reference external" href="flight_processing.data.FlightDownloader.html">flight_processing.data.FlightDownloader</a>,</p></li>
+<li><p>a graph of airspace handovers is produced using <a class="reference external" href="flight_processing.data.GraphBuilder.html">flight_processing.data.GraphBuilder</a>,</p></li>
+<li><p>and finally the resulting graph is visualised and used for further processing in <a class="reference external" href="flight_processing.data.AirspaceGraph.html">flight_processing.data.AirspaceGraph</a>.</p></li>
+</ul>
+<p>Each of the <code class="docutils literal notranslate"><span class="pre">data</span></code> classes contain an underlying <a class="reference external" href="https://geopandas.org/">geopandas GeoDataFrame</a>, and <code class="docutils literal notranslate"><span class="pre">GraphBuilder</span></code> and <code class="docutils literal notranslate"><span class="pre">AirspaceGraph</span></code> make use of an underlying C++ class (<code class="docutils literal notranslate"><span class="pre">AirspaceHandler</span></code>) for faster and more efficient processing.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">FlightDownloader</span></code> class uses Xavier Olive’s <a class="reference external" href="https://traffic-viz.github.io/index.html">traffic</a> library to download flights from the <a class="reference external" href="https://opensky-network.org/">OpenSky Network</a>.</p>
+<p><strong>Contents</strong></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="flight_processing.DataConfig.html">flight_processing.DataConfig</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flight_processing.data.FlightDownloader.html">flight_processing.data.FlightDownloader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flight_processing.data.GraphBuilder.html">flight_processing.data.GraphBuilder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flight_processing.data.AirspaceGraph.html">flight_processing.data.AirspaceGraph</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="flight_processing.DataConfig.html" class="btn btn-neutral float-right" title="flight_processing.DataConfig" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="demo_airspace_graph.html" class="btn btn-neutral float-left" title="Loading Graph" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Joshua Smailes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

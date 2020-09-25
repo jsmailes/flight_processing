@@ -1,0 +1,599 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>flight_processing.data.AirspaceGraph &mdash; Flight Processing  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="flight_processing.data.GraphBuilder" href="flight_processing.data.GraphBuilder.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Flight Processing
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="core_structure.html">Core Structure</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.DataConfig.html">flight_processing.DataConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.data.FlightDownloader.html">flight_processing.data.FlightDownloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.data.GraphBuilder.html">flight_processing.data.GraphBuilder</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">flight_processing.data.AirspaceGraph</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flight Processing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="core_structure.html">Core Structure</a> &raquo;</li>
+        
+      <li>flight_processing.data.AirspaceGraph</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/flight_processing.data.AirspaceGraph.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="flight-processing-data-airspacegraph">
+<h1>flight_processing.data.AirspaceGraph<a class="headerlink" href="#flight-processing-data-airspacegraph" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="flight_processing.data.AirspaceGraph">
+<em class="property">class </em><code class="sig-prename descclassname">flight_processing.data.</code><code class="sig-name descname">AirspaceGraph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dataset_location</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Having constructed a graph of handovers from processing downloaded flights,
+load the graph and perform data processing on it.</p>
+<p>Requires a dataframe of airspaces as well as flights to have been processed using <cite>GraphBuilder</cite> - they must first be saved using <cite>FlightDownloader</cite>.</p>
+<p><strong>Summary:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>initialisation:
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.__init__">__init__</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.load_graphs">load_graphs</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.load_graph_files">load_graph_files</a></p></li>
+<li><p>properties:
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.gdf">gdf</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.graph">graph</a></p></li>
+<li><p>handover testing:
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.set_confidence_values">set_confidence_values</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.confidence">confidence</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.test_point">test_point</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.test_handover">test_handover</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.test_flight">test_flight</a></p></li>
+<li><p>visualisation:
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.visualise_graph">visualise_graph</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.draw_graph_map">draw_graph_map</a></p></li>
+<li><p>miscellaneous:
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.get_airspace">get_airspace</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.airspace_distance">airspace_distance</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.edge_weight">edge_weight</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.zone_centre">zone_centre</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.average_edge_weight">average_edge_weight</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.process_single_flight">process_single_flight</a></p></li>
+</ul>
+</div></blockquote>
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dataset_location</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialise the graph builder with a given dataset, either from a file or directly from a dataframe.</p>
+<p>By default the dataframe will be loaded from a file as specified in the config.</p>
+<p>A loaded dataframe must have the following columns:
+- <cite>name</cite>
+- <cite>lower_limit</cite>
+- <cite>upper_limit</cite></p>
+<p>In addition, a DataFrame must have a <cite>wkt</cite> column containing the well-known text of the airspace’s geometry,
+and a GeoDataFrame must have a correctly formatted <cite>geometry</cite> column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>str</em><em> or </em><a class="reference internal" href="flight_processing.DataConfig.html#flight_processing.DataConfig" title="flight_processing.DataConfig"><em>DataConfig</em></a>) – dataset name or specification</p></li>
+<li><p><strong>df</strong> (<em>pandas.core.frame.DataFrame</em><em> or </em><em>geopandas.geodataframe.GeoDataFrame</em><em>, </em><em>optional</em>) – dataframe of airspaces</p></li>
+<li><p><strong>dataset_location</strong> (<em>str</em><em>, </em><em>optional</em>) – location of saved dataframe</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose logging</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#flight_processing.data.AirspaceGraph" title="flight_processing.data.AirspaceGraph">AirspaceGraph</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.airspace_distance">
+<code class="sig-name descname">airspace_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">long</span></em>, <em class="sig-param"><span class="n">lat</span></em>, <em class="sig-param"><span class="n">height</span></em>, <em class="sig-param"><span class="n">airspace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.airspace_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the distance from the given point to the given airspace in feet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>long</strong> (<em>float</em>) – longitude of point</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – latitude of point</p></li>
+<li><p><strong>height</strong> (<em>float</em>) – height in ft</p></li>
+<li><p><strong>airspace</strong> (<em>str</em><em> or </em><em>int</em>) – airspace name or identifier</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>distance to airspace in feet</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.average_edge_weight">
+<code class="sig-name descname">average_edge_weight</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">median</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.average_edge_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the average edge weight across the whole graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>median</strong> (<em>bool</em><em>, </em><em>optional</em>) – return median weight instead of mean, default False</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>average edge weight</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.confidence">
+<code class="sig-name descname">confidence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edge</span></em>, <em class="sig-param"><span class="n">distance1</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distance2</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.confidence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a graph edge and (optional) distance to an airspace, return information on the confidence about that handover.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edge</strong> (<em>dict</em>) – edge from handover graph</p></li>
+<li><p><strong>distance1</strong> (<em>float</em><em>, </em><em>optional</em>) – distance to first airspace</p></li>
+<li><p><strong>distance2</strong> (<em>float</em><em>, </em><em>optional</em>) – distance to second airspace</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>information about handover confidence</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.draw_graph_map">
+<code class="sig-name descname">draw_graph_map</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flight</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">subset</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logscale</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">file_out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.draw_graph_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the dataframe of airspaces on a map with the graph of handovers overlaid on top, optionally plotting flights and highlighting a subset of airspaces.</p>
+<p>Calls pyplot’s <cite>draw</cite> function so a diagram will be output directly.
+The result can also be saved to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flight</strong> (<em>traffic.core.flight.Flight</em><em> or </em><em>traffic.core.traffic.Traffic</em>) – draw a flight or flights on the map</p></li>
+<li><p><strong>subset</strong> (<em>set</em><em>(</em><em>int</em><em>) or </em><em>list</em><em>(</em><em>int</em><em>) or </em><em>set</em><em>(</em><em>str</em><em>) or </em><em>list</em><em>(</em><em>str</em><em>)</em>) – subset of airspaces to highlight (e.g. airspaces a flight passes through), as IDs or names</p></li>
+<li><p><strong>logscale</strong> (<em>bool</em>) – edges are coloured according to a logarithmic (rather than linear) scale, default False</p></li>
+<li><p><strong>file_out</strong> (<em>str</em><em>, </em><em>optional</em>) – save the result to a file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.edge_weight">
+<code class="sig-name descname">edge_weight</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">airspace1</span></em>, <em class="sig-param"><span class="n">airspace2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.edge_weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the weight of the edge between the given airspaces on the graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>airspace1</strong> (<em>str</em><em> or </em><em>int</em>) – first airspace name or identifier</p></li>
+<li><p><strong>airspace2</strong> (<em>str</em><em> or </em><em>int</em>) – second airspace name or identifier</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>edge weight</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.gdf">
+<em class="property">property </em><code class="sig-name descname">gdf</code><a class="headerlink" href="#flight_processing.data.AirspaceGraph.gdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the underlying geopandas GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dataframe</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>geopandas.geodataframe.GeoDataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.get_airspace">
+<code class="sig-name descname">get_airspace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">airspace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.get_airspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the row corresponding to the given airspace name or identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>airspace</strong> (<em>str</em><em> or </em><em>int</em>) – airspace name or identifier</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>airspace data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.core.series.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.graph">
+<em class="property">property </em><code class="sig-name descname">graph</code><a class="headerlink" href="#flight_processing.data.AirspaceGraph.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the underlying graph of airspace handovers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>graph</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>networkx.classes.digraph.DiGraph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.load_graph_files">
+<code class="sig-name descname">load_graph_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">files</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.load_graph_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the graph of handovers from a given list of NPZ file locations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>files</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – files to load</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.load_graphs">
+<code class="sig-name descname">load_graphs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time_start</span></em>, <em class="sig-param"><span class="n">time_end</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.load_graphs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the graph of handovers from a series of NPZ files within a given time range.</p>
+<p>Graphs will be loaded from <cite>{data_prefix}/graphs/{dataset}/{date}/{time}.json</cite>, where:
+- <cite>data_prefix</cite> is specified by the <cite>DataConfig</cite> object passed in on construction, or the <cite>data_location</cite> config value is used by default,
+- <cite>dataset</cite> is the name of the dataset as specified on construction,
+- <cite>date</cite> and <cite>time</cite> are determined by the timestamp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_start</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – start time</p></li>
+<li><p><strong>time_end</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – end time</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.process_single_flight">
+<code class="sig-name descname">process_single_flight</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flight</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.process_single_flight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process a single flight, returning an ordered list of airspace handovers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flight</strong> (<em>traffic.core.flight.Flight</em>) – flight to process</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of handovers as pairs of identifiers</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list(list(int))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.set_confidence_values">
+<code class="sig-name descname">set_confidence_values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">distance_zero</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distance_one</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">minimum_weight</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">minimum_weight_adjusted</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">confidence_distance</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">confidence_distance_modifier</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">confidence_weight</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">confidence_weight_adjusted</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.set_confidence_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the confidence values used in
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.confidence">confidence</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.test_point">test_point</a>,
+<a class="reference external" href="#flight_processing.data.AirspaceGraph.test_handover">test_handover</a>,
+and <a class="reference external" href="#flight_processing.data.AirspaceGraph.test_flight">test_flight</a>.</p>
+<p>These values are set to the following by default:
+- distance_zero = 5000
+- distance_one = 3000
+- minimum_weight = 50
+- minimum_weight_adjusted = 0.05
+- confidence_distance = 1.0
+- confidence_distance_modifier = 0.8
+- confidence_weight = 1.0
+- confidence_weight_adjusted = 1.0</p>
+<p>These values should be modified according to data extracted from
+handovers and from the specific graph used.</p>
+<p><code class="docutils literal notranslate"><span class="pre">distance_zero</span></code> and <code class="docutils literal notranslate"><span class="pre">distance_one</span></code> do not depend on the graph, but
+<code class="docutils literal notranslate"><span class="pre">minimum_weight</span></code> and <code class="docutils literal notranslate"><span class="pre">minimum_weight_adjusted</span></code> should be modified
+to fit the graph since they are based on its weights.</p>
+<p>It must hold that <code class="docutils literal notranslate"><span class="pre">distance_zero</span> <span class="pre">&gt;=</span> <span class="pre">distance_one</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distance_zero</strong> (<em>float</em>) – distance from airspace border above which confidence is not increased</p></li>
+<li><p><strong>distance_one</strong> (<em>float</em>) – distance from airspace border below which confidence is increased by <code class="docutils literal notranslate"><span class="pre">confidence_distance</span></code></p></li>
+<li><p><strong>minimum_weight</strong> (<em>float</em>) – minimum graph edge weight before confidence value is increased</p></li>
+<li><p><strong>minimum_weight_adjusted</strong> – minimum “adjusted” graph edge weight before confidence value is increased - adjusted weight is the edge weight divided by the total weight of all edges leaving that node</p></li>
+<li><p><strong>confidence_distance</strong> (<em>float</em>) – if distance is sufficiently low, how much to increase confidence by</p></li>
+<li><p><strong>confidence_distance_modifier</strong> (<em>float</em>) – if aircraft is not in either airspace, multiply distance-based confidence by this value (should be <code class="docutils literal notranslate"><span class="pre">&lt;=1.0</span></code>)</p></li>
+<li><p><strong>confidence_weight</strong> (<em>float</em>) – if edge weight is sufficiently high, how much to increase confidence by</p></li>
+<li><p><strong>confidence_weight_adjusted</strong> (<em>float</em>) – if “adjusted” edge weight is sufficiently high, how much to increase confidence by</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.test_flight">
+<code class="sig-name descname">test_flight</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flight</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.test_flight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a given flight, returning each of the handovers that could have occurred during the flight and information about that handover’s confidence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flight</strong> (<em>traffic.core.flight.Flight</em>) – flight to test</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>information about handovers</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.test_handover">
+<code class="sig-name descname">test_handover</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">long</span></em>, <em class="sig-param"><span class="n">lat</span></em>, <em class="sig-param"><span class="n">height</span></em>, <em class="sig-param"><span class="n">airspace1</span></em>, <em class="sig-param"><span class="n">airspace2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.test_handover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a handover at a given point, returning a dictionary containing information about that handover (including confidence).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>long</strong> (<em>float</em>) – longitude of point</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – latitude of point</p></li>
+<li><p><strong>height</strong> (<em>float</em>) – height in ft</p></li>
+<li><p><strong>airspace1</strong> (<em>str</em><em> or </em><em>int</em>) – first airspace name or identifier</p></li>
+<li><p><strong>airspace2</strong> (<em>str</em><em> or </em><em>int</em>) – second airspace name or identifier</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>information about handover</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.test_point">
+<code class="sig-name descname">test_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">long</span></em>, <em class="sig-param"><span class="n">lat</span></em>, <em class="sig-param"><span class="n">height</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.test_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a point, returning a list of potential handovers which could occur at that point and their confidence.</p>
+<p>For each airspace which contains the given point we return a number of airspaces near that point,
+along with the confidence value of that (potential) handover.
+This takes the form of a list of dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>long</strong> (<em>float</em>) – longitude of point</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – latitude of point</p></li>
+<li><p><strong>height</strong> (<em>float</em>) – height in ft</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>information about handovers</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.visualise_graph">
+<code class="sig-name descname">visualise_graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.visualise_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualise the graph interactively using HoloViews.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.AirspaceGraph.zone_centre">
+<code class="sig-name descname">zone_centre</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.zone_centre" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the centre of the given airspace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em><em> or </em><em>int</em>) – airspace name or identifier</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>coordinates of the airspace centre</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>shapely.geometry.point.Point</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="flight_processing.data.GraphBuilder.html" class="btn btn-neutral float-left" title="flight_processing.data.GraphBuilder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Joshua Smailes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,856 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Importing the UK’s Airspaces &mdash; Flight Processing  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Importing the USA’s Airspaces" href="airspace_data_usa.html" />
+    <link rel="prev" title="Preparing Datasets" href="preparing_datasets.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Flight Processing
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="quickstart.html">Quickstart</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="preparing_datasets.html">Preparing Datasets</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Importing the UK’s Airspaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#setup">Setup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initial-data-processing">Initial Data Processing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#extracting-geographical-data">Extracting Geographical Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#visualising-airspaces">Visualising Airspaces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#export-data">Export Data</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="airspace_data_usa.html">Importing the USA’s Airspaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="airspace_data_switzerland.html">Importing Switzerland’s Airspaces</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="demo_flight_downloader.html">Downloading Flights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_graph_builder.html">Processing Flights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_airspace_graph.html">Loading Graph</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="core_structure.html">Core Structure</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flight Processing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="quickstart.html">Quickstart</a> &raquo;</li>
+        
+          <li><a href="preparing_datasets.html">Preparing Datasets</a> &raquo;</li>
+        
+      <li>Importing the UK’s Airspaces</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/airspace_data_uk.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="importing-the-uks-airspaces">
+<h1>Importing the UK’s Airspaces<a class="headerlink" href="#importing-the-uks-airspaces" title="Permalink to this headline">¶</a></h1>
+<p>We import data on the UK’s ATC regions from the UK NATS and extract the
+useful information including the shape of each region.</p>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<p>Modify the URL below to point to the latest version of the UK’s AIP.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_location</span> <span class="o">=</span> <span class="s1">&#39;https://www.aurora.nats.co.uk/htmlAIP/Publications/2020-06-18-AIRAC/html/eAIP/EG-ENR-2.1-en-GB.html#ENR-2.1&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">descartes</span><span class="o">,</span> <span class="nn">geopandas</span>
+<span class="kn">import</span> <span class="nn">cartopy</span>
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">LineString</span><span class="p">,</span> <span class="n">Point</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">MultiPolygon</span><span class="p">,</span> <span class="n">base</span>
+<span class="kn">import</span> <span class="nn">pyproj</span>
+<span class="kn">from</span> <span class="nn">shapely.ops</span> <span class="kn">import</span> <span class="n">transform</span><span class="p">,</span> <span class="n">unary_union</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">rtree</span> <span class="kn">import</span> <span class="n">index</span> <span class="c1"># requires spatialindex_devel</span>
+
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">cartopy.geodesic</span> <span class="k">as</span> <span class="nn">cgeo</span>
+<span class="kn">import</span> <span class="nn">cartopy.io.img_tiles</span> <span class="k">as</span> <span class="nn">cimgt</span>
+<span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+
+<span class="kn">from</span> <span class="nn">traffic.data</span> <span class="kn">import</span> <span class="n">opensky</span>
+<span class="kn">from</span> <span class="nn">traffic.core</span> <span class="kn">import</span> <span class="n">Airspace</span>
+<span class="kn">from</span> <span class="nn">traffic.core.airspace</span> <span class="kn">import</span> <span class="n">ExtrudedPolygon</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">holoviews</span> <span class="k">as</span> <span class="nn">hv</span>
+<span class="kn">import</span> <span class="nn">hvplot.networkx</span> <span class="k">as</span> <span class="nn">hvnx</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">namestring</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^(?P&lt;name&gt;.+  )(?P&lt;lateral_limits&gt;Same extent as .+|( ?-?\d</span><span class="si">{6}</span><span class="s2">(N|S) \d</span><span class="si">{7}</span><span class="s2">(E|W)( \(.*\))?| ?thence (anti-)?clockwise by the arc of a circle radius \d+(.\d+)? NM centred on -?\d</span><span class="si">{6}</span><span class="s2">(N|S) \d</span><span class="si">{7}</span><span class="s2">(E|W) to)+( but excluding .*)?)  ?(Upper limit: (?P&lt;upper_limit&gt;FL\d+|\d+ FT (ALT|SFC)))  ?(Lower limit: (?P&lt;lower_limit&gt;FL\d+|\d+ FT (ALT|SFC)|SFC))  ?(Class: (?P&lt;class&gt;[A-G]))(?P&lt;second&gt;  ?(Upper limit: (?P&lt;upper_limit_2&gt;FL\d+|\d+ FT (ALT|SFC)))  ?(Lower limit: (?P&lt;lower_limit_2&gt;FL\d+|\d+ FT (ALT|SFC)|SFC))  ?(Class: (?P&lt;class_2&gt;[A-G])))?$&quot;</span>
+<span class="n">callsignstring</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^((?P&lt;callsign&gt;[A-Z ]+)  )?((?P&lt;language&gt;English)?(  )?)(?!English)(?P&lt;hours&gt;.*)$&quot;</span>
+<span class="n">freqstring</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^(?P&lt;frequency&gt;\d</span><span class="si">{3}</span><span class="s2">\.\d</span><span class="si">{3}</span><span class="s2">)(  (?P&lt;purpose&gt;.*))?$&quot;</span>
+<span class="n">lateralstring</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;((?P&lt;edge1&gt;Same extent as .+)| ?-?(?P&lt;point&gt;(?P&lt;point_lat&gt;\d</span><span class="si">{6}</span><span class="s2">)(?P&lt;point_ns&gt;(N|S)) (?P&lt;point_long&gt;\d</span><span class="si">{7}</span><span class="s2">)(?P&lt;point_ew&gt;(E|W)))| ?(?P&lt;circle&gt;thence (?P&lt;circle_anti&gt;(anti-)?)clockwise by the arc of a circle radius (?P&lt;circle_radius&gt;\d+(.\d+)?) NM centred on -?(?P&lt;circle_lat&gt;\d</span><span class="si">{6}</span><span class="s2">)(?P&lt;circle_ns&gt;(N|S)) (?P&lt;circle_long&gt;\d</span><span class="si">{7}</span><span class="s2">)(?P&lt;circle_ew&gt;(E|W)) to ?-?((?P&lt;circle_lat2&gt;\d</span><span class="si">{6}</span><span class="s2">)(?P&lt;circle_ns2&gt;(N|S)) (?P&lt;circle_long2&gt;\d</span><span class="si">{7}</span><span class="s2">)(?P&lt;circle_ew2&gt;(E|W))))|(?P&lt;edge2&gt; but excluding the .*))&quot;</span>
+<span class="n">verticalstring</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^((?P&lt;fl&gt;FL(?P&lt;fl_num&gt;\d+))|(?P&lt;ft&gt;(?P&lt;ft_num&gt;\d+) FT (?P&lt;ft_alt_sfc&gt;ALT|SFC))|(?P&lt;sfc&gt;SFC))$&quot;</span>
+
+<span class="n">expression_namestring</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">namestring</span><span class="p">)</span>
+<span class="n">expression_callsignstring</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">callsignstring</span><span class="p">)</span>
+<span class="n">expression_freqstring</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">freqstring</span><span class="p">)</span>
+<span class="n">expression_lateral</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">lateralstring</span><span class="p">)</span>
+<span class="n">expression_vertical</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">verticalstring</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="initial-data-processing">
+<h2>Initial Data Processing<a class="headerlink" href="#initial-data-processing" title="Permalink to this headline">¶</a></h2>
+<p>We parse the HTML table using a built-in pandas method and parse each
+row with a series of regular expressions to extract the data in a useful
+format.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dfs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_html</span><span class="p">(</span><span class="n">dataset_location</span><span class="p">,</span> <span class="n">flavor</span><span class="o">=</span><span class="s1">&#39;bs4&#39;</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;ffill&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_row</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="n">name_long</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">callsign_long</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">freq_long</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">remarks</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">name_processed</span> <span class="o">=</span> <span class="n">process_namestring</span><span class="p">(</span><span class="n">name_long</span><span class="p">)</span>
+    <span class="n">callsign_processed</span> <span class="o">=</span> <span class="n">process_callsignstring</span><span class="p">(</span><span class="n">callsign_long</span><span class="p">)</span>
+    <span class="n">freq_processed</span> <span class="o">=</span> <span class="n">process_freqstring</span><span class="p">(</span><span class="n">freq_long</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">name_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
+        <span class="n">name_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lateral_limits&#39;</span><span class="p">),</span>
+        <span class="n">name_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;upper_limit&#39;</span><span class="p">),</span>
+        <span class="n">name_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lower_limit&#39;</span><span class="p">),</span>
+        <span class="n">name_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;class_of_airspace&#39;</span><span class="p">),</span>
+        <span class="n">name_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;upper_limit_2&#39;</span><span class="p">),</span>
+        <span class="n">name_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lower_limit_2&#39;</span><span class="p">),</span>
+        <span class="n">name_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;class_of_airspace_2&#39;</span><span class="p">),</span>
+        <span class="n">unit</span><span class="p">,</span>
+        <span class="n">callsign_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;callsign&#39;</span><span class="p">),</span>
+        <span class="n">callsign_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;language&#39;</span><span class="p">),</span>
+        <span class="n">callsign_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;hours&#39;</span><span class="p">),</span>
+        <span class="n">freq_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;frequency&#39;</span><span class="p">),</span>
+        <span class="n">freq_processed</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;purpose&#39;</span><span class="p">),</span>
+        <span class="n">remarks</span>
+    <span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">process_vertical_limit</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">expression_vertical</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;fl&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;fl_num&#39;</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="k">elif</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;ft_num&#39;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;sfc&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">process_namestring</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">expression_namestring</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;original&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;lateral_limits&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;lateral_limits&#39;</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;upper_limit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">process_vertical_limit</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;upper_limit&#39;</span><span class="p">))</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;lower_limit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">process_vertical_limit</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;lower_limit&#39;</span><span class="p">))</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;class_of_airspace&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;second&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;second&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;second&#39;</span><span class="p">]:</span> <span class="c1"># second upper/lower limit and class</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;upper_limit_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">process_vertical_limit</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;upper_limit_2&#39;</span><span class="p">))</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;lower_limit_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">process_vertical_limit</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;lower_limit_2&#39;</span><span class="p">))</span>
+            <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;class_of_airspace_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;class_2&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">process_callsignstring</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">expression_callsignstring</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;original&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;callsign&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;callsign&#39;</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;language&#39;</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;hours&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;hours&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">process_freqstring</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">expression_freqstring</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;original&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;frequency&#39;</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;purpose&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;purpose&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+
+<span class="n">df2</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">process_row</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">result_type</span><span class="o">=</span><span class="s1">&#39;expand&#39;</span><span class="p">)</span>
+
+<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lateral_limits&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;upper_limit&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lower_limit&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;class_of_airspace&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;upper_limit_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lower_limit_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;class_of_airspace_2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;unit&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;callsign&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;language&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;hours&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;frequency&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;purpose&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;remarks&#39;</span>
+<span class="p">]</span>
+<span class="n">df2</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fir_index</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="n">df2</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;FIR&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">df2</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;UIR&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fir</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">fir_index</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">fir</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>lateral_limits</th>
+      <th>upper_limit</th>
+      <th>lower_limit</th>
+      <th>class_of_airspace</th>
+      <th>upper_limit_2</th>
+      <th>lower_limit_2</th>
+      <th>class_of_airspace_2</th>
+      <th>unit</th>
+      <th>callsign</th>
+      <th>language</th>
+      <th>hours</th>
+      <th>frequency</th>
+      <th>purpose</th>
+      <th>remarks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>LONDON FIR</td>
+      <td>550000N 0050000E -513000N 0020000E -510700N 00...</td>
+      <td>24500</td>
+      <td>19500</td>
+      <td>C</td>
+      <td>19500.0</td>
+      <td>0.0</td>
+      <td>G</td>
+      <td>LONDON CONTROL (SWANWICK)</td>
+      <td>LONDON CONTROL</td>
+      <td>English</td>
+      <td>H24</td>
+      <td>118.480</td>
+      <td>None</td>
+      <td>LONDON CONTROL (SWANWICK):Note 1: The Le Touqu...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>LONDON FIR</td>
+      <td>550000N 0050000E -513000N 0020000E -510700N 00...</td>
+      <td>24500</td>
+      <td>19500</td>
+      <td>C</td>
+      <td>19500.0</td>
+      <td>0.0</td>
+      <td>G</td>
+      <td>LONDON CONTROL (SWANWICK)</td>
+      <td>LONDON CONTROL</td>
+      <td>English</td>
+      <td>H24</td>
+      <td>118.825</td>
+      <td>London TMA outbound radar: See London Terminal...</td>
+      <td>LONDON CONTROL (SWANWICK):Note 1: The Le Touqu...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>LONDON FIR</td>
+      <td>550000N 0050000E -513000N 0020000E -510700N 00...</td>
+      <td>24500</td>
+      <td>19500</td>
+      <td>C</td>
+      <td>19500.0</td>
+      <td>0.0</td>
+      <td>G</td>
+      <td>LONDON CONTROL (SWANWICK)</td>
+      <td>LONDON CONTROL</td>
+      <td>English</td>
+      <td>H24</td>
+      <td>119.780</td>
+      <td>London TMA outbound radar: See London Terminal...</td>
+      <td>LONDON CONTROL (SWANWICK):Note 1: The Le Touqu...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>LONDON FIR</td>
+      <td>550000N 0050000E -513000N 0020000E -510700N 00...</td>
+      <td>24500</td>
+      <td>19500</td>
+      <td>C</td>
+      <td>19500.0</td>
+      <td>0.0</td>
+      <td>G</td>
+      <td>LONDON CONTROL (SWANWICK)</td>
+      <td>LONDON CONTROL</td>
+      <td>English</td>
+      <td>H24</td>
+      <td>120.180</td>
+      <td>None</td>
+      <td>LONDON CONTROL (SWANWICK):Note 1: The Le Touqu...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>LONDON FIR</td>
+      <td>550000N 0050000E -513000N 0020000E -510700N 00...</td>
+      <td>24500</td>
+      <td>19500</td>
+      <td>C</td>
+      <td>19500.0</td>
+      <td>0.0</td>
+      <td>G</td>
+      <td>LONDON CONTROL (SWANWICK)</td>
+      <td>LONDON CONTROL</td>
+      <td>English</td>
+      <td>H24</td>
+      <td>120.475</td>
+      <td>None</td>
+      <td>LONDON CONTROL (SWANWICK):Note 1: The Le Touqu...</td>
+    </tr>
+  </tbody>
+</table>
+</div><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zones</span> <span class="o">=</span> <span class="n">df2</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="o">-</span><span class="n">fir_index</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">zones</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;upper_limit_2&#39;</span><span class="p">,</span> <span class="s1">&#39;lower_limit_2&#39;</span><span class="p">,</span> <span class="s1">&#39;class_of_airspace_2&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">zones</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>lateral_limits</th>
+      <th>upper_limit</th>
+      <th>lower_limit</th>
+      <th>class_of_airspace</th>
+      <th>unit</th>
+      <th>callsign</th>
+      <th>language</th>
+      <th>hours</th>
+      <th>frequency</th>
+      <th>purpose</th>
+      <th>remarks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>105</th>
+      <td>ABERDEEN CTA 1</td>
+      <td>572153N 0015835W -572100N 0015802W -572100N 00...</td>
+      <td>11500</td>
+      <td>1500</td>
+      <td>D</td>
+      <td>ABERDEEN/DYCE</td>
+      <td>ABERDEEN APPROACH</td>
+      <td>English</td>
+      <td></td>
+      <td>119.055</td>
+      <td>DOC 55 NM/25,000 FT.</td>
+      <td>The Airspace remains notified even though the ...</td>
+    </tr>
+    <tr>
+      <th>106</th>
+      <td>ABERDEEN CTA 2</td>
+      <td>571522N 0015428W -570845N 0015019W thence cloc...</td>
+      <td>11500</td>
+      <td>1500</td>
+      <td>D</td>
+      <td>ABERDEEN/DYCE</td>
+      <td>ABERDEEN APPROACH</td>
+      <td>English</td>
+      <td></td>
+      <td>119.055</td>
+      <td>DOC 55 NM/25,000 FT.</td>
+      <td>The Airspace remains notified even though the ...</td>
+    </tr>
+    <tr>
+      <th>107</th>
+      <td>ABERDEEN CTA 3</td>
+      <td>572100N 0023356W -570015N 0025056W -565433N 00...</td>
+      <td>11500</td>
+      <td>3000</td>
+      <td>D</td>
+      <td>ABERDEEN/DYCE</td>
+      <td>ABERDEEN APPROACH</td>
+      <td>English</td>
+      <td></td>
+      <td>119.055</td>
+      <td>DOC 55 NM/25,000 FT.</td>
+      <td>The Airspace remains notified even though the ...</td>
+    </tr>
+    <tr>
+      <th>108</th>
+      <td>BALDER CTA</td>
+      <td>590504N 0013916E -581110N 0030955E -575615N 00...</td>
+      <td>8500</td>
+      <td>1500</td>
+      <td>D</td>
+      <td>NORWAY ACC</td>
+      <td>NORWAY CONTROL</td>
+      <td>English</td>
+      <td>0600 - 2030 Mon-Fri (1 hr earlier in summer)</td>
+      <td>134.200</td>
+      <td>None</td>
+      <td>Mandatory carriage of ADS-B equipment.</td>
+    </tr>
+    <tr>
+      <th>109</th>
+      <td>BANBA CTA</td>
+      <td>520049N 0060720W -514034N 0060027W -512400N 00...</td>
+      <td>66000</td>
+      <td>19500</td>
+      <td>C</td>
+      <td>SHANNON ACC</td>
+      <td>SHANNON CONTROL</td>
+      <td>English</td>
+      <td>H24</td>
+      <td>131.150</td>
+      <td>None</td>
+      <td>ATS within the BANBA CTA is delegated to Shann...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+<div class="section" id="extracting-geographical-data">
+<h2>Extracting Geographical Data<a class="headerlink" href="#extracting-geographical-data" title="Permalink to this headline">¶</a></h2>
+<p>We take the text representation of each airspace’s geometry and turn it
+into a geometry object that we can work with more easily. We then use
+this to produce a geopandas GeoDataFrame.</p>
+<p>Note: we are using buffer(0) to fix self-intersecting polygons. This
+turns “bow tie” shapes into a MultiPolygon.</p>
+<p>TODO: fix curved sections, currently using resolution=1 because they
+don’t quite work properly</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">circle</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">centre</span><span class="p">,</span> <span class="n">clockwise</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span> <span class="c1"># start, end, centre tuples (lat,long), clockwise bool</span>
+    <span class="c1"># correct the centre by projecting it onto the perpendicular bisector of start and end (TODO better implementation)</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">start</span>
+    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">end</span>
+    <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span> <span class="o">=</span> <span class="n">centre</span>
+    <span class="c1"># edge cases</span>
+    <span class="k">if</span> <span class="n">y2</span> <span class="o">==</span> <span class="n">y1</span><span class="p">:</span>
+        <span class="n">centre2</span> <span class="o">=</span> <span class="p">((</span><span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">y3</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">x2</span> <span class="o">==</span> <span class="n">x1</span><span class="p">:</span>
+        <span class="n">centre2</span> <span class="o">=</span> <span class="p">(</span><span class="n">x3</span><span class="p">,</span> <span class="p">(</span><span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">(((</span><span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m</span><span class="p">))</span> <span class="o">+</span> <span class="p">((</span><span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="n">x3</span><span class="p">)</span> <span class="o">-</span> <span class="n">y3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">m</span><span class="p">))</span>
+        <span class="n">centre2</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">x3</span><span class="p">))</span> <span class="o">+</span> <span class="n">y3</span><span class="p">)</span>
+
+    <span class="n">radius</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">centre2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">pow</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">centre2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">angle1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">start</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">centre2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">centre2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">angle2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">end</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">centre2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">centre2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="n">angle2</span> <span class="o">-</span> <span class="n">angle1</span><span class="p">)</span> <span class="o">/</span> <span class="n">resolution</span>
+    <span class="k">if</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">clockwise</span><span class="p">:</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">angle2</span> <span class="o">-</span> <span class="n">angle1</span><span class="p">))</span> <span class="o">/</span> <span class="n">resolution</span>
+    <span class="k">if</span> <span class="n">step</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">clockwise</span><span class="p">:</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">angle2</span> <span class="o">-</span> <span class="n">angle1</span><span class="p">))</span> <span class="o">/</span> <span class="n">resolution</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="c1">#ret.append(start)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">resolution</span><span class="p">):</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="n">angle1</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">step</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">centre2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">radius</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span>
+        <span class="n">long</span> <span class="o">=</span> <span class="n">centre2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">radius</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">lat</span><span class="p">,</span> <span class="n">long</span><span class="p">))</span>
+    <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="k">def</span> <span class="nf">strings_to_point</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">long</span><span class="p">,</span> <span class="n">ew</span><span class="p">):</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">ns</span> <span class="o">==</span> <span class="s1">&#39;N&#39;</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10000</span>
+    <span class="n">longitude</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">long</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">ew</span> <span class="o">==</span> <span class="s1">&#39;E&#39;</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10000</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">lateral_to_geography</span><span class="p">(</span><span class="n">lateral_limits</span><span class="p">):</span>
+    <span class="n">geography</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">expression_lateral</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">lateral_limits</span><span class="p">):</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;edge1&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Edge case: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;edge1&#39;</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;edge2&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Edge case: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;edge2&#39;</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;point&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">point</span> <span class="o">=</span> <span class="n">strings_to_point</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;point_lat&#39;</span><span class="p">),</span>
+                                     <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;point_ns&#39;</span><span class="p">),</span>
+                                     <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;point_long&#39;</span><span class="p">),</span>
+                                     <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;point_ew&#39;</span><span class="p">))</span>
+            <span class="n">geography</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;circle&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">geography</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">strings_to_point</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;circle_lat2&#39;</span><span class="p">),</span>
+                                   <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;circle_ns2&#39;</span><span class="p">),</span>
+                                   <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;circle_long2&#39;</span><span class="p">),</span>
+                                   <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;circle_ew2&#39;</span><span class="p">))</span>
+            <span class="n">centre</span> <span class="o">=</span> <span class="n">strings_to_point</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;circle_lat&#39;</span><span class="p">),</span>
+                                      <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;circle_ns&#39;</span><span class="p">),</span>
+                                      <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;circle_long&#39;</span><span class="p">),</span>
+                                      <span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;circle_ew&#39;</span><span class="p">))</span>
+            <span class="n">clockwise</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;circle_anti&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">geography</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">circle</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">centre</span><span class="p">,</span> <span class="n">clockwise</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
+            <span class="c1">#geography.append(end)</span>
+        <span class="c1">#print(groups)</span>
+    <span class="k">return</span> <span class="n">geography</span>
+
+<span class="k">def</span> <span class="nf">geography_to_points</span><span class="p">(</span><span class="n">geography</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">geography</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">points_from_xy</span><span class="p">([],</span> <span class="p">[])</span>
+    <span class="n">lats</span><span class="p">,</span> <span class="n">longs</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">geography</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">points_from_xy</span><span class="p">(</span><span class="n">longs</span><span class="p">,</span> <span class="n">lats</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">geography_to_airspace</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">poly</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">poly</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">geopandas</span><span class="o">.</span><span class="n">points_from_xy</span><span class="p">([],</span> <span class="p">[]))</span>
+    <span class="n">extruded_poly</span> <span class="o">=</span> <span class="n">ExtrudedPolygon</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">lower_limit</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">upper_limit</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">airspace</span> <span class="o">=</span> <span class="n">Airspace</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">extruded_poly</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">airspace</span>
+
+<span class="c1">#geography_lambda = lambda x: MultiPolygon([Polygon(geography_to_points(lateral_to_geography(x)))])</span>
+<span class="k">def</span> <span class="nf">geography_lambda</span><span class="p">(</span><span class="n">limit</span><span class="p">):</span>
+    <span class="n">poly</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">geography_to_points</span><span class="p">(</span><span class="n">lateral_to_geography</span><span class="p">(</span><span class="n">limit</span><span class="p">)))</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">poly</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">MultiPolygon</span><span class="p">([</span><span class="n">poly</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">MultiPolygon</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
+
+<span class="n">zones</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zones</span><span class="o">.</span><span class="n">lateral_limits</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">geography_lambda</span><span class="p">)</span>
+<span class="n">zones</span><span class="p">[</span><span class="s1">&#39;airspace&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zones</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">geography_to_airspace</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Edge</span> <span class="n">case</span><span class="p">:</span>  <span class="n">but</span> <span class="n">excluding</span> <span class="n">the</span> <span class="n">Gatwick</span> <span class="n">CTR</span><span class="o">.</span>
+<span class="n">Edge</span> <span class="n">case</span><span class="p">:</span>  <span class="n">but</span> <span class="n">excluding</span> <span class="n">the</span> <span class="n">Gatwick</span> <span class="n">CTR</span><span class="o">.</span>
+<span class="n">Edge</span> <span class="n">case</span><span class="p">:</span>  <span class="n">but</span> <span class="n">excluding</span> <span class="n">the</span> <span class="n">Gatwick</span> <span class="n">CTR</span><span class="o">.</span>
+<span class="n">Edge</span> <span class="n">case</span><span class="p">:</span>  <span class="n">but</span> <span class="n">excluding</span> <span class="n">the</span> <span class="n">Gatwick</span> <span class="n">CTR</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf</span> <span class="o">=</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">zones</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">zones</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+<span class="n">gdf</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">4326</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">gdf</span><span class="o">.</span><span class="n">crs</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Geographic</span> <span class="mi">2</span><span class="n">D</span> <span class="n">CRS</span><span class="p">:</span> <span class="n">EPSG</span><span class="p">:</span><span class="mi">4326</span><span class="o">&gt;</span>
+<span class="n">Name</span><span class="p">:</span> <span class="n">WGS</span> <span class="mi">84</span>
+<span class="n">Axis</span> <span class="n">Info</span> <span class="p">[</span><span class="n">ellipsoidal</span><span class="p">]:</span>
+<span class="o">-</span> <span class="n">Lat</span><span class="p">[</span><span class="n">north</span><span class="p">]:</span> <span class="n">Geodetic</span> <span class="n">latitude</span> <span class="p">(</span><span class="n">degree</span><span class="p">)</span>
+<span class="o">-</span> <span class="n">Lon</span><span class="p">[</span><span class="n">east</span><span class="p">]:</span> <span class="n">Geodetic</span> <span class="n">longitude</span> <span class="p">(</span><span class="n">degree</span><span class="p">)</span>
+<span class="n">Area</span> <span class="n">of</span> <span class="n">Use</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">World</span>
+<span class="o">-</span> <span class="n">bounds</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mf">180.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">90.0</span><span class="p">,</span> <span class="mf">180.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">)</span>
+<span class="n">Datum</span><span class="p">:</span> <span class="n">World</span> <span class="n">Geodetic</span> <span class="n">System</span> <span class="mi">1984</span>
+<span class="o">-</span> <span class="n">Ellipsoid</span><span class="p">:</span> <span class="n">WGS</span> <span class="mi">84</span>
+<span class="o">-</span> <span class="n">Prime</span> <span class="n">Meridian</span><span class="p">:</span> <span class="n">Greenwich</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="visualising-airspaces">
+<h2>Visualising Airspaces<a class="headerlink" href="#visualising-airspaces" title="Permalink to this headline">¶</a></h2>
+<p>We can now plot the airspaces on a map, and plot the airspaces which
+intersect a given point.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">loc</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="o">-</span><span class="mf">0.388092</span><span class="p">,</span> <span class="mf">51.590865</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">gdf_filtered</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[(</span><span class="n">gdf</span><span class="o">.</span><span class="n">lower_limit</span> <span class="o">&lt;</span> <span class="n">v</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">upper_limit</span> <span class="o">&gt;</span> <span class="n">v</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">loc</span><span class="p">)]</span>
+
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+
+<span class="n">imagery</span> <span class="o">=</span> <span class="n">cimgt</span><span class="o">.</span><span class="n">Stamen</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;terrain-background&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">imagery</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+<span class="n">minlon</span> <span class="o">=</span> <span class="o">-</span><span class="mi">11</span>
+<span class="n">maxlon</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">minlat</span> <span class="o">=</span> <span class="mi">48</span>
+<span class="n">maxlat</span> <span class="o">=</span> <span class="mf">61.5</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">((</span><span class="n">minlon</span><span class="p">,</span> <span class="n">maxlon</span><span class="p">,</span> <span class="n">minlat</span><span class="p">,</span> <span class="n">maxlat</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">imagery</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">add_geometries</span><span class="p">(</span><span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">add_geometries</span><span class="p">(</span><span class="n">gdf_filtered</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">loc</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span> <span class="n">marker</span> <span class="o">=</span> <span class="s2">&quot;^&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Aircraft Location&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">set_zorder</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/airspace_data_uk_17_0.png" src="_images/airspace_data_uk_17_0.png" />
+</div>
+<div class="section" id="export-data">
+<h2>Export Data<a class="headerlink" href="#export-data" title="Permalink to this headline">¶</a></h2>
+<p>We save the data to a file.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flight_processing</span> <span class="kn">import</span> <span class="n">DataConfig</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">DataConfig</span><span class="o">.</span><span class="n">known_dataset</span><span class="p">(</span><span class="s2">&quot;uk&quot;</span><span class="p">)</span>
+<span class="n">out_location</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">dataset_location</span>
+<span class="n">out_location</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;/mnt/cold_data/josh/processing/regions_uk_wkt.json&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf_out</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="k">del</span> <span class="n">gdf_out</span><span class="p">[</span><span class="s1">&#39;airspace&#39;</span><span class="p">]</span>
+
+<span class="n">gdf_out</span><span class="p">[</span><span class="s1">&#39;wkt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_out</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">wkt</span><span class="p">)</span>
+<span class="c1">#del gdf_out[&#39;geometry&#39;]</span>
+
+<span class="n">gdf_out</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dataset_location</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s2">&quot;GeoJSON&quot;</span><span class="p">)</span>
+
+<span class="k">del</span> <span class="n">gdf_out</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ERROR</span><span class="p">:</span><span class="n">fiona</span><span class="o">.</span><span class="n">_env</span><span class="p">:</span><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">regions_uk_wkt</span><span class="o">.</span><span class="n">json</span><span class="p">:</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
+<span class="n">WARNING</span><span class="p">:</span><span class="n">fiona</span><span class="o">.</span><span class="n">_env</span><span class="p">:</span><span class="n">driver</span> <span class="n">GeoJSON</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">support</span> <span class="n">creation</span> <span class="n">option</span> <span class="n">ENCODING</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="airspace_data_usa.html" class="btn btn-neutral float-right" title="Importing the USA’s Airspaces" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="preparing_datasets.html" class="btn btn-neutral float-left" title="Preparing Datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Joshua Smailes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

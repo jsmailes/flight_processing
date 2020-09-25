@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>flight_processing.DataConfig &mdash; Flight Processing  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="flight_processing.data.FlightDownloader" href="flight_processing.data.FlightDownloader.html" />
+    <link rel="prev" title="Core Structure" href="core_structure.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Flight Processing
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="core_structure.html">Core Structure</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">flight_processing.DataConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.data.FlightDownloader.html">flight_processing.data.FlightDownloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.data.GraphBuilder.html">flight_processing.data.GraphBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.data.AirspaceGraph.html">flight_processing.data.AirspaceGraph</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flight Processing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="core_structure.html">Core Structure</a> &raquo;</li>
+        
+      <li>flight_processing.DataConfig</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/flight_processing.DataConfig.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="flight-processing-dataconfig">
+<h1>flight_processing.DataConfig<a class="headerlink" href="#flight-processing-dataconfig" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="flight_processing.DataConfig">
+<em class="property">class </em><code class="sig-prename descclassname">flight_processing.</code><code class="sig-name descname">DataConfig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">minlon</span></em>, <em class="sig-param"><span class="n">maxlon</span></em>, <em class="sig-param"><span class="n">minlat</span></em>, <em class="sig-param"><span class="n">maxlat</span></em>, <em class="sig-param"><span class="n">detail</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">data_prefix</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.DataConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load relevant information about a dataset, giving either custom parameters or the name of a known dataset.</p>
+<p><strong>Summary:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>initialisation:
+<a class="reference external" href="#flight_processing.DataConfig.__init__">__init__</a>,
+<a class="reference external" href="#flight_processing.DataConfig.known_dataset">known_dataset</a></p></li>
+<li><p>properties:
+<a class="reference external" href="#flight_processing.DataConfig.dataset">dataset</a>,
+<a class="reference external" href="#flight_processing.DataConfig.minlon">minlon</a>,
+<a class="reference external" href="#flight_processing.DataConfig.maxlon">maxlon</a>,
+<a class="reference external" href="#flight_processing.DataConfig.minlat">minlat</a>,
+<a class="reference external" href="#flight_processing.DataConfig.maxlat">maxlat</a>,
+<a class="reference external" href="#flight_processing.DataConfig.detail">detail</a>,
+<a class="reference external" href="#flight_processing.DataConfig.dataset_location">dataset_location</a>,
+<a class="reference external" href="#flight_processing.DataConfig.bounds_opensky">bounds_opensky</a>,
+<a class="reference external" href="#flight_processing.DataConfig.bounds_plt">bounds_plt</a></p></li>
+<li><p>utility:
+<a class="reference external" href="#flight_processing.DataConfig.data_flights">data_flights</a>,
+<a class="reference external" href="#flight_processing.DataConfig.data_graph_yaml">data_graph_yaml</a>,
+<a class="reference external" href="#flight_processing.DataConfig.data_graph_json">data_graph_json</a>,
+<a class="reference external" href="#flight_processing.DataConfig.data_graph_npz">data_graph_npz</a></p></li>
+</ul>
+</div></blockquote>
+<dl class="py method">
+<dt id="flight_processing.DataConfig.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">minlon</span></em>, <em class="sig-param"><span class="n">maxlon</span></em>, <em class="sig-param"><span class="n">minlat</span></em>, <em class="sig-param"><span class="n">maxlat</span></em>, <em class="sig-param"><span class="n">detail</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">data_prefix</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.DataConfig.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialise the object with custom parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>str</em>) – dataset name</p></li>
+<li><p><strong>minlon</strong> (<em>float</em>) – longitude minimum bound</p></li>
+<li><p><strong>maxlon</strong> (<em>float</em>) – longitude maximum bound</p></li>
+<li><p><strong>minlat</strong> (<em>float</em>) – latitude minimum bound</p></li>
+<li><p><strong>maxlat</strong> (<em>float</em>) – latitude maximum bound</p></li>
+<li><p><strong>detail</strong> (<em>int</em><em>, </em><em>optional</em>) – map detail on plots</p></li>
+<li><p><strong>data_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – dataset folder location, overrides config</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#flight_processing.DataConfig" title="flight_processing.DataConfig">DataConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.bounds_opensky">
+<em class="property">property </em><code class="sig-name descname">bounds_opensky</code><a class="headerlink" href="#flight_processing.DataConfig.bounds_opensky" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the bounding box of the dataset in the format expected by traffic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float, float, float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.bounds_plt">
+<em class="property">property </em><code class="sig-name descname">bounds_plt</code><a class="headerlink" href="#flight_processing.DataConfig.bounds_plt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the bounding box of the dataset in the format expected by pyplot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(float, float, float, float)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.data_flights">
+<code class="sig-name descname">data_flights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datetime</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.DataConfig.data_flights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the location of a flight dump for the given datetime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>datetime</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – datetime to get</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>location of file (may not exist)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.data_graph_json">
+<code class="sig-name descname">data_graph_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datetime</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.DataConfig.data_graph_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the location of a JSON graph for the given datetime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>datetime</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – datetime to get</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>location of file (may not exist)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.data_graph_npz">
+<code class="sig-name descname">data_graph_npz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datetime</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.DataConfig.data_graph_npz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the location of an NPZ graph for the given datetime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>datetime</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – datetime to get</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>location of file (may not exist)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.data_graph_yaml">
+<code class="sig-name descname">data_graph_yaml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datetime</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.DataConfig.data_graph_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the location of a YAML graph for the given datetime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>datetime</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – datetime to get</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>location of file (may not exist)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.dataset">
+<em class="property">property </em><code class="sig-name descname">dataset</code><a class="headerlink" href="#flight_processing.DataConfig.dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.dataset_location">
+<em class="property">property </em><code class="sig-name descname">dataset_location</code><a class="headerlink" href="#flight_processing.DataConfig.dataset_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the location of the saved geopandas GeoDataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.detail">
+<em class="property">property </em><code class="sig-name descname">detail</code><a class="headerlink" href="#flight_processing.DataConfig.detail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the map detail.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.known_dataset">
+<em class="property">classmethod </em><code class="sig-name descname">known_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">data_prefix</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.DataConfig.known_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialise the object with known parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>str</em>) – dataset name</p></li>
+<li><p><strong>data_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – dataset folder location, overrides config</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#flight_processing.DataConfig" title="flight_processing.DataConfig">DataConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.maxlat">
+<em class="property">property </em><code class="sig-name descname">maxlat</code><a class="headerlink" href="#flight_processing.DataConfig.maxlat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the latitude maximum bound.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.maxlon">
+<em class="property">property </em><code class="sig-name descname">maxlon</code><a class="headerlink" href="#flight_processing.DataConfig.maxlon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the longitude maximum bound.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.minlat">
+<em class="property">property </em><code class="sig-name descname">minlat</code><a class="headerlink" href="#flight_processing.DataConfig.minlat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the latitude minimum bound.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.DataConfig.minlon">
+<em class="property">property </em><code class="sig-name descname">minlon</code><a class="headerlink" href="#flight_processing.DataConfig.minlon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the longitude minimum bound.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="flight_processing.data.FlightDownloader.html" class="btn btn-neutral float-right" title="flight_processing.data.FlightDownloader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="core_structure.html" class="btn btn-neutral float-left" title="Core Structure" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Joshua Smailes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Downloading Flights &mdash; Flight Processing  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Processing Flights" href="demo_graph_builder.html" />
+    <link rel="prev" title="Importing Switzerland’s Airspaces" href="airspace_data_switzerland.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Flight Processing
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="quickstart.html">Quickstart</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="preparing_datasets.html">Preparing Datasets</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Downloading Flights</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-1-known-dataset">Example 1: known dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-2-new-dataset">Example 2: new dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="demo_graph_builder.html">Processing Flights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_airspace_graph.html">Loading Graph</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="core_structure.html">Core Structure</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flight Processing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="quickstart.html">Quickstart</a> &raquo;</li>
+        
+      <li>Downloading Flights</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/demo_flight_downloader.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="downloading-flights">
+<h1>Downloading Flights<a class="headerlink" href="#downloading-flights" title="Permalink to this headline">¶</a></h1>
+<p>This notebook dumps flights to file using the OpenSky impala shell.
+Ensure you have correctly configured the <code class="docutils literal notranslate"><span class="pre">traffic</span></code> library before use,
+as well as setting the data location in
+<code class="docutils literal notranslate"><span class="pre">~/.config/flight_processing/flight_processing.conf</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flight_processing</span> <span class="kn">import</span> <span class="n">DataConfig</span>
+<span class="kn">from</span> <span class="nn">flight_processing.data</span> <span class="kn">import</span> <span class="n">FlightDownloader</span>
+</pre></div>
+</div>
+<div class="section" id="example-1-known-dataset">
+<h2>Example 1: known dataset<a class="headerlink" href="#example-1-known-dataset" title="Permalink to this headline">¶</a></h2>
+<p>This example uses the already encoded bounds of Switzerland to download
+flights.</p>
+<p>First we download the flights as a <code class="docutils literal notranslate"><span class="pre">Traffic</span></code> object, then we dump 1
+hour of flights to a file, then finally we dump 3 more hours of flights
+to files in a single bulk command.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialise downloader</span>
+<span class="n">downloader</span> <span class="o">=</span> <span class="n">FlightDownloader</span><span class="p">(</span><span class="s2">&quot;switzerland&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download one hour of flights as a usable object</span>
+<span class="n">downloader</span><span class="o">.</span><span class="n">download_flights</span><span class="p">(</span><span class="s2">&quot;2020-01-01 00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-01-01 01:00&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<b>Traffic with 13 identifiers</b><style  type="text/css" >
+#T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow0_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 100.0%, transparent 100.0%);
+        }#T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow1_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 99.9%, transparent 99.9%);
+        }#T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow2_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 59.9%, transparent 59.9%);
+        }#T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow3_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 44.2%, transparent 44.2%);
+        }#T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow4_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 43.0%, transparent 43.0%);
+        }#T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow5_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 38.5%, transparent 38.5%);
+        }#T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow6_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 28.1%, transparent 28.1%);
+        }#T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow7_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 16.1%, transparent 16.1%);
+        }#T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow8_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 15.0%, transparent 15.0%);
+        }#T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow9_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 13.1%, transparent 13.1%);
+        }</style><table id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5b" ><thead>    <tr>        <th class="blank" ></th>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >count</th>    </tr>    <tr>        <th class="index_name level0" >icao24</th>        <th class="index_name level1" >callsign</th>        <th class="blank" ></th>    </tr></thead><tbody>
+                <tr>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel0_row0" class="row_heading level0 row0" >4b1806</th>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel1_row0" class="row_heading level1 row0" >SWR</th>
+                        <td id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow0_col0" class="data row0 col0" >3599</td>
+            </tr>
+            <tr>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel0_row1" class="row_heading level0 row1" >4b180b</th>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel1_row1" class="row_heading level1 row1" >SWR1327</th>
+                        <td id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow1_col0" class="data row1 col0" >3596</td>
+            </tr>
+            <tr>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel0_row2" class="row_heading level0 row2" >4b17fb</th>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel1_row2" class="row_heading level1 row2" >SWR193V</th>
+                        <td id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow2_col0" class="data row2 col0" >2156</td>
+            </tr>
+            <tr>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel0_row3" class="row_heading level0 row3" >424352</th>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel1_row3" class="row_heading level1 row3" >AFL2605</th>
+                        <td id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow3_col0" class="data row3 col0" >1591</td>
+            </tr>
+            <tr>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel0_row4" class="row_heading level0 row4" >3965ab</th>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel1_row4" class="row_heading level1 row4" >AFR470</th>
+                        <td id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow4_col0" class="data row4 col0" >1546</td>
+            </tr>
+            <tr>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel0_row5" class="row_heading level0 row5" >4b5c4d</th>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel1_row5" class="row_heading level1 row5" >FLORI513</th>
+                        <td id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow5_col0" class="data row5 col0" >1385</td>
+            </tr>
+            <tr>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel0_row6" class="row_heading level0 row6" >4b5c61</th>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel1_row6" class="row_heading level1 row6" >FLORI539</th>
+                        <td id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow6_col0" class="data row6 col0" >1011</td>
+            </tr>
+            <tr>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel0_row7" class="row_heading level0 row7" >300621</th>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel1_row7" class="row_heading level1 row7" >IBRXA</th>
+                        <td id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow7_col0" class="data row7 col0" >580</td>
+            </tr>
+            <tr>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel0_row8" class="row_heading level0 row8" >4b1808</th>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel1_row8" class="row_heading level1 row8" >SWR121E</th>
+                        <td id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow8_col0" class="data row8 col0" >540</td>
+            </tr>
+            <tr>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel0_row9" class="row_heading level0 row9" >471ee2</th>
+                        <th id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5blevel1_row9" class="row_heading level1 row9" >WZZ6192</th>
+                        <td id="T_bdf9eb5c_fd8e_11ea_8882_a33c5ff21b5brow9_col0" class="data row9 col0" >470</td>
+            </tr>
+    </tbody></table><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download flights and dump as JSON</span>
+<span class="n">downloader</span><span class="o">.</span><span class="n">dump_flights</span><span class="p">(</span><span class="s2">&quot;2020-01-01 00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-01-01 01:00&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">/</span><span class="mi">20200101</span><span class="o">/</span><span class="mf">0000.</span><span class="n">json</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download 3 hours of flights and dump as JSON files</span>
+<span class="n">downloader</span><span class="o">.</span><span class="n">dump_flights_bulk</span><span class="p">(</span><span class="s2">&quot;2020-01-01 01:00&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-01-01 04:00&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">02</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">/</span><span class="mi">20200101</span><span class="o">/</span><span class="mf">0100.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">02</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">03</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">/</span><span class="mi">20200101</span><span class="o">/</span><span class="mf">0200.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">03</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">04</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">/</span><span class="mi">20200101</span><span class="o">/</span><span class="mf">0300.</span><span class="n">json</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cleanup</span>
+<span class="k">del</span> <span class="n">downloader</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2-new-dataset">
+<h2>Example 2: new dataset<a class="headerlink" href="#example-2-new-dataset" title="Permalink to this headline">¶</a></h2>
+<p>This example manually encodes the bounds of Switzerland to download
+flights in the same way as above - this can be done with any country or
+region.</p>
+<p>First we download the flights as a <code class="docutils literal notranslate"><span class="pre">Traffic</span></code> object, then we dump 1
+hour of flights to a file, then finally we dump 23 more hours of flights
+to files in a single bulk command.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">DataConfig</span><span class="p">(</span><span class="s2">&quot;switzerland-custom&quot;</span><span class="p">,</span> <span class="n">minlon</span><span class="o">=</span><span class="mf">5.3</span><span class="p">,</span> <span class="n">maxlon</span><span class="o">=</span><span class="mf">10.7</span><span class="p">,</span> <span class="n">minlat</span><span class="o">=</span><span class="mf">45.5</span><span class="p">,</span> <span class="n">maxlat</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">downloader</span> <span class="o">=</span> <span class="n">FlightDownloader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download one hour of flights as a usable object</span>
+<span class="n">downloader</span><span class="o">.</span><span class="n">download_flights</span><span class="p">(</span><span class="s2">&quot;2020-03-05 00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-03-05 01:00&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<b>Traffic with 15 identifiers</b><style  type="text/css" >
+#T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow0_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 100.0%, transparent 100.0%);
+        }#T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow1_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 76.7%, transparent 76.7%);
+        }#T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow2_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 66.2%, transparent 66.2%);
+        }#T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow3_col0,#T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow4_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 55.3%, transparent 55.3%);
+        }#T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow5_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 46.1%, transparent 46.1%);
+        }#T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow6_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 42.8%, transparent 42.8%);
+        }#T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow7_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 38.9%, transparent 38.9%);
+        }#T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow8_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 17.3%, transparent 17.3%);
+        }#T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow9_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 15.1%, transparent 15.1%);
+        }</style><table id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5b" ><thead>    <tr>        <th class="blank" ></th>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >count</th>    </tr>    <tr>        <th class="index_name level0" >icao24</th>        <th class="index_name level1" >callsign</th>        <th class="blank" ></th>    </tr></thead><tbody>
+                <tr>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel0_row0" class="row_heading level0 row0" >4b17fe</th>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel1_row0" class="row_heading level1 row0" >SWR</th>
+                        <td id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow0_col0" class="data row0 col0" >3599</td>
+            </tr>
+            <tr>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel0_row1" class="row_heading level0 row1" >3e0a38</th>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel1_row1" class="row_heading level1 row1" >BPO245</th>
+                        <td id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow1_col0" class="data row1 col0" >2761</td>
+            </tr>
+            <tr>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel0_row2" class="row_heading level0 row2" >4ca7f9</th>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel1_row2" class="row_heading level1 row2" >ABR1624</th>
+                        <td id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow2_col0" class="data row2 col0" >2383</td>
+            </tr>
+            <tr>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel0_row3" class="row_heading level0 row3" >01d78d</th>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel1_row3" class="row_heading level1 row3" >ECHO2</th>
+                        <td id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow3_col0" class="data row3 col0" >1991</td>
+            </tr>
+            <tr>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel0_row4" class="row_heading level0 row4" >44014a</th>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel1_row4" class="row_heading level1 row4" >EJU9044</th>
+                        <td id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow4_col0" class="data row4 col0" >1990</td>
+            </tr>
+            <tr>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel0_row5" class="row_heading level0 row5" >424350</th>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel1_row5" class="row_heading level1 row5" >AFL2605</th>
+                        <td id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow5_col0" class="data row5 col0" >1660</td>
+            </tr>
+            <tr>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel0_row6" class="row_heading level0 row6" >06a1e6</th>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel1_row6" class="row_heading level1 row6" >QTR8111</th>
+                        <td id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow6_col0" class="data row6 col0" >1539</td>
+            </tr>
+            <tr>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel0_row7" class="row_heading level0 row7" >4caa86</th>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel1_row7" class="row_heading level1 row7" >ANE2021</th>
+                        <td id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow7_col0" class="data row7 col0" >1400</td>
+            </tr>
+            <tr>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel0_row8" class="row_heading level0 row8" >451dbd</th>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel1_row8" class="row_heading level1 row8" >BCS130</th>
+                        <td id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow8_col0" class="data row8 col0" >622</td>
+            </tr>
+            <tr>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel0_row9" class="row_heading level0 row9" >4b43aa</th>
+                        <th id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5blevel1_row9" class="row_heading level1 row9" >RGA2</th>
+                        <td id="T_cbaa4e04_fd8e_11ea_8882_a33c5ff21b5brow9_col0" class="data row9 col0" >545</td>
+            </tr>
+    </tbody></table><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download flights and dump as JSON</span>
+<span class="n">downloader</span><span class="o">.</span><span class="n">dump_flights</span><span class="p">(</span><span class="s2">&quot;2020-03-05 00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-03-05 01:00&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">01</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0000.</span><span class="n">json</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download 23 hours of flights and dump as JSON files</span>
+<span class="n">downloader</span><span class="o">.</span><span class="n">dump_flights_bulk</span><span class="p">(</span><span class="s2">&quot;2020-03-05 01:00&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-03-06 00:00&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">01</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">02</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0100.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">02</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">03</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0200.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">03</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">04</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0300.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">04</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">05</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0400.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">05</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">06</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0500.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">06</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">07</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0600.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">07</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">08</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0700.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">08</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">09</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0800.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">09</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">10</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0900.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">10</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">11</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1000.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">11</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">12</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1100.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">12</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1200.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">14</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1300.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">14</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">15</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1400.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">15</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">16</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1500.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">16</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">17</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1600.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">17</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">18</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1700.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">18</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">19</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1800.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">19</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">20</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1900.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">20</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">21</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Converting</span> <span class="n">to</span> <span class="n">JSON</span><span class="o">.</span>
+<span class="n">Saving</span> <span class="n">to</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">flights</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">2000.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Downloading</span> <span class="n">flights</span> <span class="kn">from</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">21</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span> <span class="n">to</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">22</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cleanup</span>
+<span class="k">del</span> <span class="n">downloader</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="demo_graph_builder.html" class="btn btn-neutral float-right" title="Processing Flights" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="airspace_data_switzerland.html" class="btn btn-neutral float-left" title="Importing Switzerland’s Airspaces" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Joshua Smailes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

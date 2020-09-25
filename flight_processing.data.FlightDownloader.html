@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>flight_processing.data.FlightDownloader &mdash; Flight Processing  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="flight_processing.data.GraphBuilder" href="flight_processing.data.GraphBuilder.html" />
+    <link rel="prev" title="flight_processing.DataConfig" href="flight_processing.DataConfig.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Flight Processing
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="core_structure.html">Core Structure</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.DataConfig.html">flight_processing.DataConfig</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">flight_processing.data.FlightDownloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.data.GraphBuilder.html">flight_processing.data.GraphBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flight_processing.data.AirspaceGraph.html">flight_processing.data.AirspaceGraph</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flight Processing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="core_structure.html">Core Structure</a> &raquo;</li>
+        
+      <li>flight_processing.data.FlightDownloader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/flight_processing.data.FlightDownloader.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="flight-processing-data-flightdownloader">
+<h1>flight_processing.data.FlightDownloader<a class="headerlink" href="#flight-processing-data-flightdownloader" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="flight_processing.data.FlightDownloader">
+<em class="property">class </em><code class="sig-prename descclassname">flight_processing.data.</code><code class="sig-name descname">FlightDownloader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.FlightDownloader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download flight data from the OpenSky impala shell using the traffic library.</p>
+<p>Requires traffic to be correctly configured with valid impala credentials,
+see the <a class="reference external" href="https://traffic-viz.github.io/opensky_impala.html">traffic documentation</a> for more details.</p>
+<p><strong>Summary:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>initialisation:
+<a class="reference external" href="#flight_processing.data.FlightDownloader.__init__">__init__</a></p></li>
+<li><p>downloading:
+<a class="reference external" href="#flight_processing.data.FlightDownloader.download_flights">download_flights</a>,
+<a class="reference external" href="#flight_processing.data.FlightDownloader.save_traffic">save_traffic</a>,
+<a class="reference external" href="#flight_processing.data.FlightDownloader.dump_flights">dump_flights</a>,
+<a class="reference external" href="#flight_processing.data.FlightDownloader.dump_flights_bulk">dump_flights_bulk</a></p></li>
+</ul>
+</div></blockquote>
+<dl class="py method">
+<dt id="flight_processing.data.FlightDownloader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.FlightDownloader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialise the downloader with a given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>str</em><em> or </em><a class="reference internal" href="flight_processing.DataConfig.html#flight_processing.DataConfig" title="flight_processing.DataConfig"><em>DataConfig</em></a>) – dataset name or specification</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose logging</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#flight_processing.data.FlightDownloader" title="flight_processing.data.FlightDownloader">FlightDownloader</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.FlightDownloader.download_flights">
+<code class="sig-name descname">download_flights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time_start</span></em>, <em class="sig-param"><span class="n">time_end</span></em>, <em class="sig-param"><span class="n">limit</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.FlightDownloader.download_flights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download flights within the specified time interval, returning the flights as an object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_start</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – start time</p></li>
+<li><p><strong>time_end</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – end time</p></li>
+<li><p><strong>limit</strong> (<em>int</em><em>, </em><em>optional</em>) – maximum number of <em>position values</em> to return - note that each flight may contain thousands of position values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>flights</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>traffic.core.traffic.Traffic</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.FlightDownloader.dump_flights">
+<code class="sig-name descname">dump_flights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time_start</span></em>, <em class="sig-param"><span class="n">time_end</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.FlightDownloader.dump_flights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download flights within the specified time interval, saving the flights to a file.</p>
+<p>Flights will be saved to <cite>{data_prefix}/flights/{dataset}/{date}/{time}.json</cite>, where:
+- <cite>data_prefix</cite> is specified by the <cite>DataConfig</cite> object passed in on construction, or the <cite>data_location</cite> config value is used by default,
+- <cite>dataset</cite> is the name of the dataset as specified on construction,
+- <cite>date</cite> and <cite>time</cite> are determined by <cite>time_start</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_start</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – start time</p></li>
+<li><p><strong>time_end</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – end time</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.FlightDownloader.dump_flights_bulk">
+<code class="sig-name descname">dump_flights_bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time_start</span></em>, <em class="sig-param"><span class="n">time_end</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.FlightDownloader.dump_flights_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download flights within the specified time interval, saving the flights to a file.</p>
+<p>Behaves the same as <cite>dump_flights</cite> but flight data is split into new files for each hour.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_start</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – start time</p></li>
+<li><p><strong>time_end</strong> (<em>datetime.datetime</em><em> or </em><em>str</em>) – end time</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="flight_processing.data.FlightDownloader.save_traffic">
+<code class="sig-name descname">save_traffic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">traffic</span></em>, <em class="sig-param"><span class="n">location</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.FlightDownloader.save_traffic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the passed in flights to the specified location.</p>
+<p>This function is intended for the use case in which a user does not have access to the OpenSky Impala shell.
+The user can instead download traffic from another source, such as the <a class="reference external" href="https://traffic-viz.github.io/opensky_rest.html">OpenSky REST API</a>,
+and save it to disk using this function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>traffic</strong> (<em>traffic.core.traffic.Traffic</em>) – flights to save</p></li>
+<li><p><strong>location</strong> (<em>str</em>) – location to save the flights to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="flight_processing.data.GraphBuilder.html" class="btn btn-neutral float-right" title="flight_processing.data.GraphBuilder" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="flight_processing.DataConfig.html" class="btn btn-neutral float-left" title="flight_processing.DataConfig" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Joshua Smailes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

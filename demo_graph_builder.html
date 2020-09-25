@@ -1,0 +1,680 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Processing Flights &mdash; Flight Processing  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Loading Graph" href="demo_airspace_graph.html" />
+    <link rel="prev" title="Downloading Flights" href="demo_flight_downloader.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Flight Processing
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="quickstart.html">Quickstart</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="preparing_datasets.html">Preparing Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_flight_downloader.html">Downloading Flights</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Processing Flights</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-1-known-dataset-from-file">Example 1: known dataset from file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-2-new-dataset-from-geo-dataframe">Example 2: new dataset from (Geo)DataFrame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-3-process-a-single-flight-plot-on-map">Example 3: Process a single flight, plot on map</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="demo_airspace_graph.html">Loading Graph</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="core_structure.html">Core Structure</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Flight Processing</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="quickstart.html">Quickstart</a> &raquo;</li>
+        
+      <li>Processing Flights</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/demo_graph_builder.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="processing-flights">
+<h1>Processing Flights<a class="headerlink" href="#processing-flights" title="Permalink to this headline">¶</a></h1>
+<p>This notebook takes a dataset from a file or (Geo)DataFrame and flights
+which have been dumped to a file (see <code class="docutils literal notranslate"><span class="pre">demo-export-flights.ipynb</span></code>) and
+procuces a graph of airspace handovers, saving the result to a file.</p>
+<p>Ensure you have already dumped some flight data using the aforementioned
+notebook, and set the data location in
+<code class="docutils literal notranslate"><span class="pre">~/.config/flight_processing/flight_processing.conf</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flight_processing</span> <span class="kn">import</span> <span class="n">DataConfig</span>
+<span class="kn">from</span> <span class="nn">flight_processing.data</span> <span class="kn">import</span> <span class="n">GraphBuilder</span><span class="p">,</span> <span class="n">FlightDownloader</span>
+
+<span class="kn">import</span> <span class="nn">geopandas</span>
+</pre></div>
+</div>
+<div class="section" id="example-1-known-dataset-from-file">
+<h2>Example 1: known dataset from file<a class="headerlink" href="#example-1-known-dataset-from-file" title="Permalink to this headline">¶</a></h2>
+<p>This example uses the already encoded bounds of Switzerland and its
+airspace bounds which have already been saved to a file.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialise</span>
+<span class="n">graphbuilder</span> <span class="o">=</span> <span class="n">GraphBuilder</span><span class="p">(</span><span class="s2">&quot;switzerland&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Loading</span> <span class="n">airspace</span> <span class="n">data</span> <span class="kn">from</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">regions_switzerland_wkt</span><span class="o">.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Adding</span> <span class="n">airspace</span> <span class="n">data</span> <span class="n">to</span> <span class="n">C</span><span class="o">++.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Process one hour of flights</span>
+<span class="n">graphbuilder</span><span class="o">.</span><span class="n">process_flights</span><span class="p">(</span><span class="s2">&quot;2020-01-01 00:00&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">/</span><span class="mi">20200101</span><span class="o">/</span><span class="mf">0000.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Process 3 hours of flights</span>
+<span class="n">graphbuilder</span><span class="o">.</span><span class="n">process_flights_bulk</span><span class="p">(</span><span class="s2">&quot;2020-01-01 01:00&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-01-01 04:00&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">01</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">/</span><span class="mi">20200101</span><span class="o">/</span><span class="mf">0100.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">02</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">/</span><span class="mi">20200101</span><span class="o">/</span><span class="mf">0200.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">03</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">/</span><span class="mi">20200101</span><span class="o">/</span><span class="mf">0300.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cleanup</span>
+<span class="k">del</span> <span class="n">graphbuilder</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2-new-dataset-from-geo-dataframe">
+<h2>Example 2: new dataset from (Geo)DataFrame<a class="headerlink" href="#example-2-new-dataset-from-geo-dataframe" title="Permalink to this headline">¶</a></h2>
+<p>In this example we directly load a (Geo)DataFrame with the relevant
+columns rather than relying on already saved files.</p>
+<p>Note: in this case we are loading the same dataframe from a file, but
+the dataframe can be produced within python without the need to save it
+anywhere beforehand.</p>
+<p>We are also using a custom DataConfig as in example 2 of
+<code class="docutils literal notranslate"><span class="pre">demo-export-flights.ipynb</span></code>.</p>
+<p>Note 2: GeoDataFrames require columns <code class="docutils literal notranslate"><span class="pre">lower_limit</span></code>, <code class="docutils literal notranslate"><span class="pre">upper_limit</span></code>,
+<code class="docutils literal notranslate"><span class="pre">geometry</span></code>, and DataFrames require columns <code class="docutils literal notranslate"><span class="pre">lower_limit</span></code>,
+<code class="docutils literal notranslate"><span class="pre">upper_limit</span></code>, <code class="docutils literal notranslate"><span class="pre">wkt</span></code>.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">DataConfig</span><span class="p">(</span><span class="s2">&quot;switzerland-custom&quot;</span><span class="p">,</span> <span class="n">minlon</span><span class="o">=</span><span class="mf">5.3</span><span class="p">,</span> <span class="n">maxlon</span><span class="o">=</span><span class="mf">10.7</span><span class="p">,</span> <span class="n">minlat</span><span class="o">=</span><span class="mf">45.5</span><span class="p">,</span> <span class="n">maxlat</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;/mnt/cold_data/josh/processing/regions_switzerland_wkt.json&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf</span> <span class="o">=</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
+<span class="n">gdf</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>lower_limit</th>
+      <th>upper_limit</th>
+      <th>wkt</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>A9.1 AIRWAY</td>
+      <td>9000</td>
+      <td>19500</td>
+      <td>MULTIPOLYGON (((8.982777777777779 47.254166666...</td>
+      <td>MULTIPOLYGON (((8.98278 47.25417, 8.93194 47.2...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>A9.2 AIRWAY</td>
+      <td>13000</td>
+      <td>19500</td>
+      <td>MULTIPOLYGON (((8.94888888888889 47.0338888888...</td>
+      <td>MULTIPOLYGON (((8.94889 47.03389, 8.98278 46.8...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Aiguilles Rouges 300m AGL</td>
+      <td>0</td>
+      <td>3300</td>
+      <td>MULTIPOLYGON (((6.847222222222222 45.931944444...</td>
+      <td>MULTIPOLYGON (((6.84722 45.93194, 6.83028 45.9...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Alpen Mil off</td>
+      <td>15000</td>
+      <td>19500</td>
+      <td>MULTIPOLYGON (((6.813333333333333 46.372777777...</td>
+      <td>MULTIPOLYGON (((6.81333 46.37278, 7.05083 46.5...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Alpen Mil on</td>
+      <td>13000</td>
+      <td>19500</td>
+      <td>MULTIPOLYGON (((6.813333333333333 46.372777777...</td>
+      <td>MULTIPOLYGON (((6.81333 46.37278, 7.05083 46.5...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>ZURICH 5 TMA 118.1</td>
+      <td>3500</td>
+      <td>19500</td>
+      <td>MULTIPOLYGON (((8.915000000000001 47.491388888...</td>
+      <td>MULTIPOLYGON (((8.91500 47.49139, 8.89806 47.4...</td>
+    </tr>
+    <tr>
+      <th>148</th>
+      <td>ZURICH 6 TMA 118.1</td>
+      <td>5500</td>
+      <td>19500</td>
+      <td>MULTIPOLYGON (((8.423611111111111 47.779444444...</td>
+      <td>MULTIPOLYGON (((8.42361 47.77944, 8.30500 47.7...</td>
+    </tr>
+    <tr>
+      <th>149</th>
+      <td>ZURICH 7 TMA 118.1</td>
+      <td>7500</td>
+      <td>19500</td>
+      <td>MULTIPOLYGON (((8.372777777777777 47.305, 8.42...</td>
+      <td>MULTIPOLYGON (((8.37278 47.30500, 8.42361 47.2...</td>
+    </tr>
+    <tr>
+      <th>150</th>
+      <td>ZURICH 8 TMA 118.1</td>
+      <td>6500</td>
+      <td>19500</td>
+      <td>MULTIPOLYGON (((8 47.64388888888889, 7.9997222...</td>
+      <td>MULTIPOLYGON (((8.00000 47.64389, 7.99972 47.5...</td>
+    </tr>
+    <tr>
+      <th>151</th>
+      <td>ZURICH 9 TMA 118.1</td>
+      <td>7500</td>
+      <td>19500</td>
+      <td>MULTIPOLYGON (((8.779444444444444 47.864166666...</td>
+      <td>MULTIPOLYGON (((8.77944 47.86417, 8.66083 47.8...</td>
+    </tr>
+  </tbody>
+</table>
+<p>152 rows × 5 columns</p>
+</div><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">graphbuilder</span> <span class="o">=</span> <span class="n">GraphBuilder</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">gdf</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ERROR</span><span class="p">:</span><span class="n">fiona</span><span class="o">.</span><span class="n">_env</span><span class="p">:</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">tmpswul1qoy</span><span class="o">.</span><span class="n">json</span><span class="p">:</span> <span class="n">No</span> <span class="n">such</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">directory</span>
+<span class="n">WARNING</span><span class="p">:</span><span class="n">fiona</span><span class="o">.</span><span class="n">_env</span><span class="p">:</span><span class="n">driver</span> <span class="n">GeoJSON</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">support</span> <span class="n">creation</span> <span class="n">option</span> <span class="n">ENCODING</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Preprocessing</span> <span class="n">dataframe</span><span class="o">...</span>
+<span class="n">Saving</span> <span class="n">dataframe</span> <span class="n">to</span> <span class="n">temporary</span> <span class="n">file</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">tmpswul1qoy</span><span class="o">.</span><span class="n">json</span><span class="o">...</span>
+<span class="n">Loading</span> <span class="n">airspace</span> <span class="n">data</span> <span class="kn">from</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">tmpswul1qoy</span><span class="o">.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Adding</span> <span class="n">airspace</span> <span class="n">data</span> <span class="n">to</span> <span class="n">C</span><span class="o">++.</span>
+<span class="n">Removing</span> <span class="n">temporary</span> <span class="n">file</span> <span class="n">at</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">tmpswul1qoy</span><span class="o">.</span><span class="n">json</span><span class="o">...</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Process one hour of flights</span>
+<span class="n">graphbuilder</span><span class="o">.</span><span class="n">process_flights</span><span class="p">(</span><span class="s2">&quot;2020-03-05 00:00&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0000.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Process 23 hours of flights</span>
+<span class="n">graphbuilder</span><span class="o">.</span><span class="n">process_flights_bulk</span><span class="p">(</span><span class="s2">&quot;2020-03-05 01:00&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-03-06 00:00&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">01</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0100.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">02</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0200.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">03</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0300.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">04</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0400.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">05</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0500.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">06</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0600.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">07</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0700.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">08</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0800.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">09</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">0900.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">10</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1000.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">11</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1100.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">12</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1200.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1300.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">14</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1400.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">15</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1500.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">16</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1600.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">17</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1700.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">18</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1800.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">19</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">1900.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">20</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">2000.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">21</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">2100.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">22</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">2200.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+<span class="n">Processing</span> <span class="n">data</span> <span class="k">for</span> <span class="mi">2020</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">05</span> <span class="mi">23</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.</span>
+<span class="n">Done</span> <span class="n">processing</span><span class="p">,</span> <span class="n">saving</span> <span class="k">as</span><span class="p">:</span>
+<span class="n">NPZ</span><span class="p">:</span>  <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">graphs</span><span class="o">/</span><span class="n">switzerland</span><span class="o">-</span><span class="n">custom</span><span class="o">/</span><span class="mi">20200305</span><span class="o">/</span><span class="mf">2300.</span><span class="n">npz</span>
+<span class="n">JSON</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">YAML</span><span class="p">:</span> <span class="kc">None</span>
+<span class="n">Done</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cleanup</span>
+<span class="k">del</span> <span class="n">graphbuilder</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-3-process-a-single-flight-plot-on-map">
+<h2>Example 3: Process a single flight, plot on map<a class="headerlink" href="#example-3-process-a-single-flight-plot-on-map" title="Permalink to this headline">¶</a></h2>
+<p>In this example we load up the dataset as described above, but we
+download a single flight using <code class="docutils literal notranslate"><span class="pre">traffic</span></code> and process just that flight.
+We plot this flight, the dataframe, and the airspaces it passes through
+on a map to verify that the processing works correctly.</p>
+<p>We will use the USA dataset here because we have access to more flight
+data, but this should work for any region.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialise</span>
+<span class="n">graphbuilder</span> <span class="o">=</span> <span class="n">GraphBuilder</span><span class="p">(</span><span class="s2">&quot;usa&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">downloader</span> <span class="o">=</span> <span class="n">FlightDownloader</span><span class="p">(</span><span class="s2">&quot;usa&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Loading</span> <span class="n">airspace</span> <span class="n">data</span> <span class="kn">from</span> <span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">cold_data</span><span class="o">/</span><span class="n">josh</span><span class="o">/</span><span class="n">processing</span><span class="o">/</span><span class="n">regions_usa_wkt</span><span class="o">.</span><span class="n">json</span><span class="o">.</span>
+<span class="n">Adding</span> <span class="n">airspace</span> <span class="n">data</span> <span class="n">to</span> <span class="n">C</span><span class="o">++.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download some flights</span>
+<span class="n">flights</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download_flights</span><span class="p">(</span><span class="s2">&quot;2020-01-01 00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-01-01 01:00&quot;</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+<span class="n">flights</span>
+</pre></div>
+</div>
+<b>Traffic with 2 identifiers</b><style  type="text/css" >
+#T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdrow0_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 100.0%, transparent 100.0%);
+        }#T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdrow1_col0{
+            width:  10em;
+             height:  80%;
+            background:  linear-gradient(90deg,#5fba7d 27.2%, transparent 27.2%);
+        }</style><table id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cd" ><thead>    <tr>        <th class="blank" ></th>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >count</th>    </tr>    <tr>        <th class="index_name level0" >icao24</th>        <th class="index_name level1" >callsign</th>        <th class="blank" ></th>    </tr></thead><tbody>
+                <tr>
+                        <th id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdlevel0_row0" class="row_heading level0 row0" >a63e46</th>
+                        <th id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdlevel1_row0" class="row_heading level1 row0" >GJS4571</th>
+                        <td id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdrow0_col0" class="data row0 col0" >1572</td>
+            </tr>
+            <tr>
+                        <th id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdlevel0_row1" class="row_heading level0 row1" >a90aaa</th>
+                        <th id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdlevel1_row1" class="row_heading level1 row1" >PDT4960</th>
+                        <td id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdrow1_col0" class="data row1 col0" >428</td>
+            </tr>
+    </tbody></table><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Isolate one specific flight</span>
+<span class="n">flight</span> <span class="o">=</span> <span class="n">flights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">flight</span>
+</pre></div>
+</div>
+<b>Flight GJS4571</b><ul><li><b>aircraft:</b> a63e46</li><li><b>from:</b> 2020-01-01 00:33:48+00:00</li><li><b>to:</b> 2020-01-01 00:59:59+00:00</li></ul><div style="white-space: nowrap"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300" viewBox="-135423.21082497007 -18336.099103533877 270647.7932102147 38013.44865558917" preserveAspectRatio="xMinYMin meet"><g transform="matrix(1,0,0,-1,0,1341.2504485214158)"><polyline fill="none" stroke="#66cc99" stroke-width="1804.3186214014313" points="125200.59004412555,3173.8589706889215 122867.5919198346,3509.2466815237703 112939.69356218372,4768.247356313995 74761.88464283258,9460.099381405695 73269.10198732886,9589.314650877608 71702.76748027669,9652.427815086083 70271.10104570804,9653.35721093623 68620.3013518612,9594.537473586182 66167.99526011178,9421.283879278157 50182.83867556489,8064.196283514865 -26578.169687905804,1357.0910438521921 -73458.20927524341,-2787.3649047844096 -100352.90465817228,-5087.41291462081 -101343.83900808413,-5200.480239360804 -102247.35170722942,-5355.347522738554 -105469.23979599755,-6050.691959607349 -110337.32310109501,-7172.146234168171 -112414.92903940687,-7596.918445827148 -114555.50712264286,-7949.226962956602 -116715.61255923496,-8214.127289332971 -117683.11362858533,-8285.148742611062 -118860.816967042,-8312.106762414815 -125399.21848385101,-8091.751316263284" opacity="0.8" /></g></svg></div><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">handovers</span> <span class="o">=</span> <span class="n">graphbuilder</span><span class="o">.</span><span class="n">process_single_flight</span><span class="p">(</span><span class="n">flights</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">handovers</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">8</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">regions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">u</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">handovers</span><span class="p">:</span>
+    <span class="n">regions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+    <span class="n">regions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+<span class="nb">len</span><span class="p">(</span><span class="n">regions</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">7</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">graphbuilder</span><span class="o">.</span><span class="n">draw_map</span><span class="p">(</span><span class="n">flight</span><span class="o">=</span><span class="n">flights</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">subset</span><span class="o">=</span><span class="n">regions</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cleanup</span>
+<span class="k">del</span> <span class="n">graphbuilder</span>
+<span class="k">del</span> <span class="n">downloader</span>
+<span class="k">del</span> <span class="n">flights</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="demo_airspace_graph.html" class="btn btn-neutral float-right" title="Loading Graph" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="demo_flight_downloader.html" class="btn btn-neutral float-left" title="Downloading Flights" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Joshua Smailes
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
