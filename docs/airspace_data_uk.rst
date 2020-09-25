@@ -50,10 +50,6 @@ Modify the URL below to point to the latest version of the UK’s AIP.
 
 
 
-.. raw:: html
-
-    
-
 
 .. code:: ipython3
 
