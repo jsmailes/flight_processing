@@ -19,3 +19,11 @@ Edit the following lines in your traffic configuration file:
    [opensky]
    username =
    password =
+
+This library uses the `logging <https://docs.python.org/3/library/logging.html>`_ module to handle its logs - configure your logger's level to get more (or less) verbose logging:
+
+.. code-block: python
+
+   import logging
+   logger = logging.getLogger()
+   logger.setLevel(level=logging.INFO)

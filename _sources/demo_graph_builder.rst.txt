@@ -15,6 +15,12 @@ notebook, and set the data location in
     from flight_processing.data import GraphBuilder, FlightDownloader
     
     import geopandas
+    import logging
+    
+    logger = logging.getLogger()
+    logger.setLevel(level=logging.INFO)
+    
+    logging.getLogger('traffic').disabled = True
 
 
 
@@ -32,13 +38,14 @@ airspace bounds which have already been saved to a file.
 .. code:: ipython3
 
     # Initialise
-    graphbuilder = GraphBuilder("switzerland", verbose=True)
+    graphbuilder = GraphBuilder("switzerland")
 
 
 .. parsed-literal::
 
-    Loading airspace data from /mnt/cold_data/josh/processing/regions_switzerland_wkt.json.
-    Adding airspace data to C++.
+    INFO:flight_processing.data.graph_builder:Loading airspace data from /mnt/cold_data/josh/processing/regions_switzerland_wkt.json.
+    INFO:flight_processing.data.graph_builder:Initialising AirspaceHandler C++ object.
+    INFO:flight_processing.data.graph_builder:Adding airspace data to AirspaceHandler C++ object.
 
 
 .. code:: ipython3
@@ -49,12 +56,12 @@ airspace bounds which have already been saved to a file.
 
 .. parsed-literal::
 
-    Processing data for 2020-01-01 00:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland/20200101/0000.npz
-    JSON: None
-    YAML: None
-    Done.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-01-01 00:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland/20200101/0000.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland/20200101/0000.npz.
 
 
 .. code:: ipython3
@@ -65,24 +72,26 @@ airspace bounds which have already been saved to a file.
 
 .. parsed-literal::
 
-    Processing data for 2020-01-01 01:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland/20200101/0100.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-01-01 02:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland/20200101/0200.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-01-01 03:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland/20200101/0300.npz
-    JSON: None
-    YAML: None
-    Done.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flights in bulk between 2020-01-01 01:00:00 and 2020-01-01 04:00:00.
+    INFO:flight_processing.utils:Executing function 3 times between 2020-01-01 01:00:00 and 2020-01-01 04:00:00 with time delta 1:00:00.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-01-01 01:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland/20200101/0100.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland/20200101/0100.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-01-01 02:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland/20200101/0200.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland/20200101/0200.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-01-01 03:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland/20200101/0300.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland/20200101/0300.npz.
 
 
 .. code:: ipython3
@@ -245,22 +254,20 @@ Note 2: GeoDataFrames require columns ``lower_limit``, ``upper_limit``,
 
 .. code:: ipython3
 
-    graphbuilder = GraphBuilder.from_dataframe(dataset, gdf, verbose=True)
+    graphbuilder = GraphBuilder.from_dataframe(dataset, gdf)
 
 
 .. parsed-literal::
 
-    ERROR:fiona._env:/tmp/tmpswul1qoy.json: No such file or directory
+    INFO:flight_processing.data.graph_builder:Preprocessing dataframe.
+    INFO:flight_processing.data.graph_builder:Saving dataframe to temporary file at /tmp/tmpo1fd5b_e.json.
+    ERROR:fiona._env:/tmp/tmpo1fd5b_e.json: No such file or directory
     WARNING:fiona._env:driver GeoJSON does not support creation option ENCODING
-
-
-.. parsed-literal::
-
-    Preprocessing dataframe...
-    Saving dataframe to temporary file at /tmp/tmpswul1qoy.json...
-    Loading airspace data from /tmp/tmpswul1qoy.json.
-    Adding airspace data to C++.
-    Removing temporary file at /tmp/tmpswul1qoy.json...
+    INFO:flight_processing.data.graph_builder:Instantiating GraphBuilder object.
+    INFO:flight_processing.data.graph_builder:Loading airspace data from /tmp/tmpo1fd5b_e.json.
+    INFO:flight_processing.data.graph_builder:Initialising AirspaceHandler C++ object.
+    INFO:flight_processing.data.graph_builder:Adding airspace data to AirspaceHandler C++ object.
+    INFO:flight_processing.data.graph_builder:Removing temporary file at /tmp/tmpo1fd5b_e.json.
 
 
 .. code:: ipython3
@@ -271,12 +278,12 @@ Note 2: GeoDataFrames require columns ``lower_limit``, ``upper_limit``,
 
 .. parsed-literal::
 
-    Processing data for 2020-03-05 00:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0000.npz
-    JSON: None
-    YAML: None
-    Done.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 00:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/0000.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0000.npz.
 
 
 .. code:: ipython3
@@ -287,144 +294,146 @@ Note 2: GeoDataFrames require columns ``lower_limit``, ``upper_limit``,
 
 .. parsed-literal::
 
-    Processing data for 2020-03-05 01:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0100.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 02:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0200.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 03:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0300.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 04:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0400.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 05:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0500.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 06:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0600.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 07:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0700.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 08:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0800.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 09:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0900.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 10:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1000.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 11:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1100.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 12:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1200.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 13:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1300.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 14:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1400.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 15:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1500.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 16:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1600.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 17:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1700.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 18:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1800.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 19:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1900.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 20:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/2000.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 21:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/2100.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 22:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/2200.npz
-    JSON: None
-    YAML: None
-    Done.
-    Processing data for 2020-03-05 23:00:00.
-    Done processing, saving as:
-    NPZ:  /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/2300.npz
-    JSON: None
-    YAML: None
-    Done.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flights in bulk between 2020-03-05 01:00:00 and 2020-03-06 00:00:00.
+    INFO:flight_processing.utils:Executing function 23 times between 2020-03-05 01:00:00 and 2020-03-06 00:00:00 with time delta 1:00:00.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 01:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/0100.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0100.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 02:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/0200.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0200.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 03:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/0300.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0300.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 04:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/0400.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0400.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 05:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/0500.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0500.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 06:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/0600.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0600.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 07:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/0700.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0700.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 08:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/0800.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0800.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 09:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/0900.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/0900.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 10:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/1000.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1000.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 11:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/1100.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1100.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 12:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/1200.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1200.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 13:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/1300.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1300.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 14:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/1400.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1400.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 15:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/1500.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1500.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 16:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/1600.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1600.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 17:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/1700.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1700.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 18:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/1800.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1800.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 19:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/1900.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/1900.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 20:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/2000.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/2000.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 21:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/2100.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/2100.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 22:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/2200.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/2200.npz.
+    INFO:flight_processing.data.graph_builder:Processing downloaded flight data for time 2020-03-05 23:00:00.
+    INFO:flight_processing.data.graph_builder:Calling AirspaceHandler C++ object to process file at /mnt/cold_data/josh/processing/flights/switzerland-custom/20200305/2300.json.
+    INFO:flight_processing.data.graph_builder:Retrieving result.
+    INFO:flight_processing.data.graph_builder:Saving to file(s).
+    INFO:flight_processing.data.data_utils:Converting graph to sparse matrix.
+    INFO:flight_processing.data.data_utils:Saving graph as NPZ to /mnt/cold_data/josh/processing/graphs/switzerland-custom/20200305/2300.npz.
 
 
 .. code:: ipython3
@@ -446,14 +455,15 @@ data, but this should work for any region.
 .. code:: ipython3
 
     # Initialise
-    graphbuilder = GraphBuilder("usa", verbose=True)
-    downloader = FlightDownloader("usa", verbose=True)
+    graphbuilder = GraphBuilder("usa")
+    downloader = FlightDownloader("usa")
 
 
 .. parsed-literal::
 
-    Loading airspace data from /mnt/cold_data/josh/processing/regions_usa_wkt.json.
-    Adding airspace data to C++.
+    INFO:flight_processing.data.graph_builder:Loading airspace data from /mnt/cold_data/josh/processing/regions_usa_wkt.json.
+    INFO:flight_processing.data.graph_builder:Initialising AirspaceHandler C++ object.
+    INFO:flight_processing.data.graph_builder:Adding airspace data to AirspaceHandler C++ object.
 
 
 .. code:: ipython3
@@ -463,29 +473,41 @@ data, but this should work for any region.
     flights
 
 
+.. parsed-literal::
+
+    INFO:flight_processing.data.flight_downloader:Downloading flights between 2020-01-01 00:00:00 and 2020-01-01 01:00:00 from OpenSky.
+    INFO:root:Sending request between time 2020-01-01 00:00:00+00:00 and 2020-01-01 01:00:00+00:00 and hour 2020-01-01 00:00:00+00:00 and 2020-01-01 01:00:00+00:00
+    INFO:paramiko.transport:Connected (version 2.0, client OpenSSH_7.6p1)
+    INFO:paramiko.transport:Authentication (password) successful!
+    INFO:root:Sending request: select time, icao24, lat, lon, velocity, heading, vertrate, callsign, onground, alert, spi, squawk, baroaltitude, geoaltitude, lastposupdate, lastcontact, hour from state_vectors_data4  where hour>=1577836800.0 and hour<1577840400.0 and time>=1577836800.0 and time<1577840400.0 and lon>=-130 and lon<=-58 and lat>=23 and lat<=46 limit 2000
+    INFO:root:Reading request in cache /mnt/cold_data/josh/traffic_cache/opensky/21dfcfe680bd06298dd2706f96bcf45f
+    INFO:numexpr.utils:Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+    INFO:numexpr.utils:NumExpr defaulting to 8 threads.
+
+
 
 
 .. raw:: html
 
     <b>Traffic with 2 identifiers</b><style  type="text/css" >
-    #T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdrow0_col0{
+    #T_0efa1bb2_01a9_11eb_a43e_63a6d0713514row0_col0{
                 width:  10em;
                  height:  80%;
                 background:  linear-gradient(90deg,#5fba7d 100.0%, transparent 100.0%);
-            }#T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdrow1_col0{
+            }#T_0efa1bb2_01a9_11eb_a43e_63a6d0713514row1_col0{
                 width:  10em;
                  height:  80%;
                 background:  linear-gradient(90deg,#5fba7d 27.2%, transparent 27.2%);
-            }</style><table id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cd" ><thead>    <tr>        <th class="blank" ></th>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >count</th>    </tr>    <tr>        <th class="index_name level0" >icao24</th>        <th class="index_name level1" >callsign</th>        <th class="blank" ></th>    </tr></thead><tbody>
+            }</style><table id="T_0efa1bb2_01a9_11eb_a43e_63a6d0713514" ><thead>    <tr>        <th class="blank" ></th>        <th class="blank level0" ></th>        <th class="col_heading level0 col0" >count</th>    </tr>    <tr>        <th class="index_name level0" >icao24</th>        <th class="index_name level1" >callsign</th>        <th class="blank" ></th>    </tr></thead><tbody>
                     <tr>
-                            <th id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdlevel0_row0" class="row_heading level0 row0" >a63e46</th>
-                            <th id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdlevel1_row0" class="row_heading level1 row0" >GJS4571</th>
-                            <td id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdrow0_col0" class="data row0 col0" >1572</td>
+                            <th id="T_0efa1bb2_01a9_11eb_a43e_63a6d0713514level0_row0" class="row_heading level0 row0" >a63e46</th>
+                            <th id="T_0efa1bb2_01a9_11eb_a43e_63a6d0713514level1_row0" class="row_heading level1 row0" >GJS4571</th>
+                            <td id="T_0efa1bb2_01a9_11eb_a43e_63a6d0713514row0_col0" class="data row0 col0" >1572</td>
                 </tr>
                 <tr>
-                            <th id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdlevel0_row1" class="row_heading level0 row1" >a90aaa</th>
-                            <th id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdlevel1_row1" class="row_heading level1 row1" >PDT4960</th>
-                            <td id="T_fa414da8_fd8e_11ea_a56e_5f863b19b7cdrow1_col0" class="data row1 col0" >428</td>
+                            <th id="T_0efa1bb2_01a9_11eb_a43e_63a6d0713514level0_row1" class="row_heading level0 row1" >a90aaa</th>
+                            <th id="T_0efa1bb2_01a9_11eb_a43e_63a6d0713514level1_row1" class="row_heading level1 row1" >PDT4960</th>
+                            <td id="T_0efa1bb2_01a9_11eb_a43e_63a6d0713514row1_col0" class="data row1 col0" >428</td>
                 </tr>
         </tbody></table>
 
@@ -496,6 +518,11 @@ data, but this should work for any region.
     # Isolate one specific flight
     flight = flights[0]
     flight
+
+
+.. parsed-literal::
+
+    INFO:root:Loading @junzis aircraft database
 
 
 
@@ -510,6 +537,12 @@ data, but this should work for any region.
 
     handovers = graphbuilder.process_single_flight(flights[0])
     len(handovers)
+
+
+.. parsed-literal::
+
+    INFO:flight_processing.data.graph_builder:Converting flight to arrays of coordinates.
+    INFO:flight_processing.data.graph_builder:Processing flight using AirspaceHandler C++ object.
 
 
 
@@ -541,6 +574,19 @@ data, but this should work for any region.
 .. code:: ipython3
 
     graphbuilder.draw_map(flight=flights[0], subset=regions)
+
+
+.. parsed-literal::
+
+    INFO:flight_processing.data.graph_builder:Downloading terrain data from Stamen.
+    INFO:flight_processing.data.graph_builder:Plotting airspace boundaries on map.
+    INFO:flight_processing.data.graph_builder:Plotting flight(s) on map.
+    INFO:flight_processing.data.graph_builder:Plotting subset of airspaces on map.
+
+
+
+.. image:: demo_graph_builder_files/demo_graph_builder_20_1.png
+
 
 .. code:: ipython3
 

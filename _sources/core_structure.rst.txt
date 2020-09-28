@@ -12,6 +12,14 @@ Each of the ``data`` classes contain an underlying `geopandas GeoDataFrame <http
 
 The ``FlightDownloader`` class uses Xavier Olive's `traffic <https://traffic-viz.github.io/index.html>`_ library to download flights from the `OpenSky Network <https://opensky-network.org/>`_.
 
+The `logging <https://docs.python.org/3/library/logging.html>`_ module is used to handle logs - configure your logger's level to get more (or less) verbose logging:
+
+.. code-block: python
+
+   import logging
+   logger = logging.getLogger()
+   logger.setLevel(level=logging.INFO)
+
 **Contents**
 
 .. toctree::
