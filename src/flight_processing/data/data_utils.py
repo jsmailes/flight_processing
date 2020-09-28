@@ -6,6 +6,9 @@ import pandas as pd
 import geopandas
 import shapely.wkt
 from shapely.geometry import Point
+import logging
+
+logger = logging.getLogger(__name__)
 
 def graph_add_node(graph, name):
     """
@@ -16,6 +19,7 @@ def graph_add_node(graph, name):
     :param name: name of node to be added
     :type name: str
     """
+
     if not graph.has_node(name):
         graph.add_node(name)
 
@@ -32,6 +36,7 @@ def graph_increment_edge(graph, u, v, amount=1):
     :param amount: amount by which to increment the edge, default 1
     :type amount: int, optional
     """
+
     if graph.has_edge(u, v):
         graph[u][v]['weight'] += amount
     else:
@@ -54,10 +59,13 @@ def build_graph_from_sparse_matrix(gdf, matrix, graph=None):
     :return: graph of airspace handovers
     :rtype: networkx.classes.digraph.DiGraph
     """
+
     n, m = matrix.shape
     assert(n == m)
 
     if graph is None:
+        logger.info("Generating new graph from dataframe.")
+
         graph = nx.DiGraph()
         for i in range(n):
             name = gdf.loc[i]['name']
@@ -93,10 +101,13 @@ def build_graph_from_matrix(gdf, matrix, graph=None):
     :return: graph of airspace handovers
     :rtype: networkx.classes.digraph.DiGraph
     """
+
     n, m = matrix.shape
     assert(n == m)
 
     if graph is None:
+        logger.info("Generating new graph from dataframe.")
+
         graph = nx.DiGraph()
         for i in range(n):
             name = gdf.loc[i]['name']
@@ -126,19 +137,24 @@ def save_graph_to_file(gdf, matrix, graph_json=None, graph_yaml=None, graph_npz=
     :param graph_npz: location of NPZ output
     :type graph_npz: pathlib.Path or str, optional
     """
+
     if graph_json is not None:
         check_file(graph_json)
+        logger.info("Saving graph as JSON to {}.".format(graph_json))
         with open(graph_json, "w") as outfile:
             outfile.write(json.dumps(dict(graph=matrix.tolist()), indent=0))
 
     if graph_yaml is not None:
         check_file(graph_yaml)
+        logger.info("Saving graph as YAML to {}.".format(graph_yaml))
         graph = build_graph_from_matrix(gdf, matrix) # TODO this can be done better
         nx.write_yaml(graph, str(graph_yaml))
 
     if graph_npz is not None:
         check_file(graph_npz)
+        logger.info("Converting graph to sparse matrix.")
         matrix_sparse = sparse.csr_matrix(matrix)
+        logger.info("Saving graph as NPZ to {}.".format(graph_npz))
         sparse.save_npz(str(graph_npz), matrix_sparse)
 
 def get_zone_centre(gdf, name):
@@ -153,6 +169,7 @@ def get_zone_centre(gdf, name):
     :return: coordinates of the airspace centre
     :rtype: shapely.geometry.point.Point
     """
+
     gdf_temp = gdf[gdf['name'] == name]
     if len(gdf_temp) == 0:
         return None
@@ -178,12 +195,14 @@ def process_dataframe(df):
     :return: geodataframe of airspaces, correctly formatted
     :rtype: geopandas.geodataframe.GeoDataFrame
     """
+
     if isinstance(df, pd.DataFrame):
         df2 = df.copy()
         required_columns = {'name', 'wkt', 'lower_limit', 'upper_limit'}
         if not required_columns <= set(df2.columns):
             raise ValueError("DataFrame must contain columns 'name', 'wkt', 'lower_limit', 'upper_limit'.")
         if not 'geometry' in list(df2.columns):
+            logger.info("Converting WKT representation of geometry to geometry objects.")
             df2['geometry'] = df2.wkt.apply(shapely.wkt.loads)
         gdf = geopandas.GeoDataFrame(df2, geometry=df2.geometry)
     elif isinstance(df, geopandas.GeoDataFrame):
@@ -192,6 +211,7 @@ def process_dataframe(df):
         if not required_columns <= set(df2.columns):
             raise ValueError("GeoDataFrame must contain columns 'name', 'lower_limit', 'upper_limit'.")
         if not 'wkt' in list(df2.columns):
+            logger.info("Converting geometry objects to their WKT representations.")
             df2['wkt'] = df2.geometry.apply(lambda g: g.wkt)
         gdf = df2
     else:

@@ -6,14 +6,22 @@ from pathlib import Path
 from appdirs import user_config_dir
 import configparser
 import numpy as np
+from math import ceil
+import logging
+
+logger = logging.getLogger(__name__)
 
 config_dir = Path(user_config_dir("flight_processing"))
 config_file = config_dir / "flight_processing.conf"
 
 if not config_dir.exists():
+    logger.info("Config directory {} does not exist, copying config file to {}.".format(config_dir, config_file))
+
     config_template = (Path(__file__).parent / "flight_processing.conf").read_text()
     config_dir.mkdir(parents=True)
     config_file.write_text(config_template)
+
+logger.info("Parsing config.")
 
 config = configparser.ConfigParser()
 config.read(config_file.as_posix())
@@ -23,12 +31,10 @@ detail = 4
 data_prefix = Path(config.get("global", "data_location", fallback=""))
 
 if not data_prefix.exists():
-    print("Warning: data_location does not exist, creating necessary folders.") # TODO logging
+    logger.info("Data location {} (as specified in config) does not exist, creating necessary folders.".format(data_prefix))
     data_prefix.mkdir(parents=True)
 
 format_dataset_location = "regions_{dataset}_wkt.json"
-format_data_flights = "{data_prefix}/flights/{dataset}/{date}/{time}.json"
-format_data_graph = "{data_prefix}/graphs/{dataset}/{date}/{time}.{suffix}"
 
 timestring_traffic = "%Y-%m-%d %H:%M"
 timestring_date = "%Y%m%d"
@@ -134,6 +140,7 @@ class DataConfig:
         :return: object
         :rtype: DataConfig
         """
+
         data = datasets.get(dataset)
 
         if data is None:
@@ -148,6 +155,7 @@ class DataConfig:
 
         :rtype: str
         """
+
         return self.__dataset
 
     @property
@@ -157,6 +165,7 @@ class DataConfig:
 
         :rtype: float
         """
+
         return self.__minlon
 
     @property
@@ -166,6 +175,7 @@ class DataConfig:
 
         :rtype: float
         """
+
         return self.__maxlon
 
     @property
@@ -175,6 +185,7 @@ class DataConfig:
 
         :rtype: float
         """
+
         return self.__minlat
 
     @property
@@ -184,6 +195,7 @@ class DataConfig:
 
         :rtype: float
         """
+
         return self.__maxlat
 
     @property
@@ -193,6 +205,7 @@ class DataConfig:
 
         :rtype: int
         """
+
         return self.__detail
 
     @property
@@ -202,6 +215,7 @@ class DataConfig:
 
         :rtype: pathlib.Path
         """
+
         return self.__dataset_location
 
     @property
@@ -211,6 +225,7 @@ class DataConfig:
 
         :rtype: (float, float, float, float)
         """
+
         return self.__bounds_opensky
 
     @property
@@ -258,6 +273,7 @@ class DataConfig:
         :return: location of file (may not exist)
         :rtype: pathlib.Path
         """
+
         return self.__data_graph(datetime, "yaml")
 
     def data_graph_json(self, datetime):
@@ -270,6 +286,7 @@ class DataConfig:
         :return: location of file (may not exist)
         :rtype: pathlib.Path
         """
+
         return self.__data_graph(datetime, "json")
 
     def data_graph_npz(self, datetime):
@@ -282,6 +299,7 @@ class DataConfig:
         :return: location of file (may not exist)
         :rtype: pathlib.Path
         """
+
         return self.__data_graph(datetime, "npz")
 
 
@@ -297,12 +315,13 @@ def check_file(filename):
         if isinstance(filename, Path):
             p = filename
         elif isinstance(filename, str):
+            logger.debug("Given path {} is string, converting to Path.".format(filename))
             p = Path(filename)
         else:
             raise ValueError("filename must be of type pathlib.Path or str")
 
         if not p.parent.exists():
-            print("Warning: {} does not exist, creating necessary folders.".format(str(p.parent))) # TODO logging
+            logger.info("Directory {} does not exist, creating necessary folders.".format(str(p.parent)))
             data_prefix.mkdir(parents=True)
 
 def execute_bulk(function, time_start, count, time_delta=None):
@@ -320,7 +339,11 @@ def execute_bulk(function, time_start, count, time_delta=None):
     :param time_delta: amount by which to increase the time each step, defaults to datetime.timedelta(hours=1)
     :type time_delta: datetime.timedelta
     """
+
     time_delta = time_delta if time_delta is not None else timedelta(hours=1)
+
+    logger.info("Executing function {} times, with start time {} and time delta {}.".format(count, time_start, time_delta))
+
     for i in range(count):
         t1 = time_start + (i * time_delta)
         t2 = time_start + ((i + 1) * time_delta)
@@ -340,7 +363,12 @@ def execute_bulk_between(function, time_start, time_end, time_delta=None):
     :param time_delta: amount by which to increase the time each step, defaults to datetime.timedelta(hours=1)
     :type time_delta: datetime.timedelta
     """
+
     time_delta = time_delta if time_delta is not None else timedelta(hours=1)
+    count = ceil((time_end - time_start) / time_delta)
+
+    logger.info("Executing function {} times between {} and {} with time delta {}.".format(count, time_start, time_end, time_delta))
+
     t1 = time_start
     t2 = time_start + time_delta
     while t2 <= time_end:

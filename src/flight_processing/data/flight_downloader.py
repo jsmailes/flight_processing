@@ -7,6 +7,9 @@ from traffic.data import opensky
 import simplejson
 
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
 
 timestring_traffic = "%Y-%m-%d %H:%M"
 
@@ -20,11 +23,16 @@ def flights_to_json(flights):
     :return: JSON output
     :rtype: str
     """
+
     flight_coords = []
+
+    logger.info("Converting flights to list of coordinates.")
 
     if flights is not None:
         for flight in flights:
             flight_coords.append(list(flight.coords))
+
+    logger.info("Dumping coordinates to JSON string.")
 
     return simplejson.dumps(dict(flights=flight_coords), indent=0, ignore_nan=True)
 
@@ -46,14 +54,12 @@ class FlightDownloader:
           `dump_flights_bulk <#flight_processing.data.FlightDownloader.dump_flights_bulk>`_
     """
 
-    def __init__(self, dataset, verbose=False):
+    def __init__(self, dataset):
         """
         Initialise the downloader with a given dataset.
 
         :param dataset: dataset name or specification
         :type dataset: str or DataConfig
-        :param verbose: verbose logging
-        :type verbose: bool, optional
 
         :return: object
         :rtype: FlightDownloader
@@ -63,12 +69,11 @@ class FlightDownloader:
             self.__data_config = dataset
             self.dataset = dataset.dataset
         elif isinstance(dataset, str):
+            logger.debug("Dataset argument {} is string, looking up known dataset.".format(dataset))
             self.__data_config = DataConfig.known_dataset(dataset)
             self.dataset = dataset
         else:
             raise ValueError("Argument 'dataset' must be of type DataConfig or str.")
-
-        self.verbose = verbose
 
     def download_flights(self, time_start, time_end, limit=None):
         """
@@ -84,10 +89,13 @@ class FlightDownloader:
         :return: flights
         :rtype: traffic.core.traffic.Traffic
         """
+
         t_start = parser.parse(str(time_start))
         t_end = parser.parse(str(time_end))
         string_start = t_start.strftime(timestring_traffic)
         string_end = t_end.strftime(timestring_traffic)
+
+        logger.info("Downloading flights between {} and {} from OpenSky.".format(t_start, t_end))
 
         flights = opensky.history(
             string_start,
@@ -113,15 +121,11 @@ class FlightDownloader:
         :type location: pathlib.Path or str
         """
 
-        if self.verbose:
-            print("Converting to JSON.")
-
         out = flights_to_json(traffic)
 
         check_file(location)
 
-        if self.verbose:
-            print("Saving to {}.".format(location))
+        logger.info("Saving JSON flights to {}.".format(location))
 
         with open(location, "w") as outfile:
             outfile.write(out)
@@ -144,9 +148,6 @@ class FlightDownloader:
         t_start = parser.parse(str(time_start))
         t_end = parser.parse(str(time_end))
 
-        if self.verbose:
-            print("Downloading flights from {} to {}.".format(t_start, t_end))
-
         flights = self.download_flights(t_start, t_end)
 
         location = self.__data_config.data_flights(t_start)
@@ -167,5 +168,7 @@ class FlightDownloader:
 
         t_start = parser.parse(str(time_start))
         t_end = parser.parse(str(time_end))
+
+        logger.info("Downloading flights in bulk between {} and {}.".format(t_start, t_end))
 
         execute_bulk_between(lambda t1, t2: self.dump_flights(t1, t2), t_start, t_end)

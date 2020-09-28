@@ -18,14 +18,15 @@ from shapely.ops import transform
 import holoviews as hv
 import networkx as nx
 import hvplot.networkx as hvnx
+from traffic.data import opensky
 from traffic.core.flight import Flight
 from traffic.core.traffic import Traffic
-
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.io.img_tiles as cimgt
+import logging
 
-from traffic.data import opensky
+logger = logging.getLogger(__name__)
 
 class AirspaceGraph:
     """
@@ -61,7 +62,7 @@ class AirspaceGraph:
           `process_single_flight <#flight_processing.data.AirspaceGraph.process_single_flight>`_
     """
 
-    def __init__(self, dataset, df=None, dataset_location=None, verbose=False):
+    def __init__(self, dataset, df=None, dataset_location=None):
         """
         Initialise the graph builder with a given dataset, either from a file or directly from a dataframe.
 
@@ -81,8 +82,6 @@ class AirspaceGraph:
         :type df: pandas.core.frame.DataFrame or geopandas.geodataframe.GeoDataFrame, optional
         :param dataset_location: location of saved dataframe
         :type dataset_location: pathlib.Path or str, optional
-        :param verbose: verbose logging
-        :type verbose: bool, optional
 
         :return: object
         :rtype: AirspaceGraph
@@ -92,28 +91,30 @@ class AirspaceGraph:
             self.__data_config = dataset
             self.dataset = dataset.dataset
         elif isinstance(dataset, str):
+            logger.debug("Dataset argument {} is string, looking up known dataset.".format(dataset))
             self.__data_config = DataConfig.known_dataset(dataset)
             self.dataset = dataset
         else:
             raise ValueError("Argument 'dataset' must be of type DataConfig or str.")
 
-        print("Loading airspace dataset...")
         if df is not None:
+            logger.info("Loading airspace dataset from passed in dataframe.")
             self.__gdf = process_dataframe(df)
         else:
             if dataset_location is None:
                 dataset_location = self.__data_config.dataset_location
 
+            logger.info("Loading airspace dataset from disk at location {}.".format(dataset_location))
             self.__gdf = geopandas.read_file(dataset_location)
 
-        print("Populating AirspaceHandler...")
+
+        logger.info("Initialising AirspaceHandler C++ object.")
         self.__airspaces = AirspaceHandler()
         self.__gdf['ident'] = self.__gdf.apply(self.__add_airspace, axis=1)
         self.__gdf.set_index('ident', inplace=True)
 
         self.num_airspaces = self.__airspaces.size()
-
-        print("Done!")
+        logger.info("Successfully loaded airspaces, {} in total.".format(self.num_airspaces))
 
         self.__graph = None
 
@@ -163,19 +164,17 @@ class AirspaceGraph:
         :type time_end: datetime.datetime or str
         """
 
-        print("Loading graph of handovers...")
+        logger.info("Loading matrix of handovers.")
         matrix = self.__load_npz_bulk(time_start, time_end)
 
-        print("Building graph...")
+        logger.info("Building graph from matrix.")
         if self.__graph is None:
             self.__graph = build_graph_from_sparse_matrix(self.__gdf, matrix)
         else:
             self.__graph = build_graph_from_sparse_matrix(self.__gdf, matrix, self.__graph)
 
-        print("Computing adjusted weights...")
+        logger.info("Computing adjusted weights.")
         self.__graph_relative_weights()
-
-        print("Done!")
 
     def load_graph_files(self, files):
         """
@@ -192,19 +191,17 @@ class AirspaceGraph:
         else:
             raise ValueError("Argument 'files' must be list(pathlib.Path) or list(str) or pathlib.Path or str.")
 
-        print("Loading graph of handovers...")
+        logger.info("Loading matrix of handovers.")
         matrix = self.__load_npz_files(to_load)
 
-        print("Building graph...")
+        logger.info("Building graph from matrix.")
         if self.__graph is None:
             self.__graph = build_graph_from_sparse_matrix(self.__gdf, matrix)
         else:
             self.__graph = build_graph_from_sparse_matrix(self.__gdf, matrix, self.__graph)
 
-        print("Computing adjusted weights...")
+        logger.info("Computing adjusted weights.")
         self.__graph_relative_weights()
-
-        print("Done!")
 
     def __load_npz_files(self, files):
         matrix = None
@@ -220,6 +217,8 @@ class AirspaceGraph:
 
     def __load_npz(self, time):
         file_load = self.__data_config.data_graph_npz(time)
+
+        logger.info("Loading saved graph from location {}.".format(file_load))
         return sparse.load_npz(file_load)
 
     def __load_npz_bulk(self, time_start, time_end):
@@ -227,6 +226,8 @@ class AirspaceGraph:
         t_end = parser.parse(str(time_end))
         t_delta = timedelta(hours=1)
         count = math.floor((t_end - t_start) / t_delta)
+
+        logger.info("Loading {} saved NPZ files, from {} to {}.".format(count, t_start, t_end))
 
         matrix = None
 
@@ -241,6 +242,7 @@ class AirspaceGraph:
         return matrix
 
     def __add_airspace(self, row):
+        logger.debug("Adding airspace {} to AirspaceHandler C++ object.".format(row['name']))
         return self.__airspaces.add_airspace(row.wkt, row.lower_limit, row.upper_limit)
 
     def get_airspace(self, airspace):
@@ -287,6 +289,7 @@ class AirspaceGraph:
 
         a = self.get_airspace(airspace)
 
+        logger.debug("Getting airspace distance using C++ AirspaceHandler object.")
         return self.__airspaces.distance_to_airspace(long, lat, height, int(a.name))
 
     def edge_weight(self, airspace1, airspace2):
@@ -329,6 +332,7 @@ class AirspaceGraph:
         Visualise the graph interactively using HoloViews.
         """
 
+        logger.info("Drawing graph using holoviews.")
         return hvnx.draw(self.__graph, mercator_positions(self.__gdf, self.__graph), edge_width=hv.dim('weight')*0.003, node_size=30, arrowhead_length=0.0001)
 
     def draw_graph_map(self, flight=None, subset=None, logscale=False, file_out=None):
@@ -350,6 +354,7 @@ class AirspaceGraph:
 
         fig = plt.figure(dpi=300, figsize=(7,7))
 
+        logger.info("Downloading terrain data from Stamen.")
         imagery = cimgt.Stamen(style="terrain-background")
         ax = plt.axes(projection=imagery.crs)
 
@@ -357,8 +362,10 @@ class AirspaceGraph:
 
         ax.add_image(imagery, self.__data_config.detail)
 
+        logger.info("Plotting airspace boundaries on map.")
         ax.add_geometries(self.__gdf.geometry, crs=ccrs.PlateCarree(), facecolor="none", edgecolor="black") #"#8fa8bf"
 
+        logger.info("Extracting edge weights from graph.")
         _, weights_original = zip(*nx.get_edge_attributes(self.__graph, 'weight').items())
         if logscale:
             weights = tuple(map(lambda x: math.log(x), weights_original))
@@ -367,6 +374,7 @@ class AirspaceGraph:
         positions_transformed = mercator_positions(self.__gdf, self.__graph)
         cmap = plt.cm.Purples
 
+        logger.info("Plotting graph on map.")
         nodes = nx.draw_networkx_nodes(self.__graph, positions_transformed, ax=ax, node_size=5, node_color="red")
         edges = nx.draw_networkx_edges(self.__graph, positions_transformed, ax=ax, node_size=5, edge_color=weights, edge_cmap=cmap, arrowsize=5, arrowstyle="->", width=0.8)
         nodes.set_zorder(20)
@@ -374,6 +382,7 @@ class AirspaceGraph:
             edge.set_zorder(19)
 
         if flight is not None:
+            logger.info("Plotting flight(s) on map.")
             if isinstance(flight, Flight):
                 flight.plot(ax)
             elif isinstance(flight, Traffic):
@@ -383,6 +392,7 @@ class AirspaceGraph:
                 raise ValueError("Flight must be of type Flight or Traffic.")
 
         if subset is not None:
+            logger.info("Plotting subset of airspaces on map.")
             if isinstance(subset, list) or isinstance(subset, set):
                 if all(isinstance(x, int) for x in subset):
                     gdf_filtered = self.__gdf[self.__gdf.index.isin(subset)]
@@ -400,6 +410,7 @@ class AirspaceGraph:
         ax.set_aspect('auto')
 
         if file_out is not None:
+            logger.info("Saving figure to {}".format(file_out))
             plt.savefig(file_out, bbox_inches='tight', transparent=True)
 
         plt.show()
@@ -416,6 +427,8 @@ class AirspaceGraph:
         """
 
         if median:
+            logger.info("Computing median edge weight in graph.")
+
             weights = [edge[2]['weight'] for edge in list(self.__graph.edges(data=True))]
             weights.sort()
 
@@ -428,6 +441,8 @@ class AirspaceGraph:
                 v2 = weights[(n // 2) - 1]
                 return (v1 + v2) / 2
         else:
+            logger.info("Computing mean edge weight in graph.")
+
             weight_total = 0
             count = 0
 
@@ -548,6 +563,7 @@ class AirspaceGraph:
         """
 
         if edge is not None:
+            logger.info("Getting edge weights.")
             weight = edge.get('weight')
             weight_adjusted = edge.get('weight_adjusted')
         else:
@@ -555,6 +571,7 @@ class AirspaceGraph:
             weight_adjusted = 0
 
         if distance1 is not None and distance2 is not None:
+            logger.info("Computing confidence based on distance from airspace borders.")
             if distance1 == 0: # aircraft inside first airspace, assume approaching second airspace
                 confidence_distance = lerp(distance2, self.__distance_zero, self.__distance_one, 0.0, 1.0)
             elif distance2 == 0: # aircraft inside second airspace, assume just left first airspace
@@ -564,6 +581,8 @@ class AirspaceGraph:
                 confidence_distance *= self.__confidence_distance_modifier
         else:
             confidence_distance = 0
+
+        logger.info("Computing confidence based on non-position-based data sources.")
 
         confidence_weight = int(weight >= self.__minimum_weight)
         confidence_weight_adjusted = int(weight_adjusted >= self.__minimum_weight_adjusted)
@@ -596,9 +615,12 @@ class AirspaceGraph:
         :rtype: list(list(int))
         """
 
+        logger.info("Converting flight to arrays of coordinates.")
         xs = np.array([c[0] for c in list(flight.coords)])
         ys = np.array([c[1] for c in list(flight.coords)])
         hs = np.array([c[2] for c in list(flight.coords)])
+
+        logger.info("Processing flight using AirspaceHandler C++ object.")
         return self.__airspaces.process_single_flight(xs, ys, hs)
 
     def test_point(self, long, lat, height):
@@ -622,11 +644,14 @@ class AirspaceGraph:
 
         ft = True # TODO add option to allow height in metres?
 
+        logger.info("Getting airspaces at the given point using AirspaceHandler C++ object.")
         ids_at_point = self.__airspaces.airspaces_at_point(long, lat, height, ft)
+        logger.info("Getting airspaces near to the given point using AirspaceHandler C++ object.")
         near_point = self.__airspaces.airspaces_near_point(long, lat, height, ft)
 
         out = []
 
+        logger.info("Computing confidence in a handover to each nearby airspace.")
         for id_at in ids_at_point:
             a1 = self.__gdf.loc[id_at]
             name_at = a1['name']
@@ -672,9 +697,12 @@ class AirspaceGraph:
             raise ValueError("Airspace not found!")
 
         edge = self.__graph[a1['name']].get(a2['name'])
+
+        logger.debug("Getting airspace distances using C++ AirspaceHandler object.")
         distance1 = self.__airspaces.distance_to_airspace(long, lat, height, int(a1.name))
         distance2 = self.__airspaces.distance_to_airspace(long, lat, height, int(a2.name))
 
+        logger.debug("Computing handover confidence.")
         confidence = self.confidence(edge, distance1, distance2)
 
         return confidence
@@ -693,10 +721,12 @@ class AirspaceGraph:
         if not isinstance(flight, Flight):
             raise ValueError("Argument must be of type Flight!")
 
+        logger.info("Getting all handovers along the flight.")
         handovers = self.process_single_flight(flight)
 
         out = []
 
+        logger.info("Computing confidence values for each handover.")
         for airspace1, airspace2 in handovers:
             a1 = self.get_airspace(airspace1)
             a2 = self.get_airspace(airspace2)
@@ -744,6 +774,8 @@ def mercator_positions(gdf, graph):
     :return: list of coordinates
     :rtype: list(list(float))
     """
+
+    logger.debug("Getting the coordinates of the centre of each airspace in the Mercator projection.")
 
     positions_transformed = dict()
     for name in list(nx.nodes(graph)):
