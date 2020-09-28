@@ -210,7 +210,7 @@ and a GeoDataFrame must have a correctly formatted <cite>geometry</cite> column.
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset</strong> (<em>str</em><em> or </em><a class="reference internal" href="flight_processing.DataConfig.html#flight_processing.DataConfig" title="flight_processing.DataConfig"><em>DataConfig</em></a>) – dataset name or specification</p></li>
 <li><p><strong>df</strong> (<em>pandas.core.frame.DataFrame</em><em> or </em><em>geopandas.geodataframe.GeoDataFrame</em><em>, </em><em>optional</em>) – dataframe of airspaces</p></li>
-<li><p><strong>dataset_location</strong> (<em>str</em><em>, </em><em>optional</em>) – location of saved dataframe</p></li>
+<li><p><strong>dataset_location</strong> (<em>pathlib.Path</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – location of saved dataframe</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose logging</p></li>
 </ul>
 </dd>
@@ -295,7 +295,7 @@ The result can also be saved to a file.</p>
 <li><p><strong>flight</strong> (<em>traffic.core.flight.Flight</em><em> or </em><em>traffic.core.traffic.Traffic</em>) – draw a flight or flights on the map</p></li>
 <li><p><strong>subset</strong> (<em>set</em><em>(</em><em>int</em><em>) or </em><em>list</em><em>(</em><em>int</em><em>) or </em><em>set</em><em>(</em><em>str</em><em>) or </em><em>list</em><em>(</em><em>str</em><em>)</em>) – subset of airspaces to highlight (e.g. airspaces a flight passes through), as IDs or names</p></li>
 <li><p><strong>logscale</strong> (<em>bool</em>) – edges are coloured according to a logarithmic (rather than linear) scale, default False</p></li>
-<li><p><strong>file_out</strong> (<em>str</em><em>, </em><em>optional</em>) – save the result to a file</p></li>
+<li><p><strong>file_out</strong> (<em>pathlib.Path</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – save the result to a file</p></li>
 </ul>
 </dd>
 </dl>
@@ -372,7 +372,7 @@ The result can also be saved to a file.</p>
 <dd><p>Load the graph of handovers from a given list of NPZ file locations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>files</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – files to load</p>
+<dd class="field-odd"><p><strong>files</strong> (<em>list</em><em>(</em><em>pathlib.Path</em><em>) or </em><em>list</em><em>(</em><em>str</em><em>) or </em><em>pathlib.Path</em><em> or </em><em>str</em>) – file or files to load</p>
 </dd>
 </dl>
 </dd></dl>
