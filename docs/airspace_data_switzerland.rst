@@ -3,9 +3,10 @@ Importing Switzerland’s Airspaces
 
 We import data on the Switzerland’s airspaces from
 `OpenAIP <http://www.openaip.net/>`__ and convert it to OpenAir format
-using one of the following tools: -
-https://github.com/openAIP/airspace-converter -
-https://github.com/alus-it/AirspaceConverter
+using one of the following tools:
+
+- https://github.com/openAIP/airspace-converter
+- https://github.com/alus-it/AirspaceConverter
 
 We use this data to build a dataframe that can be used with the rest of
 our code.
