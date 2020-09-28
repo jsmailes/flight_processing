@@ -120,11 +120,11 @@ def save_graph_to_file(gdf, matrix, graph_json=None, graph_yaml=None, graph_npz=
     :param matrix: matrix representing the graph
     :type matrix: numpy.ndarray
     :param graph_json: location of JSON output
-    :type graph_json: str, optional
+    :type graph_json: pathlib.Path or str, optional
     :param graph_yaml: location of YAML output
-    :type graph_yaml: str, optional
+    :type graph_yaml: pathlib.Path or str, optional
     :param graph_npz: location of NPZ output
-    :type graph_npz: str, optional
+    :type graph_npz: pathlib.Path or str, optional
     """
     if graph_json is not None:
         check_file(graph_json)
@@ -134,11 +134,12 @@ def save_graph_to_file(gdf, matrix, graph_json=None, graph_yaml=None, graph_npz=
     if graph_yaml is not None:
         check_file(graph_yaml)
         graph = build_graph_from_matrix(gdf, matrix) # TODO this can be done better
-        nx.write_yaml(graph, graph_yaml)
+        nx.write_yaml(graph, str(graph_yaml))
 
     if graph_npz is not None:
+        check_file(graph_npz)
         matrix_sparse = sparse.csr_matrix(matrix)
-        sparse.save_npz(graph_npz, matrix_sparse)
+        sparse.save_npz(str(graph_npz), matrix_sparse)
 
 def get_zone_centre(gdf, name):
     """

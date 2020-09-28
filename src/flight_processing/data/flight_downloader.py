@@ -110,7 +110,7 @@ class FlightDownloader:
         :param traffic: flights to save
         :type traffic: traffic.core.traffic.Traffic
         :param location: location to save the flights to
-        :type location: str
+        :type location: pathlib.Path or str
         """
 
         if self.verbose:

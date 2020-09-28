@@ -4,6 +4,7 @@ from ..scalebar import scale_bar
 from .data_utils import graph_add_node, graph_increment_edge, build_graph_from_sparse_matrix, build_graph_from_matrix, get_zone_centre, save_graph_to_file, process_dataframe
 from .. import config
 
+from pathlib import Path
 from scipy import sparse
 from datetime import timedelta
 from dateutil import parser
@@ -79,7 +80,7 @@ class AirspaceGraph:
         :param df: dataframe of airspaces
         :type df: pandas.core.frame.DataFrame or geopandas.geodataframe.GeoDataFrame, optional
         :param dataset_location: location of saved dataframe
-        :type dataset_location: str, optional
+        :type dataset_location: pathlib.Path or str, optional
         :param verbose: verbose logging
         :type verbose: bool, optional
 
@@ -180,16 +181,16 @@ class AirspaceGraph:
         """
         Load the graph of handovers from a given list of NPZ file locations.
 
-        :param files: files to load
-        :type files: list(str)
+        :param files: file or files to load
+        :type files: list(pathlib.Path) or list(str) or pathlib.Path or str
         """
 
-        if isinstance(files, str):
+        if isinstance(files, str) or isinstance(files, Path):
             to_load = [files]
-        elif isinstance(files, list) and all(isinstance(f, str) for f in files):
+        elif isinstance(files, list) and (all(isinstance(f, str) for f in files) or all(isinstance(f, Path) for f in files)):
             to_load = files
         else:
-            raise ValueError("Argument 'files' must be str or list of str.")
+            raise ValueError("Argument 'files' must be list(pathlib.Path) or list(str) or pathlib.Path or str.")
 
         print("Loading graph of handovers...")
         matrix = self.__load_npz_files(to_load)
@@ -344,7 +345,7 @@ class AirspaceGraph:
         :param logscale: edges are coloured according to a logarithmic (rather than linear) scale, default False
         :type logscale: bool
         :param file_out: save the result to a file
-        :type file_out: str, optional
+        :type file_out: pathlib.Path or str, optional
         """
 
         fig = plt.figure(dpi=300, figsize=(7,7))

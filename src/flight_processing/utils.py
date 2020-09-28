@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-
+from dateutil import parser
 import os
 import errno
 from pathlib import Path
@@ -20,9 +20,13 @@ config.read(config_file.as_posix())
 
 # defaults
 detail = 4
-data_prefix = config.get("global", "data_location", fallback="")
+data_prefix = Path(config.get("global", "data_location", fallback=""))
 
-format_dataset_location = "{data_prefix}/regions_{dataset}_wkt.json"
+if not data_prefix.exists():
+    print("Warning: data_location does not exist, creating necessary folders.") # TODO logging
+    data_prefix.mkdir(parents=True)
+
+format_dataset_location = "regions_{dataset}_wkt.json"
 format_data_flights = "{data_prefix}/flights/{dataset}/{date}/{time}.json"
 format_data_graph = "{data_prefix}/graphs/{dataset}/{date}/{time}.{suffix}"
 
@@ -112,7 +116,7 @@ class DataConfig:
         self.__maxlat = maxlat
         self.__detail = detail
 
-        self.__dataset_location = format_dataset_location.format(data_prefix=data_prefix, dataset=dataset)
+        self.__dataset_location = data_prefix / format_dataset_location.format(dataset=dataset)
 
         self.__bounds_opensky = (self.__minlon, self.__minlat, self.__maxlon, self.__maxlat)
         self.__bounds_plt = (self.__minlon, self.__maxlon, self.__minlat, self.__maxlat)
@@ -196,7 +200,7 @@ class DataConfig:
         """
         Returns the location of the saved geopandas GeoDataFrame.
 
-        :rtype: str
+        :rtype: pathlib.Path
         """
         return self.__dataset_location
 
@@ -226,27 +230,23 @@ class DataConfig:
         :type datetime: datetime.datetime or str
 
         :return: location of file (may not exist)
-        :rtype: str
+        :rtype: pathlib.Path
         """
-        date = datetime.strftime(timestring_date)
-        time = datetime.strftime(timestring_time)
-        return format_data_flights.format(
-                dataset = self.dataset,
-                data_prefix = self.data_prefix,
-                date = date,
-                time = time
-        )
+
+        dt = parser.parse(str(datetime))
+
+        date = dt.strftime(timestring_date)
+        time = dt.strftime(timestring_time)
+
+        return data_prefix / "flights" / self.dataset / date / "{}.json".format(time)
 
     def __data_graph(self, datetime, suffix):
-        date = datetime.strftime(timestring_date)
-        time = datetime.strftime(timestring_time)
-        return format_data_graph.format(
-                dataset = self.dataset,
-                data_prefix = self.data_prefix,
-                date = date,
-                time = time,
-                suffix = suffix
-        )
+        dt = parser.parse(str(datetime))
+
+        date = dt.strftime(timestring_date)
+        time = dt.strftime(timestring_time)
+
+        return data_prefix / "graphs" / self.dataset / date / "{}.{}".format(time, suffix)
 
     def data_graph_yaml(self, datetime):
         """
@@ -256,7 +256,7 @@ class DataConfig:
         :type datetime: datetime.datetime or str
 
         :return: location of file (may not exist)
-        :rtype: str
+        :rtype: pathlib.Path
         """
         return self.__data_graph(datetime, "yaml")
 
@@ -268,7 +268,7 @@ class DataConfig:
         :type datetime: datetime.datetime or str
 
         :return: location of file (may not exist)
-        :rtype: str
+        :rtype: pathlib.Path
         """
         return self.__data_graph(datetime, "json")
 
@@ -280,7 +280,7 @@ class DataConfig:
         :type datetime: datetime.datetime or str
 
         :return: location of file (may not exist)
-        :rtype: str
+        :rtype: pathlib.Path
         """
         return self.__data_graph(datetime, "npz")
 
@@ -290,14 +290,20 @@ def check_file(filename):
     Given a filename check if its parent directory exists, creating any necessary directories if not.
 
     :param filename: filename to check
-    :type filename: str
+    :type filename: pathlib.Path or str
     """
-    if filename is not None and not os.path.exists(os.path.dirname(filename)):
-        try:
-            os.makedirs(os.path.dirname(filename))
-        except OSError as exc: # Guard against race condition
-            if exc.errno != errno.EEXIST:
-                raise
+
+    if filename is not None:
+        if isinstance(filename, Path):
+            p = filename
+        elif isinstance(filename, str):
+            p = Path(filename)
+        else:
+            raise ValueError("filename must be of type pathlib.Path or str")
+
+        if not p.parent.exists():
+            print("Warning: {} does not exist, creating necessary folders.".format(str(p.parent))) # TODO logging
+            data_prefix.mkdir(parents=True)
 
 def execute_bulk(function, time_start, count, time_delta=None):
     """

@@ -54,7 +54,7 @@ class GraphBuilder:
         :param verbose: verbose logging
         :type verbose: bool, optional
         :param dataset_location: location of saved dataframe
-        :type dataset_location: str, optional
+        :type dataset_location: pathlib.Path or str, optional
 
         :return: object
         :rtype: GraphBuilder
@@ -169,11 +169,11 @@ class GraphBuilder:
         :param time: time of flights to process
         :type time: datetime.datetime or str
         :param npz: save output as NPZ, default True
-        :type npz: bool
+        :type npz: bool, optional
         :param json: save output as JSON, default False
-        :type json: bool
+        :type json: bool, optional
         :param yaml: save output as YAML, default False
-        :type yaml: bool
+        :type yaml: bool, optional
         """
 
         t = parser.parse(str(time))
@@ -181,7 +181,7 @@ class GraphBuilder:
         if self.verbose:
             print("Processing data for {}.".format(t))
 
-        data_flights = self.__data_config.data_flights(t)
+        data_flights = str(self.__data_config.data_flights(t))
 
         graph_npz = self.__data_config.data_graph_npz(t) if npz else None
         graph_json = self.__data_config.data_graph_json(t) if json else None
@@ -216,11 +216,11 @@ class GraphBuilder:
         :param time_end: end time for processing
         :type time_end: datetime.datetime or str
         :param npz: save output as NPZ, default True
-        :type npz: bool
+        :type npz: bool, optional
         :param json: save output as JSON, default False
-        :type json: bool
+        :type json: bool, optional
         :param yaml: save output as YAML, default False
-        :type yaml: bool
+        :type yaml: bool, optional
         """
 
         t_start = parser.parse(str(time_start))
@@ -240,7 +240,7 @@ class GraphBuilder:
         :param subset: subset of airspaces to highlight (e.g. airspaces a flight passes through), as IDs or names
         :type subset: set(int) or list(int) or set(str) or list(str)
         :param file_out: save the result to a file
-        :type file_out: str, optional
+        :type file_out: pathlib.Path or str, optional
         """
 
         fig = plt.figure(dpi=300, figsize=(7,7))
