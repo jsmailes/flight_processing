@@ -9,12 +9,9 @@ If you would like to fix a bug or add a feature to the project, feel free to sub
 
 ## Installation
 
-You can install flight_processing from [PyPI](https://pypi.org/):
-```
-pip install flight_processing
-```
+This package is not yet available through pip - you will need to build from source or install the wheel.
 
-More detailed installation instructions are available in the [documentation](https://flights.joshuasmailes.co.uk/installation.html).
+Detailed installation instructions are available in the [documentation](https://flights.joshuasmailes.co.uk/installation.html).
 
 ## Usage
 
