@@ -19,10 +19,11 @@ Visualisations are provided through `matplotlib <https://matplotlib.org/>`_, `ca
 Installation using pip
 ----------------------
 
-The package is available on `PyPI <https://pypi.org/>`_ and can be installed as follows:
+This package is not yet available on PyPI but on certain compatible systems may be able to be installed using pip:
 
 .. parsed-literal::
-   pip install flight_processing
+   wget https://github.com/jsmailes/flight_processing/releases/download/v1.0.0/flight_processing-1.0.0-cp37-cp37m-linux_x86_64.whl
+   pip install flight_processing-1.0.0-cp37-cp37m-linux_x86_64.whl
 
 Manual build and installation
 ------------------------------
@@ -88,6 +89,15 @@ Installation is fairly straightforward, since ``pip`` installs the prerequisites
 
 .. parsed-literal::
    pip install .
+
+.. note::
+   Instead of cloning and building the repository, you can download and build the tarball distributed on the `releases page <https://github.com/jsmailes/flight_processing/releases>`_.
+   This will have the same result as cloning and building the source repository but does not require the use of git.
+   The C++ dependencies will still need to be installed for this method of installation.
+
+   .. parsed-literal::
+      wget https://github.com/jsmailes/flight_processing/releases/download/v1.0.0/flight_processing-1.0.0.tar.gz
+      pip install flight_processing-1.0.0.tar.gz
 
 Troubleshooting
 ~~~~~~~~~~~~~~~
