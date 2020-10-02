@@ -10,7 +10,7 @@ This library will save quite a few large files to disk (downloaded flights, proc
    [global]
    data_location = /path/to/data/dir
 
-We must also configure the `traffic <https://traffic-viz.github.io/index.html>`_ library so it uses correct credentials for the `OpenSky <https://opensky-network.org/>`_ Impala interface. More detailed documentation can be found `here <https://traffic-viz.github.io/opensky_impala.html>`, but the gist is as follows:
+We must also configure the `traffic <https://traffic-viz.github.io/index.html>`_ library so it uses correct credentials for the `OpenSky <https://opensky-network.org/>`_ Impala interface. More detailed documentation can be found `here <https://traffic-viz.github.io/opensky_impala.html>`_, but the gist is as follows:
 
 Edit the following lines in your traffic configuration file:
 
