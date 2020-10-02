@@ -26,16 +26,16 @@ And vice versa:
 
     df['geometry'] = df.wkt.apply(shapely.wkt.loads)
 
-A geodataframe can be saved to file as follows, using ``flight_processing.DataConfig`` to get the location:
+A geodataframe can be saved to file as follows, using `flight_processing.DataConfig <flight_processing.DataConfig.html>`_ to get the location:
 
 .. code-block:: python
 
     config = DataConfig.known_dataset("usa")
-    // or: config = DataConfig("custom_name", minlon, maxlon, minlat, maxlat)
+    # or: config = DataConfig("custom_name", minlon, maxlon, minlat, maxlat)
     out_location = config.dataset_location
     df.to_file(out_location, driver="GeoJSON")
 
-If instead the dataframe is being passed into the constructor directly (only compatible with `GraphBuilder.from_dataframe <#flight_processing.data.GraphBuilder.from_dataframe>`_ or `AirspaceGraph.__init__ <#flight_processing.data.AirspaceGraph.\_\_init\_\_>`_), then both pandas DataFrames and geopandas GeoDataFrames are accepted.
+If instead the dataframe is being passed into the constructor directly (only compatible with `GraphBuilder.from_dataframe <flight_processing.data.GraphBuilder.html#flight_processing.data.GraphBuilder.from_dataframe>`_ or `AirspaceGraph.__init__ <flight_processing.data.AirspaceGraph.html#flight_processing.data.AirspaceGraph.\_\_init\_\_>`_), then both pandas DataFrames and geopandas GeoDataFrames are accepted.
 They require the same columns as before, but DataFrames do not need the ``geometry`` column and GeoDataFrames do not need the ``wkt`` column.
 
 
@@ -47,7 +47,7 @@ It is expected that processing will take a while, especially on larger datasets 
 
 Potential solutions include:
 
-- Downsample the airspace geometry data stored in the saved dataframe. This can be achieved using Shapely's built-in `simplify https://shapely.readthedocs.io/en/stable/manual.html#object.simplify>`_ method, which reduces the detail of shapes while keeping the coordinates within a certain distance of the original geometry. This will speed up airspace membership calculations without sacrificing too much accuracy.
+- Downsample the airspace geometry data stored in the saved dataframe. This can be achieved using Shapely's built-in `simplify <https://shapely.readthedocs.io/en/stable/manual.html#object.simplify>`_ method, which reduces the detail of shapes while keeping the coordinates within a certain distance of the original geometry. This will speed up airspace membership calculations without sacrificing too much accuracy.
 - Run a processing script on multiple threads using ``xargs -n 1 -P <number_of_threads>``, `GNU Parallel <http://www.gnu.org/software/parallel/>`_, or a Python multithreading library..
 - When preparing the dataframe of airspaces, combine rows with the same name into a single row with a single geometry. This will reduce the number of airspaces which need processing.
 
@@ -56,9 +56,9 @@ The confidence results returned by AirspaceGraph don't seem right!
 ------------------------------------------------------------------
 
 I'm no data scientist, and the coefficients used to calculate the handover confidence were only designed to be placeholders for testing.
-You should use the `set_confidence_values <#flight_processing.data.AirspaceGraph.set_confidence_values>`_ method to set these coefficients based on your analysis.
+You should use the `set_confidence_values <flight_processing.data.AirspaceGraph.html#flight_processing.data.AirspaceGraph.set_confidence_values>`_ method to set these coefficients based on your analysis.
 
-Alternatively you can take the values returned by `test_point <#flight_processing.data.AirspaceGraph.test_point>`_, `test_handover <#flight_processing.data.AirspaceGraph.test_handover>`_, and `test_flight <#flight_processing.data.AirspaceGraph.test_flight>`_, and compute your own confidence value.
+Alternatively you can take the values returned by `test_point <flight_processing.data.AirspaceGraph.html#flight_processing.data.AirspaceGraph.test_point>`_, `test_handover <flight_processing.data.AirspaceGraph.html#flight_processing.data.AirspaceGraph.test_handover>`_, and `test_flight <flight_processing.data.AirspaceGraph.html#flight_processing.data.AirspaceGraph.test_flight>`_, and compute your own confidence value.
 
 Any other issues may be caused by a lack of processed data - try processing more flights.
 
