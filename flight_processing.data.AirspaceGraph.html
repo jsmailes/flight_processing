@@ -36,6 +36,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Troubleshooting" href="troubleshooting.html" />
     <link rel="prev" title="flight_processing.data.GraphBuilder" href="flight_processing.data.GraphBuilder.html" /> 
 </head>
 
@@ -91,6 +92,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">flight_processing.data.AirspaceGraph</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 
             
@@ -199,10 +201,12 @@ load the graph and perform data processing on it.</p>
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">df</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dataset_location</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#flight_processing.data.AirspaceGraph.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialise the graph builder with a given dataset, either from a file or directly from a dataframe.</p>
 <p>By default the dataframe will be loaded from a file as specified in the config.</p>
-<p>A loaded dataframe must have the following columns:
-- <cite>name</cite>
-- <cite>lower_limit</cite>
-- <cite>upper_limit</cite></p>
+<p>A loaded dataframe must have the following columns:</p>
+<ul class="simple">
+<li><p><cite>name</cite></p></li>
+<li><p><cite>lower_limit</cite></p></li>
+<li><p><cite>upper_limit</cite></p></li>
+</ul>
 <p>In addition, a DataFrame must have a <cite>wkt</cite> column containing the well-known text of the airspace’s geometry,
 and a GeoDataFrame must have a correctly formatted <cite>geometry</cite> column.</p>
 <dl class="field-list simple">
@@ -548,6 +552,8 @@ This takes the form of a list of dictionaries.</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="troubleshooting.html" class="btn btn-neutral float-right" title="Troubleshooting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="flight_processing.data.GraphBuilder.html" class="btn btn-neutral float-left" title="flight_processing.data.GraphBuilder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

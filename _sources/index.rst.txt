@@ -21,11 +21,11 @@ Improvements and bug fixes are welcome, simply submit a pull request on GitHub.
    installation
    quickstart
    core_structure
+   troubleshooting
 
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
