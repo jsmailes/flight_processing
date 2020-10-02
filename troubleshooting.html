@@ -179,14 +179,14 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">shapely</span><span class="o">.</span><span class="n">wkt</span><span class="o">.</span><span class="n">loads</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>A geodataframe can be saved to file as follows, using <code class="docutils literal notranslate"><span class="pre">flight_processing.DataConfig</span></code> to get the location:</p>
+<p>A geodataframe can be saved to file as follows, using <a class="reference external" href="flight_processing.DataConfig.html">flight_processing.DataConfig</a> to get the location:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">DataConfig</span><span class="o">.</span><span class="n">known_dataset</span><span class="p">(</span><span class="s2">&quot;usa&quot;</span><span class="p">)</span>
-<span class="o">//</span> <span class="ow">or</span><span class="p">:</span> <span class="n">config</span> <span class="o">=</span> <span class="n">DataConfig</span><span class="p">(</span><span class="s2">&quot;custom_name&quot;</span><span class="p">,</span> <span class="n">minlon</span><span class="p">,</span> <span class="n">maxlon</span><span class="p">,</span> <span class="n">minlat</span><span class="p">,</span> <span class="n">maxlat</span><span class="p">)</span>
+<span class="c1"># or: config = DataConfig(&quot;custom_name&quot;, minlon, maxlon, minlat, maxlat)</span>
 <span class="n">out_location</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">dataset_location</span>
 <span class="n">df</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="n">out_location</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s2">&quot;GeoJSON&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If instead the dataframe is being passed into the constructor directly (only compatible with <a class="reference external" href="#flight_processing.data.GraphBuilder.from_dataframe">GraphBuilder.from_dataframe</a> or <a class="reference external" href="#flight_processing.data.AirspaceGraph.__init__">AirspaceGraph.__init__</a>), then both pandas DataFrames and geopandas GeoDataFrames are accepted.
+<p>If instead the dataframe is being passed into the constructor directly (only compatible with <a class="reference external" href="flight_processing.data.GraphBuilder.html#flight_processing.data.GraphBuilder.from_dataframe">GraphBuilder.from_dataframe</a> or <a class="reference external" href="flight_processing.data.AirspaceGraph.html#flight_processing.data.AirspaceGraph.__init__">AirspaceGraph.__init__</a>), then both pandas DataFrames and geopandas GeoDataFrames are accepted.
 They require the same columns as before, but DataFrames do not need the <code class="docutils literal notranslate"><span class="pre">geometry</span></code> column and GeoDataFrames do not need the <code class="docutils literal notranslate"><span class="pre">wkt</span></code> column.</p>
 </div>
 <div class="section" id="processing-data-using-graphbuilder-is-quite-slow">
@@ -195,7 +195,7 @@ They require the same columns as before, but DataFrames do not need the <code cl
 It is expected that processing will take a while, especially on larger datasets or large numbers of flights.</p>
 <p>Potential solutions include:</p>
 <ul class="simple">
-<li><p>Downsample the airspace geometry data stored in the saved dataframe. This can be achieved using Shapely’s built-in <a href="#id1"><span class="problematic" id="id2">`simplify https://shapely.readthedocs.io/en/stable/manual.html#object.simplify&gt;`_</span></a> method, which reduces the detail of shapes while keeping the coordinates within a certain distance of the original geometry. This will speed up airspace membership calculations without sacrificing too much accuracy.</p></li>
+<li><p>Downsample the airspace geometry data stored in the saved dataframe. This can be achieved using Shapely’s built-in <a class="reference external" href="https://shapely.readthedocs.io/en/stable/manual.html#object.simplify">simplify</a> method, which reduces the detail of shapes while keeping the coordinates within a certain distance of the original geometry. This will speed up airspace membership calculations without sacrificing too much accuracy.</p></li>
 <li><p>Run a processing script on multiple threads using <code class="docutils literal notranslate"><span class="pre">xargs</span> <span class="pre">-n</span> <span class="pre">1</span> <span class="pre">-P</span> <span class="pre">&lt;number_of_threads&gt;</span></code>, <a class="reference external" href="http://www.gnu.org/software/parallel/">GNU Parallel</a>, or a Python multithreading library..</p></li>
 <li><p>When preparing the dataframe of airspaces, combine rows with the same name into a single row with a single geometry. This will reduce the number of airspaces which need processing.</p></li>
 </ul>
@@ -203,8 +203,8 @@ It is expected that processing will take a while, especially on larger datasets 
 <div class="section" id="the-confidence-results-returned-by-airspacegraph-don-t-seem-right">
 <h2>The confidence results returned by AirspaceGraph don’t seem right!<a class="headerlink" href="#the-confidence-results-returned-by-airspacegraph-don-t-seem-right" title="Permalink to this headline">¶</a></h2>
 <p>I’m no data scientist, and the coefficients used to calculate the handover confidence were only designed to be placeholders for testing.
-You should use the <a class="reference external" href="#flight_processing.data.AirspaceGraph.set_confidence_values">set_confidence_values</a> method to set these coefficients based on your analysis.</p>
-<p>Alternatively you can take the values returned by <a class="reference external" href="#flight_processing.data.AirspaceGraph.test_point">test_point</a>, <a class="reference external" href="#flight_processing.data.AirspaceGraph.test_handover">test_handover</a>, and <a class="reference external" href="#flight_processing.data.AirspaceGraph.test_flight">test_flight</a>, and compute your own confidence value.</p>
+You should use the <a class="reference external" href="flight_processing.data.AirspaceGraph.html#flight_processing.data.AirspaceGraph.set_confidence_values">set_confidence_values</a> method to set these coefficients based on your analysis.</p>
+<p>Alternatively you can take the values returned by <a class="reference external" href="flight_processing.data.AirspaceGraph.html#flight_processing.data.AirspaceGraph.test_point">test_point</a>, <a class="reference external" href="flight_processing.data.AirspaceGraph.html#flight_processing.data.AirspaceGraph.test_handover">test_handover</a>, and <a class="reference external" href="flight_processing.data.AirspaceGraph.html#flight_processing.data.AirspaceGraph.test_flight">test_flight</a>, and compute your own confidence value.</p>
 <p>Any other issues may be caused by a lack of processed data - try processing more flights.</p>
 </div>
 <div class="section" id="i-need-more-precise-airspace-height-data">
